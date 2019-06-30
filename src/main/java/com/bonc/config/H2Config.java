@@ -1,11 +1,10 @@
-package com.bonc;
+package com.bonc.config;
 
 import java.sql.SQLException;
 import java.util.Properties;
 
 import org.h2.server.web.WebServlet;
 import org.h2.tools.Server;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -18,15 +17,15 @@ import org.springframework.core.Ordered;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
-import com.bonc.utils.DbUtils;
+import com.bonc.utils.MapUtils;
 
 @Configuration
 @ConditionalOnExpression("${h2.enabled:false}==true")
 public class H2Config{
-//	@Bean
+//	@Bean//启动webServer
 	public ServletRegistrationBean<WebServlet> registH2WebServlet() {
 		ServletRegistrationBean<WebServlet> srb = new ServletRegistrationBean<>(new WebServlet());
-		srb.setInitParameters(new DbUtils.MapBuilder<String, String>()
+		srb.setInitParameters(new MapUtils.MapBuilder<String, String>()
 				.put("-webAllowOthers", "")
 				.put("-trace", "")
 				.build());
@@ -35,10 +34,11 @@ public class H2Config{
 	}
 	@Bean(name="h2Server",initMethod="start",destroyMethod="stop")
 	@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+	@ConditionalOnExpression("${h2.enableAppServer:true}==true")
 	public Server h2Server() throws SQLException {
 		return Server.createTcpServer("-tcp","-tcpAllowOthers","-ifNotExists","-baseDir","D:\\h2\\db");
 	}
-	@Bean("firstDataSource")
+	@Bean("firstDataSourceProperties")
 	@ConfigurationProperties(prefix="spring.datasource.first")
 	public Properties firstDataSource() {
 		return new Properties();
@@ -51,9 +51,9 @@ public class H2Config{
 	
 	@Bean("h2DataSource")
 	@Lazy
-	public DruidDataSource h2DataSource(@Qualifier("firstDataSource")Properties firstDataSource,
+	public DruidDataSource h2DataSource(@Qualifier("firstDataSourceProperties")Properties firstDataSourceProperties,
 			@Qualifier("druidConfig")Properties druidConfig) {
-		firstDataSource.putAll(druidConfig);
+		firstDataSourceProperties.putAll(druidConfig);
 		DruidDataSource dds = DruidDataSourceBuilder.create().build();
 		dds.configFromPropety(druidConfig);
 		return dds;

@@ -5,9 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import com.bonc.utils.MapUtils.MapBuilder;
 
 /**
  * 获取连接，执行sql
@@ -60,16 +61,6 @@ public class DbUtils {
 				 callback.callback(rs);
 			 }
 			}
-	}
-	public static class  MapBuilder<K,V>{
-		private Map<K,V> map=new HashMap<>();
-		public MapBuilder<K,V> put(K key,V value){
-			map.put(key, value);
-			return this;
-		}
-		public Map<K,V> build(){
-			return map;
-		}
 	}
 	public static interface Callback{
 		void callback(ResultSet rs);
