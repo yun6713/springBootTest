@@ -1,6 +1,9 @@
-h2.enabled: true
+h2:
+  enabled: true
+  enableAppServer: true #使用应用h2数据库
 spring:
   security:
+    enabled: true #是否拦截请求
     user:
       name: user
       password: user
@@ -12,7 +15,7 @@ spring:
       hibernate:
         format_sql: true
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.alibaba.druid.pool.DruidDataSource    
     first:
       driver-class-name: org.h2.Driver
       url: jdbc:h2:tcp://localhost/./h2test

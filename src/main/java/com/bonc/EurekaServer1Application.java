@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,11 +28,8 @@ public class EurekaServer1Application {
 	private UserRepository ur;
 	@Autowired
 	private RoleRepository rr;
-	@Autowired
-	private DruidDataSource ds;
 	@RequestMapping("/test")
 	public String test() {
-		int a = ds.getInitialSize();
 		return "test";
 	}
 	@RequestMapping("/jpa")
