@@ -1,5 +1,7 @@
 package com.bonc.test;
 
+import java.rmi.Remote;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +24,9 @@ public class EurekaServer1ApplicationTests {
 		System.out.println(et.getClass());
 		Object obj = et.queryForAlias("jftest");
 		System.out.println(obj);
+	}
+	@Test
+	public void testEhcache(){
+		
 	}
 }
