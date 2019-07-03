@@ -1,9 +1,9 @@
 h2:
   enabled: true
-  enableAppServer: true #使用应用h2数据库
+  enableAppServer: false #使用应用h2数据库
 spring:
   security:
-    enabled: true #是否拦截请求
+    enabled: false #是否拦截请求
     user:
       name: user
       password: user
@@ -18,7 +18,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource    
     first:
       driver-class-name: org.h2.Driver
-      url: jdbc:h2:tcp://localhost/./h2test
+      url: jdbc:h2:tcp://10.10.101.3:8082/./h2test
       username: sa
       password: ""
     druid:      

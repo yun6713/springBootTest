@@ -18,7 +18,9 @@ public class FactoryBeanWrapper<T> implements FactoryBean<T>,InitializingBean,Di
 
 	private FactoryBeanWrapper() {
 	}
-
+	public static <T> Builder<T> builder(T t){
+		return new Builder<T>().value(t);
+	}
 	@Override
 	public T getObject() throws Exception {
 		// TODO Auto-generated method stub

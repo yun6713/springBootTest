@@ -6,7 +6,9 @@ import java.util.Map;
 
 public class MapUtils {
 
-	
+	public static <K,V> MapBuilder<K,V> builder(K key,V value){
+		return new MapBuilder<K,V>().put(key, value);
+	}
 	
 
 	public static class  MapBuilder<K,V>{

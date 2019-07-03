@@ -55,7 +55,7 @@ public class H2Config{
 			@Qualifier("druidConfig")Properties druidConfig) {
 		firstDataSourceProperties.putAll(druidConfig);
 		DruidDataSource dds = DruidDataSourceBuilder.create().build();
-		dds.configFromPropety(druidConfig);
+		dds.configFromPropety(firstDataSourceProperties);
 		return dds;
 	}
 }
