@@ -32,30 +32,42 @@ public class H2Config{
 		srb.addUrlMappings("/console/*");
 		return srb;
 	}
-	@Bean(name="h2Server",initMethod="start",destroyMethod="stop")
-	@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-	@ConditionalOnExpression("${h2.enableAppServer:true}==true")
+//	@Bean(name="h2Server",destroyMethod="stop")
+//	@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+//	@ConditionalOnExpression("${h2.enableAppServer:true}==true")
 	public Server h2Server() throws SQLException {
-		return Server.createTcpServer("-tcp","-tcpAllowOthers","-ifNotExists","-baseDir","D:\\h2\\db");
+		Server server = Server.createTcpServer("-tcp","-tcpPort","9092","-tcpAllowOthers","-ifNotExists","-baseDir","D:\\h2\\db");
+		server.start();
+		return server;
 	}
-	@Bean("firstDataSourceProperties")
+
+	@Bean("firstDataSource")
 	@ConfigurationProperties(prefix="spring.datasource.first")
 	public Properties firstDataSource() {
 		return new Properties();
 	}
+
 	@Bean("druidConfig")
 	@ConfigurationProperties(prefix="spring.datasource.druid")
 	public Properties druidConfig() {
 		return new Properties();
 	}
-	
 	@Bean("h2DataSource")
 	@Lazy
-	public DruidDataSource h2DataSource(@Qualifier("firstDataSourceProperties")Properties firstDataSourceProperties,
-			@Qualifier("druidConfig")Properties druidConfig) {
-		firstDataSourceProperties.putAll(druidConfig);
+//	@ConfigurationProperties(prefix="spring.datasource.first")
+	public DruidDataSource h2DataSource() {
+//		Properties p = new Properties();
+//		firstDataSource().forEach((k,v)->{if(k!=null)p.put("druid."+k, v);});
+//		DruidDataSource dds = DruidDataSourceBuilder.create().build();
+//		dds.configFromPropety(p);
+		return configDruidDataSource(firstDataSource(),druidConfig());
+	}
+	private DruidDataSource configDruidDataSource(Properties dbProps,Properties dsProps){
+		Properties p = new Properties();
+		dbProps.forEach((k,v)->{if(k!=null)p.put("druid."+k, v);});
+		dsProps.forEach((k,v)->{if(k!=null)p.put("druid."+k, v);});
 		DruidDataSource dds = DruidDataSourceBuilder.create().build();
-		dds.configFromPropety(firstDataSourceProperties);
+		dds.configFromPropety(p);
 		return dds;
 	}
 }
