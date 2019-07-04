@@ -11,12 +11,13 @@ import org.springframework.context.annotation.Bean;
 
 public class H2Test {
 	@Test
-	public void test01(){
+	public void test01() throws Exception{
 		Server server;
 		try {
-			server = Server.createTcpServer().start();
-			int port = server.getPort();
-			String url = server.getURL();while(true){}
+			server = Server.createTcpServer("-ifNotExists").start();
+			System.out.println(server.getURL());
+//			testConnection();
+			while(true){}
 //			server.stop();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -27,7 +28,7 @@ public class H2Test {
 	public void testH2Connection(){
 		try {
 		    Class.forName("org.h2.Driver");
-		    Connection conn = DriverManager.getConnection("jdbc:h2:~/test", "sa", "");
+		    Connection conn = DriverManager.getConnection("jdbc:h2:tcp://localhost/./test", "sa", "");
 		    conn.isClosed();
 		    } catch (Exception e) {
 		    	e.printStackTrace();;
@@ -40,7 +41,6 @@ public class H2Test {
 		server.stop();
 	}
 	@Test
-	@Bean
 	public void testConnection() throws Exception {
 		Connection conn = DbUtils.getConnection("jdbc:h2:tcp://localhost/./h9test", "sa", "");
 		DbUtils.executeQuery(conn, "SELECT * FROM TEST1 ", System.out::println);

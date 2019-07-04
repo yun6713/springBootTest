@@ -1,6 +1,7 @@
 h2:
   enabled: true
   enableAppServer: true #使用应用h2数据库
+  serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
 spring:
   security:
     enabled: false #是否拦截请求
@@ -18,9 +19,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource    
     first:
       driver-class-name: org.h2.Driver
-      url: jdbc:h2:tcp://localhost/./h2test
-      username: sa
-      password: ""
+      url: jdbc:h2:tcp://localhost:9095/./h2test
+      username: li
+      password: tianlin
     druid:      
       #连接池等相关配置
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
