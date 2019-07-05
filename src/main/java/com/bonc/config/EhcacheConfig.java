@@ -2,6 +2,7 @@ package com.bonc.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -16,6 +17,7 @@ import org.springframework.core.io.ClassPathResource;
  * @Description TODO
  */
 @Configuration
+@ConditionalOnClass(net.sf.ehcache.CacheManager.class)
 public class EhcacheConfig {
 	/**
 	 * 配置ecacheManager
