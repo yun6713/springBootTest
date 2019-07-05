@@ -1,13 +1,16 @@
 package com.bonc.test;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import org.h2.server.web.DbStarter;
 import org.h2.tools.Server;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.ResourceUtils;
 
 public class H2Test {
 	@Test
@@ -49,5 +52,14 @@ public class H2Test {
 	@Test
 	public void testDbStarter() throws Exception {
 		DbStarter ds;
+	}
+	@Test
+	public void testFileNameFilter() throws Exception {
+		File file = ResourceUtils.getFile("D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\data");
+		System.out.println(Arrays.toString(file.list()));
+		file = ResourceUtils.getFile("D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\data\\role.csv");
+		System.out.println(file.exists());
+		System.out.println(file.getName());
+		
 	}
 }

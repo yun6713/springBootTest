@@ -5,10 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +18,7 @@ import com.bonc.service.H2Service;
 
 @RestController
 @RequestMapping("/h2")
-public class H2Test {
+public class H2TestController {
 	@Autowired
 	Map<String,DruidDataSource> map;
 	@Autowired

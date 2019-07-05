@@ -1,6 +1,7 @@
 package com.bonc.config;
 
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.h2.server.web.WebServlet;
@@ -58,8 +59,8 @@ public class H2Config{
 	}
 	private DruidDataSource configDruidDataSource(Properties dbProps,Properties dsProps){
 		Properties p = new Properties();
-		dbProps.forEach((k,v)->{if(k!=null)p.put("druid."+k, v);});
-		dsProps.forEach((k,v)->{if(k!=null)p.put("druid."+k, v);});
+		dbProps.forEach((k,v)->{p.setProperty("druid."+k, Objects.toString(v));});
+		dsProps.forEach((k,v)->{p.setProperty("druid."+k, Objects.toString(v));});
 		DruidDataSource dds = DruidDataSourceBuilder.create().build();
 		dds.configFromPropety(p);
 		return dds;

@@ -1,17 +1,25 @@
 h2:
   enabled: true
   enableAppServer: true #使用应用h2数据库
+  data-path: classpath:data/data #entity
+  relation-path: classpath:data/relation #关联表
   serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
+mybatis:
+  #mapper-locations: classpath:mapper/user/UserOperation.xml
+  mapper-locations: classpath:mapper/**/*.xml
 spring:
   security:
     enabled: false #是否拦截请求
     user:
       name: user
       password: user
+  cache:
+    ehcache:
+      config: classpath:ehcache-spring.xml
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
