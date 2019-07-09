@@ -2,22 +2,25 @@ package com.bonc.security.springSecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 /**
  * 配置安全策略HttpSecurity
  * 配置验证服务，内存、LDAP、UserDetailsService
+ * 配置其他登录方式，
  * @author litianlin
  * @date   2019年7月9日上午8:50:29
  * @Description TODO
  */
 @EnableWebSecurity//启用安全配置
+@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled=true)//启用权限
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${spring.security.enabled:false}")
@@ -25,7 +28,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		//禁用csrf
-//		http.csrf().disable();
+		http.csrf().disable();
 //		http.headers().frameOptions().disable();
 		//开启验证
 		if(Boolean.valueOf(enable)) {
@@ -49,7 +52,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	UserDetailsService uds;
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(uds).passwordEncoder(new BCryptPasswordEncoder());
+		auth.userDetailsService(uds).passwordEncoder(passwordEncoder());
+	}
+	/**
+	 * 加密策略，托管给spring，便于保存用户时加密密码
+	 * encode()，加密密码
+	 * @return
+	 */
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder(){
+		return new BCryptPasswordEncoder();
 	}
 	/**
 	 * 配置本地验证服务，jdbc

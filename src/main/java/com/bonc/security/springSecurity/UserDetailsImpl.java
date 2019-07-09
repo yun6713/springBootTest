@@ -26,8 +26,9 @@ public class UserDetailsImpl implements UserDetails{
 	private User user;
 	List<SimpleGrantedAuthority> authorities;
 	public UserDetailsImpl(User user) {
-		if(user==null) 
+		if(user==null){ //赋值默认用户，防止报错
 			user = new User();
+		}
 		this.user=user;
 		this.authorities=user.getRoles().stream()
 						.map(Role::getRole)
@@ -39,12 +40,12 @@ public class UserDetailsImpl implements UserDetails{
 
 	@Override
 	public String getPassword() {
-		return this.user.getUsername();
+		return this.user.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		return this.user.getPassword();
+		return this.user.getUsername();
 	}
 
 	@Override

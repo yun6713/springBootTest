@@ -23,8 +23,11 @@ public class EurekaServer1ApplicationTests {
 	}
 	@Test
 	public void testBCryptPasswordEncoder(){
-		String pwd="";
+		String pwd="world";
 		BCryptPasswordEncoder b = new BCryptPasswordEncoder();
-		System.out.println("{bcrypt}"+b.encode(pwd));
+		String hashPass = b.encode(pwd);
+		System.out.println(hashPass);
+		System.out.println(b.matches(pwd, hashPass));
+		System.out.println(b.matches(pwd, "$2a$10$pjFDJCQk.0jObvnlQsp32.XLXHiGVaIlobaIS8FBVWdPOWEE/NjSC"));
 	}
 }
