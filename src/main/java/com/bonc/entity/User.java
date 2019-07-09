@@ -2,6 +2,9 @@ package com.bonc.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,9 +17,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
 @Table(name="user")
-public class User {
+public class User{
 	@Id
 	@Column(name="u_id")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
@@ -46,18 +53,12 @@ public class User {
 		this.password = password;
 	}
 
-public Collection<Role> getRoles() {
+	public Collection<Role> getRoles() {
 		return roles;
 	}
 	public void setRoles(Collection<Role> roles) {
 		this.roles = roles;
 	}
-	//	public UserRole getUr() {
-//		return ur;
-//	}
-//	public void setUr(UserRole ur) {
-//		this.ur = ur;
-//	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

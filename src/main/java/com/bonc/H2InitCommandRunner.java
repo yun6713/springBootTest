@@ -13,24 +13,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 /**
- * 输出项目路径；初始化h2数据
+ * 初始化h2数据
  * @author litianlin
  * @date   2019年7月5日上午11:12:40
  * @Description TODO
  */
 @Component
-public class InitCommandRunner implements CommandLineRunner{
+public class H2InitCommandRunner implements CommandLineRunner{
 
 	private static String sqlTemplate = "insert into %1s select %2s from csvread('%3s')";
 	private static String sqlTemplate2 = "select COLUMN_NAME from information_schema.COLUMNS where table_name='%1s'";
-//	@Value("${server.port:8080}")
-//	String port;
-//	@Value("${server.servlet.context-path:}")
-//	String contextPath;
-//	@Value("${server.address:localhost}")
-//	String addr;
-	@Value("${server.address:localhost}:${server.port:8080}/${server.servlet.context-path:}")
-	String addr;
 	@Value("${h2.data-path:}")
 	String dataPath;
 	@Value("${h2.relation-path:}")
@@ -42,9 +34,6 @@ public class InitCommandRunner implements CommandLineRunner{
 	
 	@Override
 	public void run(String... args) throws Exception {
-		//输出项目路径
-//		System.out.println(String.format("%1s:%2s/%3s",addr, port,contextPath));
-		System.out.println(addr);
 		//初始化数据
 		ddlAuto=ddlAuto.trim();
 		if("create".equals(ddlAuto)||"create-drop".equals(ddlAuto)) {

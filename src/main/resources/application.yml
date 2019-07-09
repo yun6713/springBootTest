@@ -9,10 +9,11 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
 spring:
   security:
-    enabled: false #是否拦截请求
+    enabled: true #是否拦截请求
     user:
       name: user
       password: user
+      roles: admin
   cache:
     ehcache:
       config: classpath:ehcache-spring.xml

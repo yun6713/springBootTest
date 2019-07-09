@@ -1,5 +1,7 @@
 package com.bonc.config;
 
+import java.net.MalformedURLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -9,7 +11,7 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.UrlResource;
 /**
  * ehcache配置类，配置CacheManager、Cahce
  * @author litianlin
@@ -23,13 +25,14 @@ public class EhcacheConfig {
 	 * 配置ecacheManager
 	 * @param loc
 	 * @return
+	 * @throws MalformedURLException 
 	 */
 	@Bean("ehcacheManager")
 	@Primary
 	public EhCacheManagerFactoryBean ehcacheManager(
-			@Value("spring.cache.ehcache.config")String loc) {
+			@Value("${spring.cache.ehcache.config}")String loc) throws MalformedURLException {
 		EhCacheManagerFactoryBean fb = new EhCacheManagerFactoryBean();
-		fb.setConfigLocation(new ClassPathResource(loc));
+		fb.setConfigLocation(new UrlResource(loc));
 		return fb;
 	}
 	/**

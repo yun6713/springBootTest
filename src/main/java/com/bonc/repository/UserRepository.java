@@ -10,4 +10,5 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 	@Transactional
 	@QueryHints(value={@QueryHint(name="n1",value="v1")})
 	User findByUId(Integer id);
+	User findByUsername(String username);
 }
