@@ -26,7 +26,8 @@ public class UserDetailsImpl implements UserDetails{
 	private User user;
 	List<SimpleGrantedAuthority> authorities;
 	public UserDetailsImpl(User user) {
-		if(user==null) return;
+		if(user==null) 
+			user = new User();
 		this.user=user;
 		this.authorities=user.getRoles().stream()
 						.map(Role::getRole)

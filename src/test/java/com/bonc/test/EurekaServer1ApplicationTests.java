@@ -1,13 +1,9 @@
 package com.bonc.test;
 
-import java.rmi.Remote;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -26,7 +22,9 @@ public class EurekaServer1ApplicationTests {
 		System.out.println(obj);
 	}
 	@Test
-	public void testEhcache(){
-		
+	public void testBCryptPasswordEncoder(){
+		String pwd="";
+		BCryptPasswordEncoder b = new BCryptPasswordEncoder();
+		System.out.println("{bcrypt}"+b.encode(pwd));
 	}
 }
