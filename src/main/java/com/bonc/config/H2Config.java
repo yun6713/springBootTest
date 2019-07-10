@@ -29,7 +29,7 @@ public class H2Config{
 				.put("-trace", "")
 				.put("-browser", "")
 				.build());
-		srb.addUrlMappings("/h2-console/*");
+		srb.addUrlMappings("/h2console/*");
 		return srb;
 	}
 	@Bean(name="h2Server",initMethod="start",destroyMethod="stop")

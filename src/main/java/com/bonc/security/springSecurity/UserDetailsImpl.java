@@ -48,6 +48,10 @@ public class UserDetailsImpl implements UserDetails{
 		return this.user.getUsername();
 	}
 
+	public User getUser() {
+		return user;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.authorities;

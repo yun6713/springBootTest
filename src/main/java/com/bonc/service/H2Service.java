@@ -4,7 +4,7 @@ import com.bonc.entity.Role;
 import com.bonc.entity.User;
 
 public interface H2Service {
-	User saveUser(User user);
+	User saveUser(User user,boolean encrypt);
 	User findUserById(Integer id);
 	void deleteUserById(Integer id);
 	

@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * 配置安全策略HttpSecurity
  * 配置验证服务，内存、LDAP、UserDetailsService
@@ -19,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @date   2019年7月9日上午8:50:29
  * @Description TODO
  */
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 @EnableWebSecurity//启用安全配置
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled=true)//启用权限
 @Configuration
@@ -29,16 +33,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		//禁用csrf
 		http.csrf().disable();
-//		http.headers().frameOptions().disable();
+		//放行h2
+		http.headers().frameOptions().disable();
 		//开启验证
 		if(Boolean.valueOf(enable)) {
+//			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class);
 			http.authorizeRequests()
-			.antMatchers("/test","/h2-console/*").permitAll()
+			.antMatchers("/test","/h2console/*").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin().permitAll().defaultSuccessUrl("/test1") //loginPage()用于指定自定义的多路页面路径
 			.and()
-			.logout().permitAll();
+			.logout().permitAll().deleteCookies("JSESSIONID");
 		}else {
 			http.authorizeRequests().anyRequest().permitAll();
 		}
@@ -60,8 +66,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
-	public BCryptPasswordEncoder passwordEncoder(){
+	public PasswordEncoder passwordEncoder(){
+		//不加密，已过时
+//		return NoOpPasswordEncoder.getInstance();
 		return new BCryptPasswordEncoder();
+	}
+	/**
+	 * 托管自定义登录filter
+	 * @return
+	 */
+//	@Bean
+	public AbstractAuthenticationProcessingFilter filter() {
+		return new MyAuthenticationFilter();
 	}
 	/**
 	 * 配置本地验证服务，jdbc

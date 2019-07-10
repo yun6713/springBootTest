@@ -38,15 +38,15 @@ public class H2TestController {
 	@RequestMapping("/insertUser")
 	public Object insertUser() {
 		User u = new User();
-		u.setUsername("ltl");
-		u.setPassword("lalala");
+		u.setUsername("b");
+		u.setPassword("b");
 		Role role = new Role();
 		role.setrId("1");
 		role.setRole("admin");
 		u.setRoles(Arrays.asList(role));
 		h2Service.saveRole(role);
-		h2Service.saveUser(u);
-		return u.getuId();
+		h2Service.saveUser(u,true);
+		return u.getuId()==null?"Failed":"Success";
 	}
 	@RequestMapping("/insertRole")
 	public Object insertRole() {

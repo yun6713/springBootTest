@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bonc.entity.Role;
@@ -23,8 +24,16 @@ public class H2ServiceImpl implements H2Service{
 	UserOperation uo;
 	@Autowired
 	EntityManager entityManager;
+	@Autowired
+	PasswordEncoder pe;
 	@Override
-	public User saveUser(User user) {
+	public User saveUser(User user,boolean encrypt) {
+		if(user.getuId()==null&&ur.findByUsername(user.getUsername())!=null)
+			return user;
+		//加密密码
+		if(encrypt) {
+			user.setPassword(pe.encode(user.getPassword()));
+		}
 		return ur.save(user);
 	}
 	@Override
