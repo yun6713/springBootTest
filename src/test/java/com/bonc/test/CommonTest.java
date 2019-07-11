@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +36,11 @@ public class CommonTest {
 				headers);
 		String str = rt.postForObject("http://localhost:8080/test?b=b",httpEntity, String.class);
 		System.out.println(str);
+	}
+	@Test
+	public void testPasswordEncoder(){
+		String pwd="123456";
+		System.out.println(new BCryptPasswordEncoder().encode(pwd));
 	}
 }
 class D<T>{

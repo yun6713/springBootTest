@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,7 +40,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 			http.authorizeRequests()
-			.antMatchers("/test","/h2console/*").permitAll()
+			.antMatchers("/test","/h2console/*","/oauth/*").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin().permitAll().defaultSuccessUrl("/test1") //loginPage()用于指定自定义的多路页面路径
@@ -59,6 +60,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(uds).passwordEncoder(passwordEncoder());
+	}
+	/*
+	 * 托管AuthenticationManager
+	 * (non-Javadoc)
+	 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#authenticationManagerBean()
+	 */
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 	/**
 	 * 加密策略，托管给spring，便于保存用户时加密密码
@@ -80,7 +91,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AbstractAuthenticationProcessingFilter filter() throws Exception {
 		AbstractAuthenticationProcessingFilter filter = new MyAuthenticationFilter();
 		//从父类获取AuthenticationManager
-		filter.setAuthenticationManager(this.authenticationManager());
+		filter.setAuthenticationManager(authenticationManager());
 		filter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
 		return filter;
 	}

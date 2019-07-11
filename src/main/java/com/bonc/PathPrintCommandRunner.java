@@ -3,6 +3,8 @@ package com.bonc;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.alibaba.druid.support.logging.LogFactory;
 /**
  * 输出项目路径
  * @author litianlin
@@ -18,7 +20,7 @@ public class PathPrintCommandRunner implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		//输出项目路径
-		System.out.println(addr);
+		LogFactory.getLog(PathPrintCommandRunner.class).info(addr);
 		
 	}
 }
