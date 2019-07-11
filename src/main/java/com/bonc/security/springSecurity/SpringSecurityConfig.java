@@ -36,7 +36,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.headers().frameOptions().disable();
 		//开启验证
 		if(Boolean.valueOf(enable)) {
-			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 			http.authorizeRequests()
 			.antMatchers("/test","/h2console/*").permitAll()
 			.anyRequest().authenticated()
@@ -82,6 +83,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		filter.setAuthenticationManager(this.authenticationManager());
 		filter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
 		return filter;
+	}
+	@Bean
+	public JwtAuthFilter jwtAuthFilter() {
+		return new JwtAuthFilter();
 	}
 	/**
 	 * 配置本地验证服务，jdbc

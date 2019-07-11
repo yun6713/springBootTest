@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bonc.entity.User;
 import com.bonc.security.springSecurity.UserDetailsImpl;
+import com.bonc.utils.JwtUtils;
 /**
  * spring security权限注解：@Secured、@PreAuthorize
  * 注解必须在@EnableGlobalMethodSecurity的属性中开启
@@ -54,6 +55,10 @@ public class AuthorController {
 		SecurityContextHolder.getContext()
 			.setAuthentication(new  UsernamePasswordAuthenticationToken(auth.getPrincipal(),auth.getCredentials(),list));
 		return "addDb success";
+	}
+	@RequestMapping("/getJwt")
+	public String getJwt() {
+		return JwtUtils.generateToken(SecurityContextHolder.getContext().getAuthentication());
 	}
 	public static Authentication getAuthentication () {
 		return SecurityContextHolder.getContext().getAuthentication();
