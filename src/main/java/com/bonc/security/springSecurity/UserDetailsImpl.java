@@ -31,7 +31,7 @@ public class UserDetailsImpl implements UserDetails{
 		}
 		this.user=user;
 		this.authorities=user.getRoles().stream()
-						.map(Role::getRole)
+						.map(Role::getRoleName)
 						.filter(Objects::nonNull)
 						.distinct()
 						.map(SimpleGrantedAuthority::new)

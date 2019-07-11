@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * 配置安全策略HttpSecurity
@@ -37,7 +36,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.headers().frameOptions().disable();
 		//开启验证
 		if(Boolean.valueOf(enable)) {
-//			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class);
 			http.authorizeRequests()
 			.antMatchers("/test","/h2console/*").permitAll()
 			.anyRequest().authenticated()
@@ -74,10 +73,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	/**
 	 * 托管自定义登录filter
 	 * @return
+	 * @throws Exception 
 	 */
-//	@Bean
-	public AbstractAuthenticationProcessingFilter filter() {
-		return new MyAuthenticationFilter();
+	@Bean
+	public AbstractAuthenticationProcessingFilter filter() throws Exception {
+		AbstractAuthenticationProcessingFilter filter = new MyAuthenticationFilter();
+		//从父类获取AuthenticationManager
+		filter.setAuthenticationManager(this.authenticationManager());
+		filter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+		return filter;
 	}
 	/**
 	 * 配置本地验证服务，jdbc

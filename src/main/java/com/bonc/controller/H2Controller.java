@@ -1,38 +1,25 @@
 package com.bonc.controller;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
-
-import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.bonc.entity.Role;
 import com.bonc.entity.User;
 import com.bonc.service.H2Service;
 
 @RestController
 @RequestMapping("/h2")
-public class H2TestController {
-	@Autowired
-	Map<String,DruidDataSource> map;
-	@Autowired
-	EntityManagerFactory entityManagerFactory;
+public class H2Controller {
 	@Autowired
 	H2Service h2Service;
-	@RequestMapping("/test")
-	public String test() {
-		return "test";
-	}
 	@RequestMapping("/find/{id}")
 	public String find(@PathVariable("id") Integer id) {
 		User u = h2Service.findUserById(id);
-//		UserRole ur = u.getUr();
 		return Optional.ofNullable(u).map(User::getUsername).orElse("noSuchOne");
 	}
 	@RequestMapping("/insertUser")
@@ -40,9 +27,7 @@ public class H2TestController {
 		User u = new User();
 		u.setUsername("b");
 		u.setPassword("b");
-		Role role = new Role();
-		role.setrId("1");
-		role.setRole("admin");
+		Role role = h2Service.findRoleByName("ROLE_admin");
 		u.setRoles(Arrays.asList(role));
 		h2Service.saveRole(role);
 		h2Service.saveUser(u,true);
@@ -50,9 +35,13 @@ public class H2TestController {
 	}
 	@RequestMapping("/insertRole")
 	public Object insertRole() {
-		Role role = new Role();
-		role.setrId("1");
-		role.setRole("admin");
+		Role role;
+		String roleName="ROLE_admin";
+		if((role=h2Service.findRoleByName(roleName))!=null) {
+			return role;
+		}
+		role = new Role();
+		role.setRoleName(roleName);
 		h2Service.saveRole(role);
 		return role;
 	}

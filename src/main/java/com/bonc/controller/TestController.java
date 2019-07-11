@@ -1,7 +1,5 @@
 package com.bonc.controller;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 	@RequestMapping("/test")
-	public String test(Map<String,Object> params,HttpServletRequest req) {
-		Map<String, String[]> map =req.getParameterMap();
-		
+	public String test(HttpServletRequest req) {
 		return "success";
 	}
 	@RequestMapping("/test1")

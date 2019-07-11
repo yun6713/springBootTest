@@ -52,12 +52,16 @@ public class H2ServiceImpl implements H2Service{
 		return rr.save(role);
 	}
 	@Override
-	public Role findRoleById(String id) {
+	public Role findRoleById(Integer id) {
 		return rr.findById(id).orElse(null);
 	}
 	@Override
-	public void deleteRoleById(String id) {
+	public void deleteRoleById(Integer id) {
 		rr.deleteById(id);
+	}
+	@Override
+	public Role findRoleByName(String roleName) {
+		return rr.findByRoleName(roleName);
 	}
 	
 }

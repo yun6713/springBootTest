@@ -9,7 +9,8 @@ public interface H2Service {
 	void deleteUserById(Integer id);
 	
 	Role saveRole(Role role);
-	Role findRoleById(String id);
-	void deleteRoleById(String id);
+	Role findRoleById(Integer id);
+	void deleteRoleById(Integer id);
+	Role findRoleByName(String roleName);
 	
 }

@@ -24,7 +24,7 @@ import com.bonc.security.springSecurity.UserDetailsImpl;
  * @Description TODO
  */
 @RestController
-public class AuthorTestController {
+public class AuthorController {
 	//基于角色
 	@Secured(value = { "ROLE_admin" })
 	@RequestMapping("/author1")
