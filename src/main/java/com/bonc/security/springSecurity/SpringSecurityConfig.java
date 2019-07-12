@@ -2,8 +2,10 @@ package com.bonc.security.springSecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -37,13 +39,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.headers().frameOptions().disable();
 		//开启验证
 		if(Boolean.valueOf(enable)) {
-			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
+			http
+				.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
 				.antMatchers("/test","/h2console/*","/oauth/*").permitAll()
 				.anyRequest().authenticated()
 				.and()
-				.formLogin().permitAll().defaultSuccessUrl("/test1") //loginPage()用于指定自定义的多路页面路径
+				.formLogin().permitAll().defaultSuccessUrl("/test2") //loginPage()用于指定自定义的多路页面路径
 				.and()
 				.logout().permitAll().deleteCookies("JSESSIONID");
 		}else {

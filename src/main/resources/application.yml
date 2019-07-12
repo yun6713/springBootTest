@@ -9,7 +9,7 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
 spring:
   security:
-    oauth: false #启用oauth
+    oauth: true #启用oauth
     enabled: true #是否拦截请求
     user:
       name: user

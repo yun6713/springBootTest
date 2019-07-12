@@ -15,15 +15,24 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 		resources.resourceId(AuthServerConfig.RESOURCE_ID).stateless(true);
 	}
+	//配置安全访问权限
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//		http.csrf().disable()
+//			.headers().frameOptions().disable()
+//			.and()
+//			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//			.and()
+//			.authorizeRequests().antMatchers("/test","/h2console/*","/oauth/**").permitAll()
+//			.anyRequest().authenticated()
+//			.and()
+//			.formLogin().permitAll().defaultSuccessUrl("/test2") //loginPage()用于指定自定义的多路页面路径
+//			.and()
+//			.logout().permitAll().deleteCookies("JSESSIONID");
+		http.csrf().disable()
+		//标定作用范围，防止与spring security冲突。
+			.requestMatchers().antMatchers("/h2/**","/"+AuthServerConfig.RESOURCE_ID)
 			.and()
-			.requestMatchers().anyRequest()
-			.and()
-			.anonymous()
-			.and()
-			.authorizeRequests().antMatchers("/test1/**").authenticated();
+			.authorizeRequests().anyRequest().authenticated();
 	}
 }

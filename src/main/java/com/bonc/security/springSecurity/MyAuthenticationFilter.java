@@ -21,7 +21,7 @@ import com.bonc.utils.MapUtils;
 public class MyAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	public MyAuthenticationFilter() {
-		super("/mylogin");	
+		super("/mylogin");
 	}
 
 	@Override
