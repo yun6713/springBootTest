@@ -13,6 +13,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
@@ -54,6 +55,7 @@ public class H2Config{
 	}
 	@Bean("h2DataSource")
 	@DependsOn("h2Server")
+	@Primary
 	public DruidDataSource h2DataSource() {
 		return configDruidDataSource(firstDataSource(),druidConfig());
 	}

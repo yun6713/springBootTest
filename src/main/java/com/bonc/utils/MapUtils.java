@@ -1,7 +1,6 @@
 package com.bonc.utils;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,7 +19,7 @@ public class MapUtils {
 	}
 
 	public static class  MapBuilder<K,V>{
-		private Map<K,V> map=new HashMap<>();
+		private Map<K,V> map=new LinkedHashMap<>();
 		public MapBuilder<K,V> put(K key,V value){
 			map.put(key, value);
 			return this;

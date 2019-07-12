@@ -41,6 +41,14 @@ public class CommonTest {
 	public void testPasswordEncoder(){
 		String pwd="123456";
 		System.out.println(new BCryptPasswordEncoder().encode(pwd));
+		System.out.println(new BCryptPasswordEncoder().matches(pwd, "$2a$10$LycPFgZnpC1PgRCnBJ/okOMZOOh4nv/J8yR6rM.qvULlSD9EkmvLm"));
+	}
+	@Test
+	public void testStringFormart(){
+		System.out.println(String.format("%1$s,%2$s,%1$s", "a","b"));
+		Map<String,String> map = MapUtils.builder("a", "b").build();
+		map.forEach((k,v)->v="c");
+		System.out.println(map);
 	}
 }
 class D<T>{

@@ -20,7 +20,7 @@ import com.bonc.utils.MapUtils;
 
 public class MyAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-	protected MyAuthenticationFilter() {
+	public MyAuthenticationFilter() {
 		super("/mylogin");	
 	}
 

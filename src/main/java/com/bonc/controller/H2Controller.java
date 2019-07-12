@@ -45,8 +45,8 @@ public class H2Controller {
 		h2Service.saveRole(role);
 		return role;
 	}
-	@RequestMapping("/delete/{id}")
-	public String delete(@PathVariable("id") Integer id) {
+	@RequestMapping("/deleteUser/{id}")
+	public String deleteUser(@PathVariable("id") Integer id) {
 		h2Service.deleteUserById(id);
 		return "Success";
 	}
