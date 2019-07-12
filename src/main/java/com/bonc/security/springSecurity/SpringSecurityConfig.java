@@ -29,27 +29,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${spring.security.enabled:false}")
 	String enable;
-//	@Override
-//	protected void configure(HttpSecurity http) throws Exception {
-//		//禁用csrf
-//		http.csrf().disable();
-//		//放行h2
-//		http.headers().frameOptions().disable();
-//		//开启验证
-//		if(Boolean.valueOf(enable)) {
-//			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
-//				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
-//				.authorizeRequests()
-//				.antMatchers("/test","/h2console/*","/oauth/*").permitAll()
-//				.anyRequest().authenticated()
-//				.and()
-//				.formLogin().permitAll().defaultSuccessUrl("/test1") //loginPage()用于指定自定义的多路页面路径
-//				.and()
-//				.logout().permitAll().deleteCookies("JSESSIONID");
-//		}else {
-//			http.authorizeRequests().anyRequest().permitAll();
-//		}
-//	}
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		//禁用csrf
+		http.csrf().disable();
+		//放行h2
+		http.headers().frameOptions().disable();
+		//开启验证
+		if(Boolean.valueOf(enable)) {
+			http.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+				.authorizeRequests()
+				.antMatchers("/test","/h2console/*","/oauth/*").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.formLogin().permitAll().defaultSuccessUrl("/test1") //loginPage()用于指定自定义的多路页面路径
+				.and()
+				.logout().permitAll().deleteCookies("JSESSIONID");
+		}else {
+			http.authorizeRequests().anyRequest().permitAll();
+		}
+	}
 	/**
 	 * 配置本地验证服务，UserDetailsService
 	 * UserDetailsService返回查询结果
@@ -87,18 +87,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception 
 	 */
-//	@Bean
-//	public AbstractAuthenticationProcessingFilter filter() throws Exception {
-//		AbstractAuthenticationProcessingFilter filter = new MyAuthenticationFilter();
-//		//从父类获取AuthenticationManager
-//		filter.setAuthenticationManager(authenticationManager());
-//		filter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
-//		return filter;
-//	}
-//	@Bean
-//	public JwtAuthFilter jwtAuthFilter() {
-//		return new JwtAuthFilter();
-//	}
+	@Bean("myFilter")
+	public AbstractAuthenticationProcessingFilter filter() throws Exception {
+		AbstractAuthenticationProcessingFilter filter = new MyAuthenticationFilter();
+		//从父类获取AuthenticationManager
+		filter.setAuthenticationManager(authenticationManager());
+		filter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+		return filter;
+	}
+	@Bean
+	public JwtAuthFilter jwtAuthFilter() {
+		return new JwtAuthFilter();
+	}
 	/**
 	 * 配置本地验证服务，jdbc
 	 */
