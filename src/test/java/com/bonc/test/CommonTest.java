@@ -50,6 +50,15 @@ public class CommonTest {
 		map.forEach((k,v)->v="c");
 		System.out.println(map);
 	}
+	@Test
+	public void testIntegerHex(){
+		byte b=5;
+		int a=b;
+		System.out.println(Integer.toHexString((0x000000FF & b) | 0xFFFFFF00));
+		System.out.println(a);
+		System.out.println(Integer.toHexString(a));
+		System.out.println("a"+null);
+	}
 }
 class D<T>{
 	
