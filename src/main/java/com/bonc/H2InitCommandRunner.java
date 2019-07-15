@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ public class H2InitCommandRunner implements CommandLineRunner{
 	String ddlAuto;
 	@Autowired
 	DataSource datasource;
-	
 	@Override
 	public void run(String... args) throws Exception {
 		//初始化数据

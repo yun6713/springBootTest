@@ -1,10 +1,9 @@
 package com.bonc;
 
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import com.alibaba.druid.support.logging.LogFactory;
 /**
  * 输出项目路径
  * @author litianlin
