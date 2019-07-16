@@ -17,6 +17,7 @@ public class Slf4jHelper {
 	private static final Map<Class<?>,Logger> LOG_MAP=new ConcurrentHashMap<>();
 	static {
 		LOG_MAP.put(Slf4jHelper.class, LoggerFactory.getLogger(Slf4jHelper.class));
+		
 	}
 	private static Logger getLogger(Class<?> clazz) {
 		return getLogger(clazz,null);

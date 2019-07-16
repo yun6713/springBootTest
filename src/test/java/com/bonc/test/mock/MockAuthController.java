@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 /**
- * TestController测试用例，测试方法与controller方法同名
+ * AuthController测试用例，测试方法与controller方法同名
  * MockMvc无法测试安全权限
  * @author litianlin
  * @date   2019年7月11日下午2:34:21
@@ -21,7 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MockTestController {
+public class MockAuthController {
 	@Autowired
 	WebApplicationContext wac;
 	MockMvc mvc;
@@ -31,11 +31,11 @@ public class MockTestController {
 	}
 	@Test
 	public void test() throws Exception {
-		String url="/test";
+		String url="/author1";
 		ResultActions ra=mvc.perform(MockMvcRequestBuilders.get(url))
 			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.content().string("success"));
-		System.out.println("TestController#test() success,result:"
+			.andExpect(MockMvcResultMatchers.content().string("author1 success"));
+		System.out.println("AuthController#test() success,result:"
 				+ra.andReturn().getResponse().getContentAsString());
 	}
 	@Test

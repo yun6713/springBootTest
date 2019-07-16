@@ -6,11 +6,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import org.h2.server.web.DbStarter;
 import org.h2.tools.Server;
 import org.junit.Test;
-import org.springframework.context.annotation.Bean;
 import org.springframework.util.ResourceUtils;
+
+import com.bonc.utils.DbUtils;
 
 public class H2Test {
 	@Test
@@ -48,10 +48,6 @@ public class H2Test {
 		Connection conn = DbUtils.getConnection("jdbc:h2:tcp://localhost/./h9test", "sa", "");
 		DbUtils.executeQuery(conn, "SELECT * FROM TEST1 ", System.out::println);
 		
-	}
-	@Test
-	public void testDbStarter() throws Exception {
-		DbStarter ds;
 	}
 	@Test
 	public void testFileNameFilter() throws Exception {
