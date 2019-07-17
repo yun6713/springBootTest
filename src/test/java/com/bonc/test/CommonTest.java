@@ -1,5 +1,6 @@
 package com.bonc.test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.bonc.utils.CommonUtils;
 import com.bonc.utils.FactoryBeanWrapper;
 import com.bonc.utils.MapUtils;
 
@@ -62,6 +64,13 @@ public class CommonTest {
 		System.out.println(Integer.toHexString(a));
 		System.out.println("a"+null);
 	}
+	@Test
+	public void testLoadYml() throws FileNotFoundException, IOException{
+		Object obj = CommonUtils.loadYml("", "classpath:application.yml");
+		System.out.println(obj);
+	}
+	
+		
 }
 class D<T>{
 	

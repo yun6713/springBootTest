@@ -5,9 +5,11 @@ import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Logger;
 
 import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -22,8 +24,10 @@ import org.springframework.util.ResourceUtils;
 @Component
 public class H2InitCommandRunner implements CommandLineRunner{
 
-	private static String sqlTemplate = "insert into %1s select %2s from csvread('%3s')";
-	private static String sqlTemplate2 = "select COLUMN_NAME from information_schema.COLUMNS where table_name='%1s'";
+	private final static Logger LOG = LoggerFactory.getLogger(H2InitCommandRunner.class);
+	private static String sqlTemplate = "insert into %1$s select %2$s from csvread('%3$s')";
+	//获取表格列名
+	private static String sqlTemplate2 = "select COLUMN_NAME from information_schema.COLUMNS where table_name='%1$s'";
 	@Value("${h2.data-path:}")
 	String dataPath;
 	@Value("${h2.relation-path:}")
@@ -75,7 +79,8 @@ public class H2InitCommandRunner implements CommandLineRunner{
 			String tableName = fileName.substring(0, fileName.lastIndexOf('.'));
 			//查询表列，防止csv、数据库列顺序不一致导致数据错乱
 			String sql = String.format(sqlTemplate2, tableName.toUpperCase());
-			System.out.println(sql);
+			if(LOG.isInfoEnabled())
+				LOG.info(sql);
 			try(
 					ResultSet rs = stat.executeQuery(sql);
 				){
@@ -86,7 +91,8 @@ public class H2InitCommandRunner implements CommandLineRunner{
 					}
 					//h2语法，插入csv中数据
 					sql = String.format(sqlTemplate, tableName,columns.toString(),file.getAbsolutePath());
-					System.out.println(sql);
+					if(LOG.isInfoEnabled())
+						LOG.info(sql);
 					stat.execute(sql);
 				}
 			}

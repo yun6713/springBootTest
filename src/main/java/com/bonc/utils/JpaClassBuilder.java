@@ -3,7 +3,6 @@ package com.bonc.utils;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.junit.Test;
 /**
  * 自动构建jpa entity类；关联关系、主键策略需自行修改
  * 必填项：tableName，colField
@@ -36,7 +35,9 @@ public class JpaClassBuilder {
 			.put("autoapprove", "")
 			.put("", "")
 			.build();
-	@Test
+	public static void main(String[] args) {
+		new JpaClassBuilder().generateClass();
+	}
 	public void generateClass() {
 		if(isBlank(tableName))
 			throw new RuntimeException("tableName不能为空");

@@ -17,9 +17,86 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<commons-logging.version>1.2</commons-logging.version>
+    	<log4j.version>1.2.17</log4j.version>
 	</properties>
 
 	<dependencies>
+<!-- 日志采用slf4j+logback，排除其他日志，导入桥接器 ，begin-->
+		<!-- 排除jcl、log4j、log4j2；jul由springboot排除 -->
+		<dependency>
+	      <groupId>commons-logging</groupId>
+	      <artifactId>commons-logging</artifactId>
+	      <version>${commons-logging.version}</version>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>log4j</groupId>
+	      <artifactId>log4j</artifactId>
+	      <version>${log4j.version}</version>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.apache.logging.log4j</groupId>
+	      <artifactId>log4j-core</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <!-- 排除slf4j到jcl、jul、log4j、log4j2桥接器 -->
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-jcl</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-jdk14</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-log4j12</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.apache.logging.log4j</groupId>
+	      <artifactId>log4j-slf4j-impl</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+		<!-- 导入桥接器，jcl、jul、log4j、log4j2到slf4j -->
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>jcl-over-slf4j</artifactId>
+	      </dependency>
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>jul-to-slf4j</artifactId>
+	     </dependency>
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>log4j-over-slf4j</artifactId>
+	      </dependency>	
+	    <dependency>
+	      <groupId>org.apache.logging.log4j</groupId>
+	      <artifactId>log4j-api</artifactId>
+	      </dependency>	
+	    <dependency>
+	      <groupId>org.apache.logging.log4j</groupId>
+	      <artifactId>log4j-to-slf4j</artifactId>
+	      </dependency>	      
+	    <!-- 导入slf4j、logback，slf4j-logback桥接器无需导入，默认 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+	    <dependency>
+	      <groupId>ch.qos.logback</groupId>
+	      <artifactId>logback-core</artifactId>
+        </dependency>
+	    <dependency>
+	      <groupId>ch.qos.logback</groupId>
+	      <artifactId>logback-classic</artifactId>
+        </dependency>
+<!-- 日志配置end -->
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
 		    <groupId>com.h2database</groupId>
@@ -113,21 +190,6 @@
 		    <groupId>org.springframework.security.oauth</groupId>
 		    <artifactId>spring-security-oauth2</artifactId>
 		    <version>2.3.6.RELEASE</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
-		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-log4j12</artifactId>
-		    <scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -21,7 +21,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -35,7 +35,7 @@ spring:
     druid:      
       #连接池等相关配置
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-      #filters: stat,wall,log4j
+      filters: stat,wall,log4j
       initialSize: 13
       maxActive: 20
       maxPoolPreparedStatementPerConnectionSize: 20

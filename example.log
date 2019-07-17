@@ -3,3 +3,9 @@ WARN main com.bonc.test.LogTest - lalala2
 WARN main com.bonc.test.LogTest - lalala2
 WARN main com.bonc.test.LogTest - lalala2
 WARN main com.bonc.test.LogTest - lalala2
+2019-07-17 11:28:02,015 INFO  [main] com.bonc.test.LogTest - lalala
+2019-07-17 11:28:02,017 WARN  [main] com.bonc.test.LogTest - lalala2
+2019-07-17 11:28:54,125 INFO  [main] com.bonc.test.LogTest - lalala
+2019-07-17 11:28:54,128 WARN  [main] com.bonc.test.LogTest - lalala2
+2019-07-17 11:55:05,895 INFO  [main] com.bonc.test.LogTest - lalala
+2019-07-17 11:55:05,898 WARN  [main] com.bonc.test.LogTest - lalala2

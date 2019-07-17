@@ -1,6 +1,7 @@
 package com.bonc;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,14 +13,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PathPrintCommandRunner implements CommandLineRunner{
-
+	private final static Logger LOG = LoggerFactory.getLogger(PathPrintCommandRunner.class);
 	@Value("${server.address:localhost}:${server.port:8080}/${server.servlet.context-path:}")
 	String addr;
 	
 	@Override
 	public void run(String... args) throws Exception {
 		//输出项目路径
-		LogFactory.getLog(PathPrintCommandRunner.class).info(addr);
+		if(LOG.isInfoEnabled())
+			LOG.info(addr);
 		
 	}
 }
