@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.bonc.entity.User;
-import com.bonc.repository.UserRepository;
+import com.bonc.repository.jpa.UserRepository;
 
 /**
  * 根据DataSource、TransactionManager配置jpa EntityManagerFactory、EntityManager

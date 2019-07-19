@@ -12,7 +12,7 @@ import com.bonc.entity.Role;
 import com.bonc.entity.User;
 import com.bonc.mapper.UserOperation;
 import com.bonc.repository.RoleRepository;
-import com.bonc.repository.UserRepository;
+import com.bonc.repository.jpa.UserRepository;
 import com.bonc.service.H2Service;
 @Service
 public class H2ServiceImpl implements H2Service{

@@ -1,4 +1,4 @@
-package com.bonc.repository;
+package com.bonc.repository.jpa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.bonc.entity.Role;

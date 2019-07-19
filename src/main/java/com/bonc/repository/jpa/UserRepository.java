@@ -1,4 +1,4 @@
-package com.bonc.repository;
+package com.bonc.repository.jpa;
 import javax.persistence.QueryHint;
 
 import org.springframework.data.jpa.repository.JpaRepository;

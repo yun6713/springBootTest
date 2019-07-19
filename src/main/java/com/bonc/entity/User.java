@@ -15,7 +15,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
+
 @Entity
+@RedisHash("{user}")
 @Table(name="user")
 public class User implements Serializable{
 	/**
@@ -25,6 +29,7 @@ public class User implements Serializable{
 	@Id
 	@Column(name="u_id")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@Indexed//redis索引
 	private Integer uId;
 	private String username;
 	private String password;
