@@ -16,7 +16,7 @@ import org.springframework.cache.annotation.EnableCaching;
  * @Description TODO
  */
 @SpringBootApplication
-@EnableCaching//开启缓存
+//@EnableCaching//开启缓存
 public class Application{
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

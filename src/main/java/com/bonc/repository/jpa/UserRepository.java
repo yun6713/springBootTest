@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bonc.entity.jpa.User;
-public interface UserRepository extends JpaRepository<User,Integer> {
+import com.bonc.repository.jpa.integrate.UserMapper;
+public interface UserRepository extends JpaRepository<User,Integer>,UserMapper {
 	@Transactional
 	@QueryHints(value={@QueryHint(name="n1",value="v1")})
 	User findByUId(Integer id);

@@ -15,18 +15,20 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 @Entity
 @RedisHash("{user}")
+@Document(indexName = "jftest")
 @Table(name="user")
 public class User implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id//redis id标记
+	@Id//spring-data id标记
 	@javax.persistence.Id//hibernate id标记
 	@Column(name="u_id")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)

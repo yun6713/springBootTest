@@ -8,9 +8,12 @@ mybatis:
   #mapper-locations: classpath:mapper/user/UserOperation.xml
   mapper-locations: classpath:mapper/**/*.xml
 spring:
+  mvc:
+    favicon:
+      enabled: false
   security:
     oauth: true #启用oauth
-    enabled: true #是否拦截请求
+    enabled: false #是否拦截请求
     user:
       name: user
       password: user
@@ -18,6 +21,18 @@ spring:
   cache:
     ehcache:
       config: classpath:ehcache-spring.xml
+  data:
+    elasticsearch:
+      cluster-name: ltl
+      cluster-nodes: localhost:9300 #必须填tcp port
+      repositories:
+        enabled: true
+  redis:
+    host: localhost
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 10
   jpa:
     show-sql: true
     hibernate:
