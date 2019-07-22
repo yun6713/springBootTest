@@ -4,8 +4,8 @@ package com.bonc.test;
 import java.util.Arrays;
 
 import javax.persistence.criteria.Predicate;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext;
 
+import org.hibernate.collection.internal.PersistentBag;
 import org.junit.Test;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
@@ -73,5 +73,6 @@ public class SpringDataTest {
 	public void testEs() {
 		ElasticsearchTemplate et;
 		ElasticsearchRepository er;
+		PersistentBag pb;
 	}
 }

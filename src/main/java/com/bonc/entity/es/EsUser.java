@@ -1,44 +1,41 @@
-package com.bonc.entity.jpa;
+package com.bonc.entity.es;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
-@Entity
-@RedisHash("{user}")
-@Table(name="user")
-public class User implements Serializable{
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
+
+@Document(indexName = "jftest",type="user")
+public class EsUser implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id//spring-data id标记
-	@javax.persistence.Id//hibernate id标记
-	@Column(name="u_id")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
-	@Indexed//redis索引
 	private Integer uId;
 	private String username;
 	private String password;
-	@ManyToMany(fetch=FetchType.EAGER)
-	@JoinTable(name="user_role",joinColumns= {@JoinColumn(name="u_id")},
-	inverseJoinColumns= {@JoinColumn(name="r_id")})
-	private Collection<Role> roles=new ArrayList<>();
+	private String roles;
+	
+	public EsUser() {
+		super();
+	}
+	public EsUser(User user) {
+		this(user.getuId(),user.getUsername(),user.getPassword(),
+				user.getRoles().stream().filter(Objects::nonNull).map(Role::getRoleName).collect(Collectors.joining(",")));
+	}
+	public EsUser(Integer uId, String username, String password, String roles) {
+		super();
+		this.uId = uId;
+		this.username = username;
+		this.password = password;
+		this.roles = roles;
+	}
 	public Integer getuId() {
 		return uId;
 	}
@@ -58,10 +55,10 @@ public class User implements Serializable{
 		this.password = password;
 	}
 
-	public Collection<Role> getRoles() {
+	public String getRoles() {
 		return roles;
 	}
-	public void setRoles(Collection<Role> roles) {
+	public void setRoles(String roles) {
 		this.roles = roles;
 	}
 	@Override
