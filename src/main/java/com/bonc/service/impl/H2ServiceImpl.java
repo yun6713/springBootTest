@@ -5,11 +5,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.bonc.entity.Role;
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
 import com.bonc.mapper.UserOperation;
 import com.bonc.repository.jpa.RoleRepository;
 import com.bonc.repository.jpa.UserRepository;

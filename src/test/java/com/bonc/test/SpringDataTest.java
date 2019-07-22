@@ -4,8 +4,11 @@ package com.bonc.test;
 import java.util.Arrays;
 
 import javax.persistence.criteria.Predicate;
+import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext;
 
 import org.junit.Test;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisClusterConnection;
@@ -24,7 +27,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.hash.Jackson2HashMapper;
 import org.springframework.data.redis.hash.ObjectHashMapper;
-import org.springframework.data.repository.CrudRepository;
 
 import io.lettuce.core.ReadFrom;
 @RedisHash
@@ -54,7 +56,7 @@ public class SpringDataTest {
 		RedisTemplate rt = new RedisTemplate();
 		
 		rt.setConnectionFactory(rcf);
-		HashOperations ho;
+		HashOperations ho=rt.opsForHash();
 		BoundHashOperations bho;
 		BoundValueOperations bvo;
 		StringRedisTemplate srt = new StringRedisTemplate();
@@ -67,5 +69,9 @@ public class SpringDataTest {
 		RedisClusterConnection cconn = lcf.getClusterConnection();
 		PartialUpdate p;
 	}
-	
+	@Test
+	public void testEs() {
+		ElasticsearchTemplate et;
+		ElasticsearchRepository er;
+	}
 }

@@ -1,7 +1,7 @@
 package com.bonc.service;
 
-import com.bonc.entity.Role;
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
 
 public interface H2Service {
 	User saveUser(User user,boolean encrypt);

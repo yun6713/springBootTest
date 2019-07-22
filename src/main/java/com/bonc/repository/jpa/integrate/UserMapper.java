@@ -1,9 +1,9 @@
-package com.bonc.mapper;
+package com.bonc.repository.jpa.integrate;
 
 import java.util.List;
 
 import com.bonc.entity.jpa.User;
 
-public interface UserOperation{
+public interface UserMapper {
 	List<User> selectUsers();
 }

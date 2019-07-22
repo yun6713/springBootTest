@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bonc.entity.Role;
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
+import com.bonc.repository.jpa.UserRepository;
 import com.bonc.service.H2Service;
 
 @RestController
@@ -17,10 +18,16 @@ import com.bonc.service.H2Service;
 public class H2Controller {
 	@Autowired
 	H2Service h2Service;
+	@Autowired
+	UserRepository ur;
 	@RequestMapping("/find/{id}")
 	public String find(@PathVariable("id") Integer id) {
 		User u = h2Service.findUserById(id);
 		return Optional.ofNullable(u).map(User::getUsername).orElse("noSuchOne");
+	}
+	@RequestMapping("/findAllUsers")
+	public Object findAllUsers() {
+		return ur.selectUsers();
 	}
 	@RequestMapping("/insertUser")
 	public Object insertUser() {
