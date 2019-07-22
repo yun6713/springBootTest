@@ -2,6 +2,7 @@ package com.bonc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 /**
  * 日志：slf4j+logback
  * 安全：spring security+oauth2；jwt
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Description TODO
  */
 @SpringBootApplication
+@EnableCaching//开启缓存
 public class Application{
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

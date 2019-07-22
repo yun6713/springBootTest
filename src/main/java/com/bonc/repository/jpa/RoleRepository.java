@@ -1,7 +1,7 @@
 package com.bonc.repository.jpa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.bonc.entity.Role;
+import com.bonc.entity.jpa.Role;
 
 public interface RoleRepository extends JpaRepository<Role,Integer> {
 

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bonc.entity.Role;
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
 import com.bonc.service.H2Service;
 
 @RestController

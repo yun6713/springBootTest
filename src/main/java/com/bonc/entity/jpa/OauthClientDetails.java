@@ -1,4 +1,4 @@
-package com.bonc.entity;
+package com.bonc.entity.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Column;

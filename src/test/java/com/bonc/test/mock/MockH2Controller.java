@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSON;
-import com.bonc.entity.Role;
+import com.bonc.entity.jpa.Role;
 /**
  * H2Controller测试用例，测试方法与controller方法同名
  * mock获取返回结果，JSON解析，Assert判定

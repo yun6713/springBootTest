@@ -19,7 +19,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.User;
 import com.bonc.repository.jpa.UserRepository;
 
 /**

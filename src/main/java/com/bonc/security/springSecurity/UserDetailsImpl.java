@@ -9,8 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.bonc.entity.Role;
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
 /**
  * 根据User构建UserDetailsImpl，过期等可根据User属性判定。
  * 权限使用SimpleGrantedAuthority

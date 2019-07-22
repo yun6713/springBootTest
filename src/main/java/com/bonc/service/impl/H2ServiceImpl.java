@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.bonc.entity.Role;
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.Role;
+import com.bonc.entity.jpa.User;
 import com.bonc.mapper.UserOperation;
-import com.bonc.repository.RoleRepository;
+import com.bonc.repository.jpa.RoleRepository;
 import com.bonc.repository.jpa.UserRepository;
 import com.bonc.service.H2Service;
 @Service

@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.User;
 import com.bonc.repository.jpa.UserRepository;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

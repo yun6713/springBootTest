@@ -1,4 +1,4 @@
-package com.bonc.entity;
+package com.bonc.entity.jpa;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,12 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
@@ -26,7 +26,8 @@ public class User implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id
+	@Id//redis id标记
+	@javax.persistence.Id//hibernate id标记
 	@Column(name="u_id")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	@Indexed//redis索引

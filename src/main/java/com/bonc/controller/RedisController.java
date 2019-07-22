@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.User;
 import com.bonc.repository.jpa.UserRepository;
 import com.bonc.repository.redis.RedisUserRepository;
 

@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bonc.entity.User;
+import com.bonc.entity.jpa.User;
 import com.bonc.security.springSecurity.UserDetailsImpl;
 import com.bonc.utils.JwtUtils;
 /**
