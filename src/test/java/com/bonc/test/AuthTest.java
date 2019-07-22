@@ -38,9 +38,9 @@ public class AuthTest {
 		RsaUtils rs=new RsaUtils();
 		rs.setPUB_KEY_FILE("classpath:rsaPub");
 		rs.setPRI_KEY_FILE("classpath:rsaPri");
-		String enc=rs.encode(str);
+		String enc=RsaUtils.encode(str);
 		System.out.println(enc);
-		System.out.println(rs.decode(enc));
+		System.out.println(RsaUtils.decode(enc));
 	}
 	@Test
 	public void generateRsaKey() throws NoSuchAlgorithmException {

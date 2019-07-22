@@ -24,7 +24,7 @@
 	<dependencies>
 <!-- 日志采用slf4j+logback，排除其他日志，导入桥接器 ，begin-->
 		<!-- 排除jcl、log4j、log4j2；jul由springboot排除 -->
-		<dependency>
+		<!-- <dependency>
 	      <groupId>commons-logging</groupId>
 	      <artifactId>commons-logging</artifactId>
 	      <version>${commons-logging.version}</version>
@@ -40,7 +40,7 @@
 	      <groupId>org.apache.logging.log4j</groupId>
 	      <artifactId>log4j-core</artifactId>
 	      <scope>test</scope>
-	    </dependency>
+	    </dependency> -->
 	    <!-- 排除slf4j到jcl、jul、log4j、log4j2桥接器 -->
 	    <dependency>
 	      <groupId>org.slf4j</groupId>

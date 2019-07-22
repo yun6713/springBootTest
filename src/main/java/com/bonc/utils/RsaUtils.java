@@ -22,7 +22,7 @@ import org.springframework.util.ResourceUtils;
 public class RsaUtils {
 	private static PublicKey rsaPublicKey;
 	private static PrivateKey rsaPrivateKey;
-	
+	private static final String RSA="RSA";
 	@Value("${rsa.pub.file:classpath:rsaPub}")
 	public void setPUB_KEY_FILE(String pUB_KEY_FILE) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		generate(pUB_KEY_FILE,true);
@@ -32,11 +32,19 @@ public class RsaUtils {
 	public void setPRI_KEY_FILE(String pRI_KEY_FILE) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		generate(pRI_KEY_FILE,false);
 	}
+	/**
+	 * 读取密钥信息
+	 * @param fileName
+	 * @param isPub
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 */
 	public static void generate(String fileName,boolean isPub) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException{
 		Resource resource = new FileSystemResource(ResourceUtils.getFile(fileName));
 		byte[] bytes=new byte[(int) resource.contentLength()];
 		resource.getInputStream().read(bytes);
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		KeyFactory keyFactory = KeyFactory.getInstance(RSA);
 		if(isPub){
 			X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(bytes));
 			RsaUtils.rsaPublicKey = keyFactory.generatePublic(x509EncodedKeySpec);
@@ -59,7 +67,7 @@ public class RsaUtils {
 //			PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(rsaPrivateKey.getEncoded());
 //			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 //			PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-			Cipher cipher = Cipher.getInstance("RSA");
+			Cipher cipher = Cipher.getInstance(RSA);
 			cipher.init(Cipher.ENCRYPT_MODE, rsaPrivateKey);
 			byte[] resultBytes = cipher.doFinal(src.getBytes());
 
@@ -87,7 +95,7 @@ public class RsaUtils {
 //			X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(rsaPublicKey.getEncoded());
 //			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 //			PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
-			Cipher cipher = Cipher.getInstance("RSA");
+			Cipher cipher = Cipher.getInstance(RSA);
 			cipher.init(Cipher.DECRYPT_MODE, RsaUtils.rsaPublicKey);
 			byte[] resultBytes = cipher.doFinal(Hex.decodeHex(src.toCharArray()));
 

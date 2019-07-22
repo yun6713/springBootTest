@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.bonc.entity.Role;
 import com.bonc.entity.User;
 import com.bonc.mapper.UserOperation;
-import com.bonc.repository.RoleRepository;
+import com.bonc.repository.jpa.RoleRepository;
 import com.bonc.repository.jpa.UserRepository;
 import com.bonc.service.H2Service;
 @Service
