@@ -3,13 +3,14 @@ package com.bonc.test;
 
 import java.util.Arrays;
 
-import javax.persistence.criteria.Predicate;
-
 import org.hibernate.collection.internal.PersistentBag;
 import org.junit.Test;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisClusterConnection;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -27,14 +28,23 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.hash.Jackson2HashMapper;
 import org.springframework.data.redis.hash.ObjectHashMapper;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
+
+import com.bonc.entity.jpa.QUser;
 
 import io.lettuce.core.ReadFrom;
 @RedisHash
 public class SpringDataTest {
 	@Test
-	public void test01() {
-		Predicate p;
-		QuerydslPredicateExecutor q;
+	public void testQbe() {
+		Pageable p;
+		Sort s;
+		Example e;
+		ExampleMatcher em;
+		QueryByExampleExecutor q;
+	}
+	public void testQueryDsl() {
+		QUser qc = QUser.user;
 	}
 	@Test
 	public void testLettuce() {

@@ -24,7 +24,7 @@
 	<dependencies>
 <!-- 日志采用slf4j+logback，排除其他日志，导入桥接器 ，begin-->
 		<!-- 排除jcl、log4j、log4j2；jul由springboot排除 -->
-		<!-- <dependency>
+		<dependency>
 	      <groupId>commons-logging</groupId>
 	      <artifactId>commons-logging</artifactId>
 	      <version>${commons-logging.version}</version>
@@ -40,7 +40,7 @@
 	      <groupId>org.apache.logging.log4j</groupId>
 	      <artifactId>log4j-core</artifactId>
 	      <scope>test</scope>
-	    </dependency> -->
+	    </dependency>
 	    <!-- 排除slf4j到jcl、jul、log4j、log4j2桥接器 -->
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
@@ -118,6 +118,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa -->
+		<dependency>
+		    <groupId>com.querydsl</groupId>
+		    <artifactId>querydsl-jpa</artifactId>
+		    </dependency>
+		<dependency>
+		    <groupId>com.querydsl</groupId>
+		    <artifactId>querydsl-apt</artifactId>
+	    </dependency>
+				
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -205,6 +215,22 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+		    <plugin>
+		      <groupId>com.mysema.maven</groupId>
+		      <artifactId>apt-maven-plugin</artifactId>
+		      <version>1.1.3</version>
+		      <executions>
+		        <execution>
+		          <goals>
+		            <goal>process</goal>
+		          </goals>
+		          <configuration>
+		            <outputDirectory>target/generated-sources/java</outputDirectory>
+		            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+		          </configuration>
+		        </execution>
+		      </executions>
+		    </plugin>
 		</plugins>
 	</build>
 
