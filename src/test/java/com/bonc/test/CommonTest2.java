@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +21,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.ResourceUtils;
 
@@ -24,6 +31,69 @@ public class CommonTest2 {
 	private static final String XML_PRE="E:\\项目资料\\上海划小\\pms-wap-inner\\src\\config\\";
 	private static String schemas_pattern="";
 	@Test
+	public void fileVisitor() throws Exception {
+		//需要检索的关键字
+		String key="巡楼";
+		Set<String> namespaceSet = new HashSet<>();
+		setSchemas();
+		Set<String> tableSet = new HashSet<>();
+		//遍历java，找到所有namespace
+		Files.walkFileTree(Paths.get(JAVA_PRE), new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				//只遍历java文件
+				String path = file.toAbsolutePath().toString();
+//				System.out.println(path);
+				if(path.endsWith(".java")) {
+					String content = file2String(path);
+					if(content.indexOf(key)>-1) {
+						try {
+							namespaceSet.addAll(getNamespace(path.substring(JAVA_PRE.length())));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				return FileVisitResult.CONTINUE;
+			}
+			@Override
+			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+				return FileVisitResult.CONTINUE;
+			}
+		});
+		//遍历xml，找到所有table
+		Files.walkFileTree(Paths.get(XML_PRE), new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				//只遍历xml文件
+				String path = file.toAbsolutePath().toString();
+				if(path.endsWith(".xml")) {
+					String content = file2String(path);
+					for(String namespace:namespaceSet) {
+						if(content.indexOf("\""+namespace+"\"")>-1) {
+							try {
+								tableSet.addAll(getTableName(path.substring(XML_PRE.length())));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							break;
+						}
+					}
+				}
+				return FileVisitResult.CONTINUE;
+			}
+			@Override
+			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+				return FileVisitResult.CONTINUE;
+			}
+		});
+		List<String> list = new ArrayList<>(tableSet);
+		Collections.sort(list);
+		list.forEach(System.out::println);
+				
+	}
+	
+//	@Test
 	/*
 	 * 批量获取，去重
 	 */
@@ -37,7 +107,7 @@ public class CommonTest2 {
 		}
 		namespaceSet.forEach(System.out::println);
 	}
-	@Test
+//	@Test
 	public void getNamespace() throws Exception {
 		String path = "dss\\web\\mobile\\actionSh\\PaymentDetailAction.java";
 		getNamespace(path).stream().forEach(System.out::println);
@@ -59,19 +129,19 @@ public class CommonTest2 {
 //		namespaceSet.stream().forEach(System.out::println);
 		return namespaceSet;
 	}
-	@Test
+//	@Test
 	//根据xml文件获取表名，通过正则匹配schema实现
 	public void getTableNames(String fileName) throws Exception {
 		String xmls = file2String(String.format(FILE_PATTERN, "巡楼xml"));
 //		String xmls = file2String(String.format(FILE_PATTERN, "巡店xml"));
-		schemas_pattern=getSchemas();
-		Set<String> namespaceSet = new HashSet<>();
+		setSchemas();
+		Set<String> tableSet = new HashSet<>();
 		for(String xml:xmls.split(",")) {
-			namespaceSet.addAll(getTableName(xml));
+			tableSet.addAll(getTableName(xml));
 		}
-		List<String> list = new ArrayList<>(namespaceSet);
+		List<String> list = new ArrayList<>(tableSet);
 		Collections.sort(list);
-		list.forEach(System.out::println);;
+		list.forEach(System.out::println);
 	}
 	@Test
 	/*
@@ -101,9 +171,11 @@ public class CommonTest2 {
 		return tableSet;
 	}
 	//拼接schema模式
-	public String getSchemas() throws Exception {
+	@Before
+	public void setSchemas() throws Exception {
+		if(!"".equals(schemas_pattern)) return;
 		String schemas = file2String(String.format(FILE_PATTERN, "schemas"));
-		return "(?i)("+schemas.replaceAll("\\s+", "")+")\\.\\w+";
+		schemas_pattern="(?i)("+schemas.replaceAll("\\s+", "")+")\\.\\w+";
 	}
 	@Test
 	//去重、排序后输出
@@ -111,10 +183,11 @@ public class CommonTest2 {
 		String tables = file2String(String.format(FILE_PATTERN, "tables"));
 		tables=tables.replaceAll("\\s+", "");
 		System.out.println(tables);
-		Set<String> tableSet = new HashSet<>();
-		List<String> list = Arrays.asList(tables.split(","));
-		tableSet.addAll(list);
-		System.out.println(tableSet.size());
+		Set<String> tableSet = new HashSet<>(Arrays.asList(tables.split(",")));
+//		System.out.println(tableSet.size());
+		List<String> list = new ArrayList<>(tableSet);
+		Collections.sort(list);
+		list.forEach(System.out::println);
 		
 	}
 	@Test
