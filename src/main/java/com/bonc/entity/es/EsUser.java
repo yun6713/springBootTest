@@ -19,21 +19,19 @@ public class EsUser implements Serializable{
 	@Id//spring-data id标记
 	private Integer uId;
 	private String username;
-	private String password;
 	private String roles;
 	
 	public EsUser() {
 		super();
 	}
 	public EsUser(User user) {
-		this(user.getuId(),user.getUsername(),user.getPassword(),
+		this(user.getuId(),user.getUsername(),
 				user.getRoles().stream().filter(Objects::nonNull).map(Role::getRoleName).collect(Collectors.joining(",")));
 	}
-	public EsUser(Integer uId, String username, String password, String roles) {
+	public EsUser(Integer uId, String username, String roles) {
 		super();
 		this.uId = uId;
 		this.username = username;
-		this.password = password;
 		this.roles = roles;
 	}
 	public Integer getuId() {
@@ -47,12 +45,6 @@ public class EsUser implements Serializable{
 	}
 	public void setUsername(String username) {
 		this.username = username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getRoles() {

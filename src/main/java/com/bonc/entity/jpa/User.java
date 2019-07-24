@@ -19,10 +19,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @RedisHash("{user}")
 @Table(name="user")
-@NamedQuery(name = "", query = "")
+@NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")
 public class User implements Serializable{
 	/**
 	 * 
@@ -34,6 +36,7 @@ public class User implements Serializable{
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	@Indexed//redis索引
 	private Integer uId;
+	@JsonIgnore
 	private String username;
 	private String password;
 	@ManyToMany(fetch=FetchType.EAGER)

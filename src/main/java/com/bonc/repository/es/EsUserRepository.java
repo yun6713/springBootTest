@@ -8,4 +8,6 @@ import com.bonc.entity.es.EsUser;
 
 public interface EsUserRepository extends ElasticsearchRepository<EsUser, Integer>{
 	List<EsUser> findByRolesContains(String info);
+
+	List<EsUser> findByRolesLike(String info);
 }

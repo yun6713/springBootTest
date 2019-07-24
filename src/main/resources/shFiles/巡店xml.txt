@@ -1,0 +1,9 @@
+﻿mobileNew\sqlmap-examtemplate.xml,
+mobileSh\sqlmap-channel.xml,
+mobileSh\sqlmap-learning.xml,
+mobileNew\sqlmap-xundiantemplate.xml,
+mobileSh\largecust\custvist\sqlmap-visittask.xml,
+mobile\sqlmap-mobileChannelTourShop.xml,
+mobileSh\largecust\custvist\sqlmap-visitplan.xml,
+mobileSh\sqlmap-head.xml,
+mobileSh\sqlmap-warnnings.xml

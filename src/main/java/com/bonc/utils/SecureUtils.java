@@ -2,6 +2,7 @@ package com.bonc.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecureUtils {
 	private static final PasswordEncoder PE = new BCryptPasswordEncoder();
 	private static MessageDigest MD5;
-	private static final Charset DEFAULT_CHARSET=Charset.defaultCharset();
+	private static final Charset DEFAULT_CHARSET=StandardCharsets.UTF_8;
 	private static final String DES="DES";
 	private static final Logger LOG = LoggerFactory.getLogger(SecureUtils.class);
 	static {

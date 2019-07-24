@@ -1,0 +1,9 @@
+﻿dss\web\mobile\actionSh\building\BuildingAction.java,
+dss\web\mobile\actionSh\building\BuildingMapAction.java,
+dss\web\mobile\actionSh\building\BuildingNewAction.java,
+dss\web\mobile\actionSh\building\BuildingQuestionAction.java,
+dss\web\mobile\actionSh\building\OriginalBuildingAction.java,
+dss\web\mobile\actionSh\building\ReBuildingAction.java,
+dss\web\mobile\actionSh\largecust\LatentCustAction.java,
+dss\web\mobile\actionSh\scheduledTaskAction.java,
+dss\web\mobile\actionSh\VisitShopNewAction.java

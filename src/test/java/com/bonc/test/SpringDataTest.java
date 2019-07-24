@@ -3,6 +3,7 @@ package com.bonc.test;
 
 import java.util.Arrays;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.collection.internal.PersistentBag;
 import org.junit.Test;
 import org.springframework.data.domain.Example;
@@ -10,7 +11,11 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisClusterConnection;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -31,6 +36,10 @@ import org.springframework.data.redis.hash.ObjectHashMapper;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 import com.bonc.entity.jpa.QUser;
+import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.lettuce.core.ReadFrom;
 @RedisHash
@@ -42,9 +51,16 @@ public class SpringDataTest {
 		Example e;
 		ExampleMatcher em;
 		QueryByExampleExecutor q;
+		JpaSpecificationExecutor j;
 	}
 	public void testQueryDsl() {
 		QUser qc = QUser.user;
+		JPAQuery<?> query = new JPAQuery<Void>(null);
+		JPQLQuery q2;
+		QueryFactory qf;
+		JPAQueryFactory jqf=null;
+		QuerydslPredicateExecutor qpe = null;
+		qpe.findAll(qc.uId.between(1, 3));
 	}
 	@Test
 	public void testLettuce() {
@@ -84,5 +100,6 @@ public class SpringDataTest {
 		ElasticsearchTemplate et;
 		ElasticsearchRepository er;
 		PersistentBag pb;
+		QueryBuilder qb;
 	}
 }
