@@ -48,7 +48,7 @@ public class CommonTest2 {
 					String content = file2String(path);
 					if(content.indexOf(key)>-1) {
 						try {
-							namespaceSet.addAll(getNamespace(path.substring(JAVA_PRE.length())));
+							namespaceSet.addAll(getNamespace(path));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -72,7 +72,7 @@ public class CommonTest2 {
 					for(String namespace:namespaceSet) {
 						if(content.indexOf("\""+namespace+"\"")>-1) {
 							try {
-								tableSet.addAll(getTableName(path.substring(XML_PRE.length())));
+								tableSet.addAll(getTableName(path));
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -117,7 +117,7 @@ public class CommonTest2 {
 		Set<String> namespaceSet = new HashSet<>();
 		if(path==null||"".equals(path.trim()))
 			return namespaceSet;
-		path = JAVA_PRE+path.trim();
+		path = path.startsWith(JAVA_PRE)?path:JAVA_PRE+path.trim();
 		//忽略大小写
 		String pattern="daoHelper\\.[a-zA-Z]+\\(\\s*\"([\\w\\.]+)";
 		String info = file2String(path);
@@ -157,7 +157,7 @@ public class CommonTest2 {
 		Set<String> tableSet = new HashSet<>();
 		if(path==null||"".equals(path.trim()))
 			return tableSet;
-		path = XML_PRE+path.trim();
+		path = path.startsWith(XML_PRE)?path:XML_PRE+path.trim();
 		String info = file2String(path);
 		String[] strs = info.split("\\s+");
 		Arrays.asList(strs).stream()
