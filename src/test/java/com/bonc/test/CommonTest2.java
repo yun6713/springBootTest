@@ -145,7 +145,8 @@ public class CommonTest2 {
 		try(
 				FileReader fr = new FileReader(file);
 			){
-			CharBuffer cb = CharBuffer.allocate(1000);
+			int min = (int) Math.min(1000*8, file.length());
+			CharBuffer cb = CharBuffer.allocate(min);
 			while(fr.read(cb)!=-1) {
 				cb.flip();
 				sb.append(cb.toString());
