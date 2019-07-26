@@ -1,0 +1,4 @@
+nohup java -jar -Ddebug=true ./target/springbootTest-0.0.1-SNAPSHOT.jar >test.log
+
+
+nohup java -jar -Ddebug=true springbootTest-0.0.1-SNAPSHOT.jar >test.log

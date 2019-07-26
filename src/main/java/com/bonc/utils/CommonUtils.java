@@ -26,6 +26,15 @@ public class CommonUtils {
 	 */
 	public static List<PropertySource<?>> loadYml(String rootName,String loc) throws FileNotFoundException, IOException {
 		return new YamlPropertySourceLoader()
-				.load(rootName,new FileSystemResource(ResourceUtils.getFile(loc)));
+				.load(rootName,FileUtils.getResource(loc));
 	}
+	/**
+	 * 判定obj是否为null，或空串、空集合
+	 * @param obj
+	 * @return
+	 */
+//	public static boolean isNullOrEmpty(Object obj) {
+//		
+//		return false;
+//	}
 }

@@ -1,5 +1,6 @@
 package com.bonc.utils;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,11 +8,14 @@ import java.util.regex.Pattern;
  * 自动构建jpa entity类；关联关系、主键策略需自行修改
  * 必填项：tableName，colField
  * 通过String.format格式化模板实现。
+ * 生成的类位于当前包，刷新展示
  * @author litianlin
  * @date   2019年7月12日下午3:28:22
  * @Description TODO
  */
 public class JpaClassBuilder {
+	private static final String JAVA=FileUtils.getJavaPath(JpaClassBuilder.class,false)+"%1$s.java";
+	//默认当前包
 	String packageName="";
 	String tableName="oauth_client_details";
 	//默认转换表名
@@ -35,15 +39,18 @@ public class JpaClassBuilder {
 			.put("autoapprove", "")
 			.put("", "")
 			.build();
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		new JpaClassBuilder().generateClass();
 	}
-	public void generateClass() {
+	public void generateClass() throws IOException {
 		if(isBlank(tableName))
 			throw new RuntimeException("tableName不能为空");
 		if(isBlank(className)) {
 			className=toCamelName(tableName.trim().toLowerCase(), "(_[a-z])([a-z]*)").replaceAll("_", "");
 			className=toCamelName(className, "(\\w)(\\w*)");
+		}
+		if(isBlank(packageName)) {
+			packageName=JpaClassBuilder.class.getPackage().getName();
 		}
 		StringBuilder varBuilder=new StringBuilder();
 		StringBuilder mtdBuilder=new StringBuilder();
@@ -62,8 +69,10 @@ public class JpaClassBuilder {
 			varBuilder.append(varStr(k,v));
 			mtdBuilder.append(methodStr(v));
 		});
-		System.out.println(String.format(classTemplate, 
-				packageName,tableName,className,varBuilder.toString()+mtdBuilder.toString()));
+		String content=String.format(classTemplate, 
+				packageName,tableName,className,varBuilder.toString()+mtdBuilder.toString());
+		System.out.println(content);
+		FileUtils.string2File(content, String.format(JAVA, className));
 	}
 	private boolean isBlank(String str) {
 		return str==null||str.trim().isEmpty();

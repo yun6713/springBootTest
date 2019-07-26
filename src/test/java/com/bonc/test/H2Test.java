@@ -46,7 +46,7 @@ public class H2Test {
 	@Test
 	public void testConnection() throws Exception {
 		Connection conn = DbUtils.getConnection("jdbc:h2:tcp://localhost/./h9test", "sa", "");
-		DbUtils.executeQuery(conn, "SELECT * FROM TEST1 ", System.out::println);
+		DbUtils.executeQuery(conn, "SELECT * FROM TEST1 ", (rs)->{System.out.println(rs);return null;});
 		
 	}
 	@Test

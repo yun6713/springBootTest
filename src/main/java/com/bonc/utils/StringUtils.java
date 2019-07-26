@@ -1,7 +1,14 @@
 package com.bonc.utils;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.CharBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.springframework.util.ResourceUtils;
 
 public class StringUtils {
 

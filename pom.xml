@@ -11,7 +11,6 @@
 	<groupId>com.bonc</groupId>
 	<artifactId>springbootTest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>eureka-server-1</name>
 	<description>Practise project for Spring Cloud</description>
 
@@ -41,7 +40,7 @@
 	      <artifactId>log4j-core</artifactId>
 	      <scope>test</scope>
 	    </dependency>
-	    <!-- 排除slf4j到jcl、jul、log4j、log4j2桥接器 -->
+	    <!-- 排除slf4j到jcl、jul、log4j、log4j2桥接器；打包时排除，否则 测试时报错 -->
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
 	      <artifactId>slf4j-jcl</artifactId>
@@ -61,7 +60,7 @@
 	      <groupId>org.apache.logging.log4j</groupId>
 	      <artifactId>log4j-slf4j-impl</artifactId>
 	      <scope>test</scope>
-	    </dependency>
+	    </dependency> 
 		<!-- 导入桥接器，jcl、jul、log4j、log4j2到slf4j -->
 	    <dependency>
 	      <groupId>org.slf4j</groupId>

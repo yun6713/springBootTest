@@ -51,7 +51,7 @@
     </appender>  
     <logger name="com.frame.log.mybatis.LogbackImpl" level="debug">  
         <appender-ref ref="fileDebugLog" />  
-    </logger> 
+    </logger>  
     
     <root level="info">  
         <appender-ref ref="consoleLog" />  
