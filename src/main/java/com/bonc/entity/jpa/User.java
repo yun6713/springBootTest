@@ -36,10 +36,13 @@ public class User implements Serializable{
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	@Indexed//redis索引
 	private Integer uId;
-	@JsonIgnore
+//	@JsonIgnore
+	@Column(name="username")
 	private String username;
+	@Column(name="password")
 	private String password;
 	@ManyToMany(fetch=FetchType.EAGER)
+	//默认主键匹配
 	@JoinTable(name="user_role",joinColumns= {@JoinColumn(name="u_id")},
 	inverseJoinColumns= {@JoinColumn(name="r_id")})
 	private Collection<Role> roles=new ArrayList<>();

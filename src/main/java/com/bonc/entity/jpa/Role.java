@@ -23,6 +23,7 @@ public class Role implements Serializable{
 	@Column(name="role_id")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private Integer rId;
+	@Column(name="role_name")
 	private String roleName;
 	public Integer getrId() {
 		return rId;

@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.bonc.mapper.UserOperation" >
-  <resultMap id="user" type="com.bonc.entity.jpa.User">
+  <!-- 配置中指定了别名扫描包 -->
+  <!-- OGNL表达式方法运算：e1[e2]、e.method()、e.field、@class@method()、@class@field -->
+  <resultMap id="user" type="user">
   	<id column="u_id" property="uId"/>
   	<result  column="username" property="username"/>
   	<result  column="password" property="password"/>
+  	<collection property="roles" ofType="role" resultMap="role"/>
+  </resultMap>
+  <resultMap type="role" id="role">
+  	<id column="role_id" property="rId"/>
+  	<result column="role_name" property="roleName"/>
   </resultMap>
   <sql id="Base_Column_List" >
-    u_id,username,password
+    u_id,username
   </sql>
   
+  <select id="selectUsers" resultMap="user" databaseId="h2">
+      select u.u_id,u.username,u.password,r.role_id,r.role_Name from user u
+      	left join user_role ur on u.u_id=ur.u_id 
+      	left join role r on ur.r_id=r.role_id
+  </select>
+  
   <select id="selectUsers" resultMap="user">
-      select * from user
+      select <include refid="Base_Column_List"></include> from user
   </select>
   
 </mapper>

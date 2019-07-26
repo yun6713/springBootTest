@@ -1,6 +1,7 @@
 package com.bonc.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bonc.entity.jpa.Role;
 import com.bonc.entity.jpa.User;
+import com.bonc.mapper.UserOperation;
 import com.bonc.repository.jpa.UserRepository;
 import com.bonc.service.H2Service;
 
@@ -20,6 +22,8 @@ public class H2Controller {
 	H2Service h2Service;
 	@Autowired
 	UserRepository ur;
+	@Autowired
+	UserOperation uo;
 	@RequestMapping("/find/{id}")
 	public String find(@PathVariable("id") Integer id) {
 		User u = h2Service.findUserById(id);
@@ -27,6 +31,7 @@ public class H2Controller {
 	}
 	@RequestMapping("/findAllUsers")
 	public Object findAllUsers() {
+		List<User> mybatis=uo.selectUsers();
 		return ur.selectUsers();
 	}
 	@RequestMapping("/insertUser")
