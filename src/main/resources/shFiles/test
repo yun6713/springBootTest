@@ -1,0 +1,968 @@
+
+create or replace view pm.pm_app_score_m as
+select ACCT_DATE,
+       LOGIN_ID,
+       NAME,
+       IS_WGJL,
+       EXECE_ID,
+       GRID_NO,
+       ORG_RANK,
+       round(to_number(nvl(COUNT,0)), 4) COUNT,
+       round(to_number(nvl(T_ORD,0)), 4) T_ORD,
+       round(to_number(nvl(MOBILE,0)), 4) MOBILE,
+       round(to_number(nvl(TEL,0)), 4) TEL,
+       round(to_number(nvl(HOME_RH,0)), 4) HOME_RH,
+       round(to_number(WEIXI), 4) WEIXI,
+       GRID_LEV,
+       UP_NAME,
+       round(to_number(nvl(UP_COUNT,0)), 4) UP_COUNT,
+       DOWN_NAME,
+       round(to_number(nvl(DOWN_COUNT,0)), 4) DOWN_COUNT,
+       STATE,
+       FIRST_NAME,
+       round(to_number(nvl(FIRST_COUNT,0)), 4) FIRST_COUNT,
+       SECOND_NAME,
+       round(to_number(nvl(SECOND_COUNT,0)), 4) SECOND_COUNT,
+       THIRD_NAME,
+       round(to_number(nvl(THIRD_COUNT,0)), 4) THIRD_COUNT,
+       LAST_NAME,
+       round(to_number(nvl(LAST_COUNT,0)), 4) LAST_COUNT,
+       LAST_BUTONE_NAME,
+       round(to_number(nvl(LAST_BUTONE_COUNT,0)), 4) LAST_BUTONE_COUNT,
+       LAST_BUTTWO_NAME,
+       round(to_number(nvl(LAST_BUTTWO_COUNT,0)), 4) LAST_BUTTWO_COUNT,
+       LAST_RANK,
+       LAST_BUTONE_RANK,
+       LAST_BUTTWO_RANK,
+       ORG_ID,
+       ORG_TYPE,
+       MOBILE_FIRST_NAME,
+       round(to_number(nvl(MOBILE_FIRST_COUNT,0)), 4) MOBILE_FIRST_COUNT,
+       MOBILE_SECOND_NAME,
+       round(to_number(nvl(MOBILE_SECOND_COUNT,0)), 4) MOBILE_SECOND_COUNT,
+       MOBILE_THIRD_NAME,
+       round(to_number(nvl(MOBILE_THIRD_COUNT,0)), 4) MOBILE_THIRD_COUNT,
+       TEL_FIRST_NAME,
+       round(to_number(nvl(TEL_FIRST_COUNT,0)), 4) TEL_FIRST_COUNT,
+       TEL_SECOND_NAME,
+       round(to_number(nvl(TEL_SECOND_COUNT,0)), 4) TEL_SECOND_COUNT,
+       TEL_THIRD_NAME,
+       round(to_number(nvl(TEL_THIRD_COUNT,0)), 4) TEL_THIRD_COUNT,
+       RH_FIRST_NAME,
+       round(to_number(nvl(RH_FIRST_COUNT,0)), 4) RH_FIRST_COUNT,
+       RH_SECOND_NAME,
+       round(to_number(nvl(RH_SECOND_COUNT,0)), 4) RH_SECOND_COUNT,
+       RH_THIRD_NAME,
+       round(to_number(nvl(RH_THIRD_COUNT,0)), 4) RH_THIRD_COUNT,
+       UP_ORG,
+       round(to_number(nvl(ORG_COUNT,0)), 4) ORG_COUNT,
+       round(to_number(nvl(count_lm,0)), 4) count_lm
+  from pm.PM_APP_SCORE_M_SPARK t
+
+ORA-00942: 表或视图不存在
+Creating view PM_CHANNEL_BUILD_POSITION
+=======================================
+
+CREATE OR REPLACE VIEW pm.PM_CHANNEL_BUILD_POSITION AS
+SELECT t1.AREA_NO,--巡访
+           T1.AREA_NAME,
+           T1.GRID_NO,
+           T1.GRID_NAME,
+           T1.LOGIN_ID,
+           T1.LOGIN_NAME,
+           T1.EXECUTE_ID,
+           T1.LONGITUDE,
+           T1.LATITUDE,
+           T1.CREATE_TIME,
+           T1.PRECREATE_TIME,
+           T1.IS_SELF,
+           T1.IS_OUTTIME,
+           T1.CHANNEL_NO,
+           T2.CHANNEL_NO_DESC,
+           T1.VISIT_TASK_ID,
+           --nvl(T2.XF_TYPE,'01') VTYPE
+           T2.XF_TYPE VTYPE--XF_TYPE 为空的 是 巡店或者巡小区的分享的点
+  FROM PM.DM_APP_SHARE_POSITION T1,
+           PMDEV.DMCODE_CHANNEL T2
+ WHERE T1.CHANNEL_NO = T2.CHANNEL_NO(+)
+ ----------------------------------------1巡访结束----------------------------------------------------------------------------------------------
+ UNION ALL
+ -----------------------------------2巡楼开始---------------------------------------------------------------------------------------------------
+SELECT T1.AREA_NO,--巡楼
+           T1.AREA_NAME,
+           T1.GRID_NO,
+           T1.GRID_NAME,
+           T1.LOGIN_ID,
+           T1.LOGIN_NAME,
+           T1.EXECUTE_ID,
+           T1.LONGITUDE,
+           T1.LATITUDE,
+           T1.CREATE_TIME,
+           T1.PRECREATE_TIME,
+           T1.IS_SELF,
+           '0' IS_OUTTIME,
+           T1.BUILD_ID,
+           T2.BUILD_NAME,
+           T1.VISIT_TASK_ID,
+           '03' VTYPE
+  FROM PM.DM_APP_SHARE_POSITION_RB T1,
+            PM.PM_GRID_BUILD_RECORD T2
+ WHERE T1.BUILD_ID = T2.BUILD_ID(+)
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.AREA_NO is '分公司编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.AREA_NAME is '分公司名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.GRID_NO is '网格编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.GRID_NAME is '网格名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.LOGIN_ID is '登录人id'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.LOGIN_NAME is '登录人姓名'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.EXECUTE_ID is '执行人id'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.LONGITUDE is '经度'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.LATITUDE is '纬度'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.CREATE_TIME is '上传时间'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.PRECREATE_TIME is '上次记录的时间，不和本次经纬度相同的时间'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.IS_SELF is '0 任务巡店/巡楼  1 自主巡店/巡楼 ，-1 不是巡店/巡楼'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.IS_OUTTIME is '是否是连续记录数据 -1 第一条数据，0 未超时，1 超时'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.CHANNEL_NO is '渠道编码/楼宇编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.CHANNEL_NO_DESC is '渠道名称/楼宇名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.VISIT_TASK_ID is '任务流水号'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.PM_CHANNEL_BUILD_POSITION.VTYPE is '01 巡门店 02巡小区 03 巡楼宇'
+
+ORA-00942: 表或视图不存在
+Creating view PM_GRID_BUILD_RECORD_APP_VIEW
+===========================================
+
+View created
+Creating view PM_GRID_BUILD_WARNING_VISIT
+=========================================
+
+CREATE OR REPLACE VIEW pm.PM_GRID_BUILD_WARNING_VISIT AS
+SELECT TO_CHAR(SYSDATE, 'YYYYMM') ACCT_MONTH,
+       T.BUILD_ID,
+       T.BUILD_NAME,
+       '03' WARN_TYPE_ID,
+       '物业拜访次数不达标' WARN_TYPE_NAME,
+       COUNT(M.RECORD_ID) WARN_VALUE_M,
+       NULL WARN_VALUE_L,
+       '[0,'||N.WARN_VALUE||']' WARN_RANGE,
+       COUNT(M.RECORD_ID) WARN_VALUE
+  FROM PM_GRID_BUILD_RECORD T, PM_GRID_BUILD_VISIT_RECORD M,
+  PM.PM_GRID_BUILD_WARNING_RANGE N
+ WHERE T.BUILD_ID = M.BUILD_ID(+)
+ AND T.BUILD_ID=N.BUILD_ID(+)
+ GROUP BY T.BUILD_ID, T.BUILD_NAME,'[0,'||N.WARN_VALUE
+
+ORA-00942: 表或视图不存在
+Creating view PM_ORGANIZATION_KHFW
+==================================
+
+CREATE OR REPLACE VIEW pm.PM_ORGANIZATION_KHFW AS
+SELECT "EXECUTE_ID",
+       "EXECUTE_NAME",
+       "PARENT_ID",
+       "PARENT_NAME",
+       "PARENT_ID_UP",
+       "LOGIN_ID",
+       "LEVEL_TYPE"
+  FROM (
+        --客户服务中心
+        SELECT T.ID EXECUTE_ID,
+                T.NAME EXECUTE_NAME,
+                '' PARENT_ID,
+                '' PARENT_NAME,
+                '' PARENT_ID_UP,
+                NULL LOGIN_ID,
+                1 LEVEL_TYPE
+          FROM PMDEV.ORG_ORGANIZATION_MOD T
+         WHERE T.ID = 'B03'
+        UNION ALL
+        --服务经理与客户服务中心对应关系
+        SELECT DISTINCT B.ID EXECUTE_ID, --FWJL_EXECUTE_ID,
+                        A.EMP_NAME EXECUTE_NAME, --FWJL_NAME,
+                        E.ID PARENT_ID,
+                        E.NAME PARENT_NAME,
+                        '' PARENT_ID_UP,
+                        NULL LOGIN_ID,
+                        2 LEVEL_TYPE
+          FROM (SELECT T.EMP_NO, T.EMP_NAME, T.GL_AREA_NO, T.GL_AREA_NAME
+                  FROM PMDEV.PMDEV_GLCT_BUSI_CEN_RELATION T
+                 WHERE T.GRID_NO = 'G031'
+                   AND T.RELATION_TYPE = '02') A,
+               (SELECT T.EMP_NO, T.ID
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') B,
+               (SELECT T.EMP_NO, T.ID, T.AREACODE
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') C,
+               (SELECT T.ID, T.NAME
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') D,
+               (SELECT T.ID, T.NAME
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.ID = 'B03') E
+         WHERE A.EMP_NO = B.EMP_NO(+)
+           AND A.GL_AREA_NO = C.EMP_NO
+           AND C.AREACODE = D.ID(+)
+        UNION ALL
+        --中心与服务经理
+        SELECT DISTINCT B.ID || '-' || C.AREACODE ZX_ID,
+                        D.NAME ZX_NAME,
+                        B.ID EXECUTE_ID, --FWJL_EXECUTE_ID,
+                        A.EMP_NAME EXECUTE_NAME, --FWJL_NAME,
+                        E.ID,
+                        NULL LOGIN_ID,
+                        3 LEVEL_TYPE
+          FROM (SELECT T.EMP_NO, T.EMP_NAME, T.GL_AREA_NO, T.GL_AREA_NAME
+                  FROM PMDEV.PMDEV_GLCT_BUSI_CEN_RELATION T
+                 WHERE T.GRID_NO = 'G031'
+                   AND T.RELATION_TYPE = '02') A,
+               (SELECT T.EMP_NO, T.ID
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') B,
+               (SELECT T.EMP_NO, T.ID, T.AREACODE
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') C,
+               (SELECT T.ID, T.NAME
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') D,
+               (SELECT T.ID, T.NAME
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.ID = 'B03') E
+         WHERE A.EMP_NO = B.EMP_NO(+)
+           AND A.GL_AREA_NO = C.EMP_NO
+           AND C.AREACODE = D.ID(+)
+        UNION ALL
+        --客户经理与中心
+        SELECT DISTINCT C.ID KHJL_EXECUTE_ID,
+                        A.GL_AREA_NAME KHJL_NAME,
+                        B.ID || '-' || C.AREACODE ZX_ID,
+                        D.NAME ZX_NAME,
+                        B.ID,
+                        C.LOGIN_ID,
+                        4 LEVEL_TYPE
+          FROM (SELECT T.EMP_NO, T.EMP_NAME, T.GL_AREA_NO, T.GL_AREA_NAME
+                  FROM PMDEV.PMDEV_GLCT_BUSI_CEN_RELATION T
+                 WHERE T.GRID_NO = 'G031'
+                   AND T.RELATION_TYPE = '02') A,
+               (SELECT T.EMP_NO, T.ID
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') B,
+               (SELECT T.EMP_NO, T.ID, T.AREACODE, T.LOGIN_ID
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') C,
+               (SELECT T.ID, T.NAME
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.DELFLAG = '0') D,
+               (SELECT T.ID, T.NAME
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.ID = 'B03') E
+         WHERE A.EMP_NO = B.EMP_NO(+)
+           AND A.GL_AREA_NO = C.EMP_NO
+           AND C.AREACODE = D.ID(+)) M
+
+ORA-01031: 权限不足
+Creating view PM_WORK_TO_DO_D
+=============================
+
+UNION ALL
+SELECT SOURCE_TYPE,
+			 SOURCE_CON,
+			 LOGIN_ID,
+			 AREA_NO,
+			 GRID_NO,
+			 EXECUTE_ID,
+			 TO_DO_PC,
+			 TO_DO,
+			 URL_D,
+			 T.REMARK,
+			 T.SEQ
+	FROM PM_USR_WORK_ORDER_D T
+
+ORA-00900: 无效 SQL 语句
+Creating view V_ORGANIZATION_MOD
+================================
+
+ID                                                                               NAME                                                                             PARENT_ID                                                                        BUSINESS2G                                                                       BUSINESS3G                                                                       AREACODE                         REMARK                                                                           ORG_TYPE   ORGRANK                                                                          DELFLAG INSERT_TIME        ORD      GRADE  DEPART_ID        LAT        LNG GRID_NO              IS_TD IS_GRID IS_TEAM EMP_NO               LOGIN_ID             V600_NO              POSIT_NO   POSIT_NAME                               DEPT_NO    NET_GRID_NAME                            CREATE_DATE JX_POSIT_NO JX_POSIT_NAME                            JX_ORG_TYPE IS_CON     IS_HG YYY_STAR
+-------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -------------------------------- -------------------------------------------------------------------------------- ---------- -------------------------------------------------------------------------------- ------- ----------- ---------- ---------- ---------- ---------- ---------- -------------------- ----- ------- ------- -------------------- -------------------- -------------------- ---------- ---------------------------------------- ---------- ---------------------------------------- ----------- ----------- ---------------------------------------- ----------- ---------- ----- --------------------------------------------------------------------------------
+root                                                                             上海市公司                                                                                                                                                                                                                                                                                                                          021                              上海市公司                                                                       10001      /root                                                                            0       2011/12/21           1          0          0                                            2                     0                                                                                                                                                                                                                                       A                      0     
+Creating view V_PM_BUILD_TASK_DETAIL_M
+======================================
+
+SELECT TO_CHAR(T.VISIT_TIME, 'YYYYMM') SEND_MONTH, --派单时间,取临时巡楼的时间为派单时间
+       TO_CHAR(T.VISIT_TIME, 'YYYYMM') VISIT_MONTH, --拜访月份
+       T.FLOW_ID, --流水号
+       T.EXE_ID, --楼宇经理执行人编码
+       T1.NAME EXE_NAME, --楼宇经理
+       T1.ORGRANK,
+       T1.POSIT_NO,
+       T1.POSIT_NAME,
+       T1.GRID_NO, --网格编码
+       T1.AREACODE AREA_NO, --区域编码
+       T.BULID_ID, --楼宇编码
+       T.BULID_NAME, --楼宇名称
+       '05' TASK_TYPE_ID, --任务类型编码
+       '临时巡楼' TASK_TYPE_NAME, --任务类型名称
+       '102' TASK_TYPE_ID_NEW,
+       '自发任务' TASK_TYPE_NAME_NEW,
+       T1.LOGIN_ID, --'-' OPERATOR_ID, --派发人员
+       T1.NAME, --'-' OPERATOR_NAME, --派单人员姓名
+       T.VISIT_TIME OPERATOR_DATE, --取临时巡楼的时间为派单时间
+       '临时巡楼任务' THEME_NAME, --任务主题
+       '' TASK_DESC, --任务描述
+       '-' START_DATE, --任务开始日期
+       '-' END_DATE, --任务结束日期
+       '3' FEEBACK_STATUS, --反馈状态编码
+       '成功反馈' FEEBACK_STATUS_DESC, --反馈状态描述,临时巡楼都应该是成功反馈
+       '01' FLISH_STATUS, --
+       '已完成任务' FLISH_STATUS_DESC, --
+       T.VISIT_TIME, --拜访时间
+       T.VISIT_LONGITUDE, --拜访时的经度
+       T.VISIT_LATITUDE, --拜访时的维度
+       T3.LONGITUDE BUILD_LONGITUDE, --楼宇的经度
+       T3.LATITUDE BUILD_LATITUDE, --楼宇的维度
+       H.SELL_AREA ORGID
+       , T.VISIT_OBJ_DESC VISIT_OBJ_DESC,
+         T.FLOW_STAFF FLOW_STAFF,
+         T.VISIT_ACHIE VISIT_ACHIE,
+         T.PRO_DESC PRO_DESC,
+         T.VISIT_TYPE,
+         t.VISIT_OBJ,
+         T.PHOTO_1 PHOTO_1,
+         T.PHOTO_2  PHOTO_2,
+         T.PHOTO_3  PHOTO_3,
+         T.PHOTO_4  PHOTO_4
+  FROM PM.PM_BUILD_TASK_RESULT_SELF T,
+       PMDEV.ORG_ORGANIZATION_MOD T1,
+       PMDSS.SC_LOGIN_USER F,
+       (SELECT T.BUILD_ID, T.LONGITUDE, T.LATITUDE
+          FROM PM.PM_GRID_BUILD_RECORD T
+         WHERE T.BUILD_ID IS NOT NULL) T3,
+       PMDSS.SC_LOGIN_USER H
+ WHERE T.EXE_ID = T1.ID(+)
+   AND T.BULID_ID = T3.BUILD_ID(+)
+   AND T1.LOGIN_ID=F.LOGIN_ID(+)
+   AND T1.LOGIN_ID = H.LOGIN_ID(+)
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.SEND_MONTH is '派单月份'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.VISIT_MONTH is '拜访月份'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.FLOW_ID is '流水号'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.EXE_ID is '楼宇经理执行人编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.EXE_NAME is '楼宇经理'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.ORGRANK is '路径'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.GRID_NO is '网格编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.AREA_NO is '区域编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.BULID_ID is '楼宇编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.BULID_NAME is '楼宇名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.TASK_TYPE_ID is '任务类型编码(统计时，不用该字段。01-主题巡楼、02-特殊巡楼、03-系统巡楼、04-常规巡楼、05-临时巡楼，其中04和05算作自发巡楼任务)'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.TASK_TYPE_NAME is '统计时，不用该字段。任务类型名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.TASK_TYPE_ID_NEW is '页面使用该字段，任务类型编码(101-特殊任务、102-自发任务、103-系统任务、104-主题任务)'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.TASK_TYPE_NAME_NEW is '页面使用该字段，任务类型名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.OPERATOR_ID is '派单人'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.OPERATOR_NAME is '派单人员姓名'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.OPERATOR_DATE is '派单时间，即创建任务的时间'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.THEME_NAME is '任务主题'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.TASK_DESC is '任务描述'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.START_DATE is '任务开始日期'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.END_DATE is '任务结束日期'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.FEEBACK_STATUS is '反馈状态编码（2-失败反馈、3-成功反馈、7-过期拜访、8-低质拜访、9-失效拜访、10-待办任务，其中只有3-成功反馈属于已完成任务、2/7/8/10都算作未完成任务、9在页面不统计）'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.FEEBACK_STATUS_DESC is '反馈状态描述，码表PMDEV.PMDEV_BUILD_STATUS'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.FLISH_STATUS is '完成状态id'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.FLISH_STATUS_DESC is '完成状态'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.VISIT_TIME is '拜访时间'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.VISIT_LONGITUDE is '拜访时的经度'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.VISIT_LATITUDE is '拜访时的维度'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.BUILD_LONGITUDE is '楼宇的经度'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.BUILD_LATITUDE is '楼宇的维度'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_DETAIL_M.ORGID is '楼宇经理的数据权限，即exe_id巡楼人员的数据权限'
+
+ORA-00942: 表或视图不存在
+Creating view V_PM_BUILD_ALL_TASK_M
+===================================
+
+CREATE OR REPLACE VIEW pm.V_PM_BUILD_ALL_TASK_M AS
+SELECT A.SEND_MONTH,
+       A.EXE_ID,
+       A.EXE_NAME,
+       A.ORGRANK,
+       A.POSIT_NO,
+       A.POSIT_NAME,
+       A.GRID_NO,
+       A.AREA_NO,
+       A.TASK_TYPE_ID_NEW,
+       A.TASK_TYPE_NAME_NEW,
+       A.FLISH_STATUS,
+       A.FLISH_STATUS_DESC,
+       A.OPERATOR_ID,
+       NVL(TASK_COUNT, 0) TASK_COUNT
+  FROM (SELECT T2.SEND_MONTH,
+               T3.TASK_TYPE_ID_NEW,
+               T3.TASK_TYPE_NAME_NEW,
+               T4.FLISH_STATUS,
+               T4.FLISH_STATUS_DESC,
+               T1.ID                 EXE_ID,
+               T1.NAME               EXE_NAME,
+               T1.ORGRANK,
+               T1.POSIT_NO,
+               T1.POSIT_NAME,
+               T1.GRID_NO,
+               T1.AREACODE           AREA_NO,
+               T5.OPERATOR_ID
+          FROM (SELECT *
+                  FROM PMDEV.ORG_ORGANIZATION_MOD T
+                 WHERE T.GRADE >= 3
+                   AND T.IS_TD = '0'
+                   AND T.NAME NOT LIKE '%未分配%'
+                   AND T.JX_ORG_TYPE = 'A'
+                   AND T.PARENT_ID NOT LIKE 'WX%'
+                   AND T.AREACODE BETWEEN 'A01' AND 'A14') T1,
+               (SELECT TO_CHAR(ADD_MONTHS(TO_DATE('201603', 'YYYYMM'), ROWNUM),
+                               'YYYYMM') SEND_MONTH
+                  FROM DUAL
+                CONNECT BY ROWNUM <=
+                           (MONTHS_BETWEEN(TO_DATE(TO_CHAR(SYSDATE, 'YYYYMM'),
+                                                   'YYYYMM'),
+                                           TO_DATE('201603', 'YYYYMM')))) T2,
+               (SELECT '101' TASK_TYPE_ID_NEW, '特殊任务' TASK_TYPE_NAME_NEW
+                  FROM DUAL
+                UNION ALL
+                SELECT '102', '自发任务'
+                  FROM DUAL
+                UNION ALL
+                SELECT '103', '系统任务'
+                  FROM DUAL
+                UNION ALL
+                SELECT '104', '主题任务' FROM DUAL) T3,
+               (SELECT '01' FLISH_STATUS, '已完成任务' FLISH_STATUS_DESC
+                  FROM DUAL
+                UNION ALL
+                SELECT '02', '未完成任务' FLISH_STATUS_DESC FROM DUAL) T4,
+               (SELECT DISTINCT T5.OPERATOR_ID
+                  FROM PM.V_PM_BUILD_TASK_DETAIL_M T5) T5) A,
+       (SELECT T.SEND_MONTH,
+               T.EXE_ID,
+               T.GRID_NO,
+               T.AREA_NO,
+               T.TASK_TYPE_ID_NEW,
+               T.TASK_TYPE_NAME_NEW,
+               T.FLISH_STATUS,
+               T.FLISH_STATUS_DESC,
+               T.OPERATOR_ID,
+               COUNT(T.FLOW_ID) TASK_COUNT
+          FROM PM.V_PM_BUILD_TASK_DETAIL_M T
+         GROUP BY T.SEND_MONTH,
+                  T.EXE_ID,
+                  T.GRID_NO,
+                  T.AREA_NO,
+                  T.TASK_TYPE_ID_NEW,
+                  T.TASK_TYPE_NAME_NEW,
+                  T.FLISH_STATUS,
+                  T.FLISH_STATUS_DESC,
+                  T.OPERATOR_ID) B
+ WHERE A.SEND_MONTH = B.SEND_MONTH(+)
+   AND A.EXE_ID = B.EXE_ID(+)
+   AND A.TASK_TYPE_ID_NEW = B.TASK_TYPE_ID_NEW(+)
+   AND A.FLISH_STATUS = B.FLISH_STATUS(+)
+   AND A.OPERATOR_ID = B.OPERATOR_ID(+)
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.SEND_MONTH is '派单月份'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.EXE_ID is '楼宇经理id'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.EXE_NAME is '楼宇经理'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.ORGRANK is '路径'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.GRID_NO is '楼宇经理所属网格'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.AREA_NO is '楼宇经理所属区域'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.TASK_TYPE_ID_NEW is '页面使用该字段，任务类型编码(101-特殊任务、102-自发任务、103-系统任务、104-主题任务)'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.TASK_TYPE_NAME_NEW is '页面使用该字段，任务类型名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.FLISH_STATUS is '完成状态id'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.FLISH_STATUS_DESC is '完成状态'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.OPERATOR_ID is '派单人'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_ALL_TASK_M.TASK_COUNT is '子任务数'
+
+ORA-00942: 表或视图不存在
+Creating view V_PM_BUILD_BASIC_INFO
+===================================
+
+SELECT T1.LOCATION_ID,
+       T1.STATION_CODE,
+       T1.BUSINESS_RANGE, --可提供业务
+       T1.ADSL_TYPE,      --接入形式
+       X.addr1,
+       X.addr2,
+       X.addr5,
+       X.addr3,
+       X.addr4,
+       X.addr6
+-- T2.XUHAO,
+-- NVL(T2.PRODUCT_LEVEL, '沃快车') PRODUCT_LEVEL --现行套餐标准-主楼
+  FROM PM.BUILD_RESOURCE T1, XDIM.DIM_VW_FTTH_SIX_ADDR_SEGM x
+ where t1.station_code = x.station_code(+)
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_BASIC_INFO.LOCATION_ID is '唯一编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_BASIC_INFO.BUSINESS_RANGE is '可提供业务'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_BASIC_INFO.ADSL_TYPE is '接入形式'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_BASIC_INFO.ADDR1 is '本楼标准地址1'
+
+ORA-00942: 表或视图不存在
+Creating view V_PM_BUILD_FEEDBACK_ROLE
+======================================
+
+CREATE OR REPLACE VIEW pm.V_PM_BUILD_FEEDBACK_ROLE AS
+SELECT T.ROLE_ID, T.ROLE_NAME
+   FROM PURE.PURE_ROLE T
+  WHERE T.ROLE_ID IN ('wgjlsq', 'fgsld')
+
+ORA-00942: 表或视图不存在
+Creating view V_PM_BUILD_TASK_TJ_M
+==================================
+
+CREATE OR REPLACE VIEW pm.V_PM_BUILD_TASK_TJ_M AS
+SELECT T.VISIT_MONTH,
+       T.EXE_ID,
+       T.EXE_NAME,
+       T.GRID_NO,
+       T.AREA_NO,
+       T.TASK_TYPE_ID_NEW,
+       T.TASK_TYPE_NAME_NEW,
+       T.FENZI,
+       NVL(T2.FENMU, 0) FENMU
+  FROM (SELECT A.VISIT_MONTH,
+               A.EXE_ID,
+               A.EXE_NAME,
+               A.GRID_NO,
+               A.AREA_NO,
+               A.TASK_TYPE_ID_NEW,
+               A.TASK_TYPE_NAME_NEW,
+               SUM(DECODE(B.FLOW_ID, NULL, 0, 1)) FENZI
+          FROM (SELECT T2.VISIT_MONTH,
+                       T3.TASK_TYPE_ID_NEW,
+                       T3.TASK_TYPE_NAME_NEW,
+                       T1.ID                 EXE_ID,
+                       T1.NAME               EXE_NAME,
+                       T1.GRID_NO,
+                       T1.AREACODE           AREA_NO
+                  FROM /*(SELECT *
+                          FROM PMDEV.ORG_ORGANIZATION_MOD T
+                         WHERE T.GRADE >= 3
+                           AND T.IS_TD = '0'
+                           AND T.NAME NOT LIKE '%未分配%'
+                           AND T.JX_ORG_TYPE = 'A'
+                           AND T.PARENT_ID NOT LIKE 'WX%'
+                           AND T.AREACODE BETWEEN 'A01' AND 'A14') T1,*/
+                       PM.V_ORGANIZATION_MOD T1,
+                       (SELECT TO_CHAR(ADD_MONTHS(TO_DATE('201603', 'YYYYMM'),
+                                                  ROWNUM),
+                                       'YYYYMM') VISIT_MONTH
+                          FROM DUAL
+                        CONNECT BY ROWNUM <=
+                                   (MONTHS_BETWEEN(TO_DATE(TO_CHAR(SYSDATE,
+                                                                   'YYYYMM'),
+                                                           'YYYYMM'),
+                                                   TO_DATE('201603', 'YYYYMM')))) T2,
+                       (SELECT '101' TASK_TYPE_ID_NEW,
+                               '特殊任务' TASK_TYPE_NAME_NEW
+                          FROM DUAL
+                        UNION ALL
+                        SELECT '102', '自发任务'
+                          FROM DUAL
+                        UNION ALL
+                        SELECT '103', '系统任务'
+                          FROM DUAL
+                        UNION ALL
+                        SELECT '104', '主题任务' FROM DUAL) T3) A,
+               (SELECT *
+                  FROM PM.V_PM_BUILD_TASK_DETAIL_M T
+                 WHERE T.FEEBACK_STATUS = '3'
+                   AND T.VISIT_MONTH IS NOT NULL) B
+         WHERE A.VISIT_MONTH = B.VISIT_MONTH(+)
+           AND A.EXE_ID = B.EXE_ID(+)
+           AND A.TASK_TYPE_ID_NEW = B.TASK_TYPE_ID_NEW(+)
+         GROUP BY A.VISIT_MONTH,
+                  A.EXE_ID,
+                  A.EXE_NAME,
+                  A.GRID_NO,
+                  A.AREA_NO,
+                  A.TASK_TYPE_ID_NEW,
+                  A.TASK_TYPE_NAME_NEW) T,
+       (SELECT T.ACCT_MONTH, T.EXE_ID, SUM(T.KPI_COUNT) FENMU
+          FROM PM.PM_BUILD_ZHIBIAO_M T
+         GROUP BY T.ACCT_MONTH, T.EXE_ID) T2
+ WHERE T.VISIT_MONTH = T2.ACCT_MONTH(+)
+   AND T.EXE_ID = T2.EXE_ID(+)
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.VISIT_MONTH is '完成巡楼月份'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.EXE_ID is '楼宇经理id'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.EXE_NAME is '楼宇经理'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.GRID_NO is '楼宇经理所属网格'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.AREA_NO is '楼宇经理所属区域'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.FENZI is '完成情况，即分子'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_BUILD_TASK_TJ_M.FENMU is '指标总数，即分母,同一个执行人的4类任务分母是一样的，统计时需要执行人去重后再统计'
+
+ORA-00942: 表或视图不存在
+Creating view V_PM_CUST_SEE_TJ_DETAIL_M
+=======================================
+
+FROM (SELECT SUBSTR(TO_CHAR(T.FEEDBACK_TIME, 'YYYYMMDD'), 1, 6) FEEDBACK_MONTH, --拜访月份，取成功拜访时间的前6位
+               T.MANAGER_ID BFR_ID, --拜访人员ID
+               T.MANAGER_NAME BFR_NAME, --拜访人员姓名
+               T.CUST_ID, --拜访客户ID
+               T.CUST_NAME, --拜访客户名称
+               T.FEEDBACK_TIME, --拜访时间
+               T.SEE_PURPOSE, --拜访目的编码
+               T1.SEE_PURPOSE_DESC, --拜访目的名称
+               NVL(T1.EFF_TIME, 0) SEE_PURPOSE_EFF_TIME, --耗时(小时)
+               NVL(T1.SEE_PURPOSE_ZS, 0) SEE_PURPOSE_ZS, --拜访目的指数
+               DECODE(T1.SEE_PURPOSE_DESC, '商机拜访', '是', '否') IS_SHANGJI_DESC, --是否商机拜访，根据拜访目的来看，商机拜访以外的都是"否"
+               DECODE(T1.SEE_PURPOSE_DESC,
+                      '商机拜访',
+                      '商机拜访',
+                      '其他拜访') SHANGJI_DESC, --是否商机拜访，根据拜访目的来看，商机拜访以外的都是其他拜访
+               NVL(T.CUST_TYPE_HX, '2') CUST_TYPE_HX, --是否核心客户，该字段为空值，默认为是非核心客户
+               NVL(T.SERVICE_LVL, '4') SERVICE_LVL -- 钻金银客户类型,该字段为空值，默认为是其他客户
+          FROM PM.PM_CUST_SEE_FEEDBACK T, --客户拜访反馈表，主表
+               (SELECT *
+                  FROM PM.PM_CUST_SEE_PURPOSE T1
+                 WHERE T1.IS_DELETE = '0') T1 --拜访目的码表
+         WHERE T.SEE_PURPOSE = T1.SEE_PURPOSE(+)
+           AND T.FEEDBACK_TYPE IN ('2', '3')) A,
+       (SELECT *
+          FROM PM.PM_CUST_SEE_ZS_WH B
+         WHERE B.IS_DELETE = '0'
+           AND B.ZS_TYPE_NAME = '商机指数') B, --指数维护码表
+       (SELECT *
+          FROM PM.PM_CUST_SEE_ZS_WH C
+         WHERE C.IS_DELETE = '0'
+           AND C.ZS_TYPE_NAME = '核心客户指数') C, --指数维护码表
+       (SELECT *
+          FROM PM.PM_CUST_SEE_ZS_WH D
+         WHERE D.IS_DELETE = '0'
+           AND D.ZS_TYPE_NAME = '钻金银客户指数') D, --指数维护码表
+       (SELECT * FROM PMDEV.ORG_ORGANIZATION_MOD E WHERE E.DELFLAG = '0') E
+ WHERE A.SHANGJI_DESC = B.ZS_NAME(+)
+   AND A.CUST_TYPE_HX = C.ZS_CODE(+)
+   AND A.SERVICE_LVL = D.ZS_CODE(+)
+   AND A.BFR_ID = E.ID(+)
+
+ORA-00900: 无效 SQL 语句
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.FEEDBACK_MONTH is '拜访月份，取成功拜访时间的前6位'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.BFR_ID is '拜访人员ID'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.BFR_NAME is '拜访人员姓名'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.GRID_NO is '网格编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.NET_GRID_NAME is '网格名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.AREA_NO is '区域编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.CUST_ID is '拜访客户ID'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.CUST_NAME is '拜访客户名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.FEEDBACK_TIME is '拜访时间'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SEE_PURPOSE is '拜访目的编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SEE_PURPOSE_DESC is '拜访目的名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SEE_PURPOSE_EFF_TIME is '耗时(小时)'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG1 is '拜访目的指数,即核心客户拜访指数'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.IS_SHANGJI is '是否商机拜访编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.IS_SHANGJI_DESC is '是否商机拜访，根据拜访目的来看，商机拜访以外的都是"否"'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SHANGJI_DESC is '是否商机拜访，根据拜访目的来看，商机拜访以外的都是其他拜访'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.IS_SHANGJI_ZS is '商机指数'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.CUST_TYPE_HX is '是否核心客户编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.CUST_TYPE_HX_DESC is '是否核心客户名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.CUST_TYPE_HX_ZS is '核心客户指数'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SERVICE_LVL is '钻金银客户类型编码'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SERVICE_LVL_NAME is '钻金银客户类型名称'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.SERVICE_LVL_ZS is '钻金银客户指数'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG2_GS_NAME is '效能2公式描述'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG2_GS_ID is '效能2公式'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG2 is '（核心客户-商机指数）的效能=拜访目的指数*商机指数*核心客户指数'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG3_GS_NAME is '效能3公式描述'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG3_GS_ID is '效能3公式'
+
+ORA-00942: 表或视图不存在
+
+comment on column pm.V_PM_CUST_SEE_TJ_DETAIL_M.XIAONENG3 is '（钻金客户-商机指数）的效能=拜访目的指数*商机指数*钻金银客户指数'
+
+ORA-00942: 表或视图不存在
+Stopped spooling to F:\dic\shSql\pm.log

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.bonc.utils.MapUtils.MapBuilder;
 
@@ -49,7 +50,7 @@ public class DbUtils {
 			}
 		
 	}
-	public static void executeQuery(Connection conn,String sql,Callback callback) throws SQLException, Exception {
+	public static void executeQuery(Connection conn,String sql,Function<ResultSet,Void> callback) throws SQLException, Exception {
 		if(!Objects.requireNonNull(sql, "sql can't be null").toLowerCase().trim().startsWith("select")) {
 			throw new RuntimeException("Must be a query sql.");
 		}
@@ -58,11 +59,8 @@ public class DbUtils {
 			){
 			 ResultSet rs = stmt.executeQuery(sql);
 			 if(callback!=null) {
-				 callback.callback(rs);
+				 callback.apply(rs);
 			 }
 			}
-	}
-	public static interface Callback{
-		void callback(ResultSet rs);
 	}
 }

@@ -25,6 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.ResourceUtils;
 
+import com.bonc.utils.FileUtils;
+import com.bonc.utils.StringUtils;
+
 public class CommonTest2 {
 	private static final String FILE_PATTERN="classpath:shFiles/%1$s.txt";
 	private static final String JAVA_PRE="E:\\项目资料\\上海划小\\pms-wap-inner\\src\\com\\bonc\\";
@@ -33,7 +36,9 @@ public class CommonTest2 {
 	@Test
 	public void fileVisitor() throws Exception {
 		//需要检索的关键字
-		String key="巡楼";
+//		String key="巡楼";
+		String key="拜访";
+		Set<String> javaSet = new HashSet<>();
 		Set<String> namespaceSet = new HashSet<>();
 		setSchemas();
 		Set<String> tableSet = new HashSet<>();
@@ -48,6 +53,7 @@ public class CommonTest2 {
 					String content = file2String(path);
 					if(content.indexOf(key)>-1) {
 						try {
+							javaSet.add(path);
 							namespaceSet.addAll(getNamespace(path));
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -61,6 +67,7 @@ public class CommonTest2 {
 				return FileVisitResult.CONTINUE;
 			}
 		});
+		javaSet.forEach(System.out::println);
 		//遍历xml，找到所有table
 		Files.walkFileTree(Paths.get(XML_PRE), new SimpleFileVisitor<Path>() {
 			@Override
@@ -90,9 +97,9 @@ public class CommonTest2 {
 		List<String> list = new ArrayList<>(tableSet);
 		Collections.sort(list);
 		list.forEach(System.out::println);
-				
+		System.out.println(list.size());
+		FileUtils.string2File(list.toString(), ResourceUtils.getFile("classpath:shFiles\\"+key+"table.txt").getAbsolutePath(), false);
 	}
-	
 //	@Test
 	/*
 	 * 批量获取，去重
@@ -129,11 +136,11 @@ public class CommonTest2 {
 //		namespaceSet.stream().forEach(System.out::println);
 		return namespaceSet;
 	}
-//	@Test
+	@Test
 	//根据xml文件获取表名，通过正则匹配schema实现
-	public void getTableNames(String fileName) throws Exception {
-		String xmls = file2String(String.format(FILE_PATTERN, "巡楼xml"));
-//		String xmls = file2String(String.format(FILE_PATTERN, "巡店xml"));
+	public void getTableNames() throws Exception {
+//		String xmls = file2String(String.format(FILE_PATTERN, "巡楼xml"));
+		String xmls = file2String(String.format(FILE_PATTERN, "巡店xml"));
 		setSchemas();
 		Set<String> tableSet = new HashSet<>();
 		for(String xml:xmls.split(",")) {
@@ -142,6 +149,7 @@ public class CommonTest2 {
 		List<String> list = new ArrayList<>(tableSet);
 		Collections.sort(list);
 		list.forEach(System.out::println);
+		System.out.println(list.size());
 	}
 	@Test
 	/*
@@ -150,19 +158,25 @@ public class CommonTest2 {
 	 * 匹配字符串开头是否为模式名，是则加入Set
 	 */
 	public void getTableName() throws Exception {
-		String path = "mobile\\sqlmap-mobileChannelTourShop.xml";
-		getTableName(path).stream().forEach(System.out::println);
+//		String path = "mobile\\sqlmap-mobileChannelTourShop.xml";
+		String path = "classpath:shFiles/test";
+		getTableName(path,true).stream().forEach(System.out::println);
 	}
 	public Set<String> getTableName(String path) throws Exception {
+		return getTableName(path,false);
+	}
+	public Set<String> getTableName(String path,boolean abPath) throws Exception {
 		Set<String> tableSet = new HashSet<>();
 		if(path==null||"".equals(path.trim()))
 			return tableSet;
-		path = path.startsWith(XML_PRE)?path:XML_PRE+path.trim();
+		//非绝对路径
+		if(!abPath)
+			path = path.startsWith(XML_PRE)?path:XML_PRE+path.trim();
 		String info = file2String(path);
 		String[] strs = info.split("\\s+");
 		Arrays.asList(strs).stream()
 			.forEach(str->{
-				str = str.trim();
+				str = str.trim(); 
 				//筛选tableName
 				if(str.matches(schemas_pattern)) {
 					tableSet.add(str.trim().toUpperCase());
@@ -232,5 +246,32 @@ public class CommonTest2 {
 			info=info.substring(1);
 		
 		return info;
+	}
+	@Test
+	public void findMissingTable() throws IOException {
+		String[] tables=file2String("classpath:shFiles/tables.txt")
+				.replaceAll("\\s+", "").split(",");
+		String sql=file2String("F:\\dic\\shSql\\pm.sql").toUpperCase();
+		Arrays.asList(tables).stream().forEach(str->{
+			if(str.startsWith("PM.")) {
+				if(sql.indexOf("TABLE "+str)==-1
+						&&sql.indexOf("VIEW "+str)==-1
+						&&sql.indexOf("INDEX "+str)==-1) {
+					System.out.println(str);
+				}
+			}
+		});
+	}
+	@Test
+	public void findMissingTable2() throws Exception {
+		String sql=file2String("F:\\dic\\shSql\\pm.sql").toUpperCase();
+		Set<String> tables=getTableName("F:\\dic\\shSql\\pm.sql", true);
+		tables.stream().forEach(str->{
+			if(sql.indexOf("TABLE "+str)==-1
+					&&sql.indexOf("VIEW "+str)==-1
+					&&sql.indexOf("INDEX "+str)==-1) {
+				System.out.println(str);
+			}
+		});
 	}
 }

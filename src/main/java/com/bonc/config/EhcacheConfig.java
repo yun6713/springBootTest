@@ -1,6 +1,7 @@
 package com.bonc.config;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
+
+import com.bonc.utils.FileUtils;
 /**
  * ehcache配置类，配置CacheManager、Cahce
  * @author litianlin
@@ -28,15 +31,14 @@ public class EhcacheConfig {
 	 * 配置ecacheManager
 	 * @param loc
 	 * @return
-	 * @throws MalformedURLException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
 	@Bean("ehcacheManager")
 	@Primary
 	public EhCacheManagerFactoryBean ehcacheManager(
-			@Value("${spring.cache.ehcache.config}")String loc) throws MalformedURLException, FileNotFoundException {
+			@Value("${spring.cache.ehcache.config}")String loc) throws IOException {
 		EhCacheManagerFactoryBean fb = new EhCacheManagerFactoryBean();
-		fb.setConfigLocation(new FileSystemResource(ResourceUtils.getFile(loc)));
+		fb.setConfigLocation(FileUtils.getResource(loc));
 		return fb;
 	}
 	/**

@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 @Component
 public class RsaUtils {
 	private static PublicKey rsaPublicKey;
@@ -41,9 +40,7 @@ public class RsaUtils {
 	 * @throws InvalidKeySpecException
 	 */
 	public static void generate(String fileName,boolean isPub) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException{
-		Resource resource = new FileSystemResource(ResourceUtils.getFile(fileName));
-		byte[] bytes=new byte[(int) resource.contentLength()];
-		resource.getInputStream().read(bytes);
+		byte[] bytes=FileUtils.file2String(fileName).getBytes(FileUtils.DEFAULT_CHARSET);
 		KeyFactory keyFactory = KeyFactory.getInstance(RSA);
 		if(isPub){
 			X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(bytes));

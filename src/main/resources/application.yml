@@ -4,6 +4,9 @@ h2:
   data-path: classpath:data/data #entity
   relation-path: classpath:data/relation #关联表
   serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
+debug: true
+server:
+  port: 8081
 mybatis:
   #mapper-locations: classpath:mapper/user/UserOperation.xml
   mapper-locations: classpath:mapper/**/*.xml
