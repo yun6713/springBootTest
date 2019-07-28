@@ -33,7 +33,7 @@ import com.bonc.repository.jpa.UserRepository;
 @EnableJpaRepositories(
 		entityManagerFactoryRef="entityManagerFactoryPrimary",
 		transactionManagerRef="primaryTransactionManager",
-		basePackageClasses = { UserRepository.class },
+		basePackageClasses = { UserRepository.class },//默认本注解所在包
 		repositoryImplementationPostfix="Impl" //自实现类后缀，默认Impl；接口、实现类必须放在扫描包下
 	)
 @EnableTransactionManagement//开启注解驱动的transaction

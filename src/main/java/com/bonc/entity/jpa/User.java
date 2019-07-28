@@ -1,6 +1,7 @@
 package com.bonc.entity.jpa;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,17 +15,24 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-@RedisHash("{user}")
+/**
+ * 注解优先使用java.persistence包。
+ * 列注解：@Id、@Column、@Temporal
+ * 
+ * @author Administrator
+ *
+ */
+@Entity//jpa
+@RedisHash("{user}")//redis
 @Table(name="user")
-@NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")
+@NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")//命名查询
 public class User implements Serializable{
 	/**
 	 * 
@@ -41,6 +49,9 @@ public class User implements Serializable{
 	private String username;
 	@Column(name="password")
 	private String password;
+	@Temporal(TemporalType.DATE)
+	@UpdateTimestamp
+	private Date createTime;
 	@ManyToMany(fetch=FetchType.EAGER)
 	//默认主键匹配
 	@JoinTable(name="user_role",joinColumns= {@JoinColumn(name="u_id")},

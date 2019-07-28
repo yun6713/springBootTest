@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 import com.bonc.entity.jpa.User;
 import com.bonc.mapper.UserOperation;
 @Component
+/**
+ * 自定义实现类，用于整合mybatis
+ * @author Administrator
+ *
+ */
 public class UserMapperImpl implements UserMapper{
 	@Autowired
 	UserOperation uo;
