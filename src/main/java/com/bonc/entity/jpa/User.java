@@ -22,6 +22,9 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.RowId;
 import org.hibernate.annotations.Target;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Id;
@@ -34,12 +37,17 @@ import org.springframework.data.redis.core.index.Indexed;
  * generator：@SequenceGenerator、@TableGenerator、@GenericGenerator
  * 参考：https://www.jianshu.com/p/d04fd3256e59
  * 内嵌类：@Embeddable、@Embedded、@Target、@Parent
+ * 主键：@Id、@EmbeddedId+@Embeddable(主键类)、@RowId、@NaturalId
+ * 关联：@OneToOne、@OneToMany、@ManyToOne、@ManyToMany，@ElementCollection；双向时通过mappedBy将外键维护交由Many端。
+ * 关联关系：@JoinColumn、@JoinTable、@PrimaryKeyJoin、@NotFound
+ * 排序：@OrderColumn、@OrderBy
  * @author Administrator
  *
  */
 @Entity//jpa
 @RedisHash("{user}")//redis
 @Table(name="user")
+@RowId(value = "rowId")//根据rowId查询记录，需数据库支持rowId
 @NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")//命名查询
 public class User implements Serializable{
 	/**
@@ -74,6 +82,7 @@ public class User implements Serializable{
 	//默认主键匹配
 	@JoinTable(name="user_role",joinColumns= {@JoinColumn(name="u_id")},
 	inverseJoinColumns= {@JoinColumn(name="r_id")})
+	@NotFound(action=NotFoundAction.IGNORE)//未找到策略
 	private Collection<Role> roles=new ArrayList<>();
 	@Embedded
 	@Target(value = Address.class)//多态时，标记实现类
