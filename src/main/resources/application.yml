@@ -39,7 +39,7 @@ spring:
       pool:
         max-active: 10
   jpa:
-    show-sql: true
+    show-sql: true    
     hibernate:
       ddl-auto: update
     properties:
@@ -55,7 +55,8 @@ spring:
     druid:      
       #连接池等相关配置
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-      filters: stat,wall,log4j
+      #filters: stat,wall,log4j
+      filters: stat,log4j #去掉防火墙，否则获取序列值报错
       initialSize: 13
       maxActive: 20
       maxPoolPreparedStatementPerConnectionSize: 20

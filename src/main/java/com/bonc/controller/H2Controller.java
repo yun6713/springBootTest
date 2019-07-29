@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bonc.entity.jpa.Address;
 import com.bonc.entity.jpa.Role;
 import com.bonc.entity.jpa.User;
 import com.bonc.mapper.UserOperation;
@@ -34,14 +35,21 @@ public class H2Controller {
 		List<User> mybatis=uo.selectUsers();
 		return ur.selectUsers();
 	}
-	@RequestMapping("/insertUser")
-	public Object insertUser() {
+	@RequestMapping("/insertUser/{name}")
+	public Object insertUser(@PathVariable String name) {
 		User u = new User();
-		u.setUsername("b");
+		u.setUsername(name);
 		u.setPassword("b");
 		Role role = h2Service.findRoleByName("ROLE_admin");
+		if(role==null) {
+			role=new Role();
+			role.setRoleName("ROLE_admin");
+			h2Service.saveRole(role);
+		}
 		u.setRoles(Arrays.asList(role));
-		h2Service.saveRole(role);
+		Address addr=new Address();
+		addr.setAddr("cq City");
+		u.setAddr(addr);
 		h2Service.saveUser(u,true);
 		return u.getuId()==null?"Failed":"Success";
 	}

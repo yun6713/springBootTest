@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.bonc.mapper.UserOperation" >
   <!-- 配置中指定了别名扫描包 -->
-  <!-- 标签：if、choose+when+otherwise、trim/where/set、foreach、bind、selectKey等 -->
+  <!-- mapper标签：select/insert/update/delete、cache/cache-ref、selectKey、sql、resultMap -->
+  <!-- OGNL标签：if、choose+when+otherwise、trim/where/set、foreach、bind等 -->
   <!-- OGNL表达式方法运算：e1[e2]、e.method()、e.field、@class@method()、@class@field -->
   <!-- 内置参数：_parameter、_databaseId -->
   <resultMap id="user" type="user">
@@ -28,5 +29,17 @@
   <select id="selectUsers" resultMap="user">
       select <include refid="Base_Column_List"></include> from user
   </select>
-  
+  <!-- 主键策略未测试 -->
+  <!-- 数据库不支持自增主键，从序列、表格获取 -->
+  <insert id="insertUser">
+  	<selectKey keyProperty="u_id" resultType="int" order="BEFORE">
+  		select  CAST(RANDOM()*1000000 as INTEGER) a from SYSIBM.SYSDUMMY1
+  	</selectKey>
+  	insert into user (u_id,username,password) values 
+  		(#{uId},#{username},#{password})
+  </insert>
+  <!-- 自增主键 -->
+  <insert id="insertRole" useGeneratedKeys="true" keyProperty="r_id">
+  	insert into role (role_name) values (#{roleName})
+  </insert>
 </mapper>

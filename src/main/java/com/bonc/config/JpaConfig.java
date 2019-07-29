@@ -24,7 +24,7 @@ import com.bonc.repository.jpa.UserRepository;
 
 /**
  * 根据DataSource、TransactionManager配置jpa EntityManagerFactory、EntityManager
- * 
+ * @EnableJpaRepositories，区分多个jpa。
  * @author litianlin
  * @date 2019年7月5日上午11:14:36
  * @Description TODO
@@ -62,9 +62,11 @@ public class JpaConfig {
 	@Primary
 	@Bean(name = "entityManagerFactoryPrimary")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactoryPrimary(EntityManagerFactoryBuilder builder) {
-		return builder.dataSource(dataSource).properties(getVendorProperties())
+		return builder.dataSource(dataSource)
+				.properties(getVendorProperties())
 				.packages(User.class) // 设置实体类所在位置
-				.persistenceUnit("primaryPersistenceUnit").build();
+				.persistenceUnit("primaryPersistenceUnit")
+				.build();
 	}
 
 	// 事务配置
