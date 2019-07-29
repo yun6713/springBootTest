@@ -18,7 +18,7 @@ spring:
       enabled: false
   security:
     oauth: true #启用oauth
-    enabled: false #是否拦截请求
+    enabled: true #是否拦截请求
     user:
       name: user
       password: user
@@ -41,7 +41,7 @@ spring:
   jpa:
     show-sql: true    
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true

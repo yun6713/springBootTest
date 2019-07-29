@@ -53,10 +53,9 @@ public class H2Controller {
 		h2Service.saveUser(u,true);
 		return u.getuId()==null?"Failed":"Success";
 	}
-	@RequestMapping("/insertRole")
-	public Object insertRole() {
+	@RequestMapping("/insertRole/{roleName}")
+	public Object insertRole(@PathVariable String roleName) {
 		Role role;
-		String roleName="ROLE_admin";
 		if((role=h2Service.findRoleByName(roleName))!=null) {
 			return role;
 		}
