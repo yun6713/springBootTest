@@ -18,7 +18,7 @@ spring:
       enabled: false
   security:
     oauth: true #启用oauth
-    enabled: true #是否拦截请求
+    enabled: false #是否拦截请求
     user:
       name: user
       password: user

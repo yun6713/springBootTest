@@ -41,7 +41,7 @@
 	      <scope>test</scope>
 	    </dependency>
 	    <!-- 排除slf4j到jcl、jul、log4j、log4j2桥接器；打包时排除，否则 测试时报错 -->
-	    <dependency>
+	    <!-- <dependency>
 	      <groupId>org.slf4j</groupId>
 	      <artifactId>slf4j-jcl</artifactId>
 	      <scope>test</scope>
@@ -60,7 +60,7 @@
 	      <groupId>org.apache.logging.log4j</groupId>
 	      <artifactId>log4j-slf4j-impl</artifactId>
 	      <scope>test</scope>
-	    </dependency> 
+	    </dependency>  -->
 		<!-- 导入桥接器，jcl、jul、log4j、log4j2到slf4j -->
 	    <dependency>
 	      <groupId>org.slf4j</groupId>

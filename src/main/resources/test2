@@ -1,0 +1,55 @@
+
+						jfType="流量计费";
+						dataList=inquiryMapper.getLljfTypeInfo(params);
+						if(dataList!=null && dataList.size()>0){
+							Map<String,Object> roomMap=dataList.get(0);
+							double instalFee = Double.parseDouble(roomMap.get("INSTALL_FEE").toString());
+							double baodiFee = Double.parseDouble(roomMap.get("BAODI_FEE").toString());
+							double exceedFee = Double.parseDouble(roomMap.get("EXCEED_FEE").toString());
+							String ipDesc = roomMap.get("IP_DESC")==null?"":roomMap.get("IP_DESC").toString();
+							String jfResouceName = roomMap.get("JF_RESOURE_NAME")==null?"":roomMap.get("JF_RESOURE_NAME").toString();
+							
+							String rentalFeeJS = "";
+							String exceedFeeJS = "";
+							Double idcDk = Double.valueOf(params.get("idcDk").toString());
+							String idcDkWL = df.format(idcDk*5).replace(".00", "");
+							String idcRate=df.format(idcDk)+"G";
+							Double saleOff = Double.valueOf(params.get("saleOff").toString());
+							if(saleOff!=null&&saleOff!=0){
+								
+								String rentalFeestr = df.format(doubleTo2(baodiFee*Double.valueOf(idcDk)*(1-saleOff))).replace(".00", "");
+								String exceedFeestr = df.format(doubleTo2(exceedFee*(1-saleOff))).replace(".00", "");
+
+								String salebaifen= df.format((1-saleOff)*100).replace(".00", "")+"%";
+								System.out.println(salebaifen);
+								//月租费计算
+								rentalFeeJS = df.format(baodiFee)+"*"+idcDk+"*"+salebaifen+"="+rentalFeestr;
+								//每A价格
+								exceedFeeJS = df.format(exceedFee)+"*"+salebaifen+"="+exceedFeestr;
+							}else{
+								rentalFeeJS = df.format(baodiFee)+"*"+idcDk+"="+df.format(doubleTo2(baodiFee*idcDk)).replace(".00", "");
+								exceedFeeJS = df.format(exceedFee)+"";
+							}
+							if("A".equals(params.get("lljfType"))){
+								String lljfType="峰值";
+							}else if("B".equals(params.get("lljfType"))){
+								String lljfType="九五";
+							}
+							String inquiryLine1 = jieruType+"，保底带宽"+idcRate+"，物理端口限速"+idcDkWL+"G，";
+							String inquiryLine2 ="保底网络使用费"+rentalFeeJS+"元/月，";
+							String inquiryLine3 ="超出保底网络使用费每G "+exceedFeeJS+"元/月，";
+							String inquiryLine4 ="安装调试费"+df.format(instalFee)+"元。";
+							String inquiryLine5 ="";
+							xjResult=inquiryLine1+inquiryLine2+inquiryLine3+inquiryLine4+inquiryLine5;
+							
+							resultMap.put("inquiryLine1", inquiryLine1);
+							resultMap.put("inquiryLine2", inquiryLine2);
+							resultMap.put("inquiryLine3", inquiryLine3);
+							resultMap.put("inquiryLine4", inquiryLine4);
+							resultMap.put("inquiryLine5", inquiryLine5);
+							resultMap.put("price", rentalFeeJS);
+							
+							//插入日志
+							//daoHelper.insert("mobile_inquiry.insertIDCXJLOG",this);
+						}
+					}

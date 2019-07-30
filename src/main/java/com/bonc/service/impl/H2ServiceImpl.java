@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bonc.entity.jpa.Role;
 import com.bonc.entity.jpa.User;
@@ -38,12 +39,14 @@ public class H2ServiceImpl implements H2Service{
 		}
 		return ur.save(user);
 	}
+	@Transactional(transactionManager="primaryTransactionManager")
 	@Override
 	public User findUserById(Integer id) {
-		List list = entityManager.createNativeQuery("select * from user").getResultList();
-		List<User> users = uo.selectUsers();
+//		List list = entityManager.createNativeQuery("select * from user").getResultList();
+//		List<User> users = uo.selectUsers();
 //		users = ur.selectUsers();
-		return ur.findByUId(id);
+		User u=ur.findByUId(id);
+		return u;
 	}
 	@Override
 	public void deleteUserById(Integer id) {
@@ -53,9 +56,10 @@ public class H2ServiceImpl implements H2Service{
 	public Role saveRole(Role role) {
 		return rr.save(role);
 	}
+	@Transactional(transactionManager="primaryTransactionManager")
 	@Override
 	public Role findRoleById(Integer id) {
-		return rr.findById(id).orElse(null);
+		return rr.findByRId(id).orElse(null);
 	}
 	@Override
 	public void deleteRoleById(Integer id) {

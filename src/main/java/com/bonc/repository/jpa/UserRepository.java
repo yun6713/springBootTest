@@ -35,11 +35,10 @@ import com.bonc.repository.jpa.integrate.UserMapper;
  * @Description TODO
  */
 public interface UserRepository extends JpaRepository<User,Integer>,UserMapper {
-	@Transactional
-	@QueryHints(value={@QueryHint(name="n1",value="v1")})
-	@NonNull//不适合此处，仅做示例
+	//锁模式，加锁必须在事务中执行。乐观锁必须有比对字段？
+	@Lock(value = LockModeType.PESSIMISTIC_READ)
+	//设置锁超时时间
+	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "3000")})
 	User findByUId(Integer id);
-	@Transactional
-	@Lock(value = LockModeType.READ)//锁模式，加锁必须加事务
-	User findByUsername(String username);
+	User findByUsername(@NonNull String username);
 }

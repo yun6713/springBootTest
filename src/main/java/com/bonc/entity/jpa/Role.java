@@ -7,8 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.Version;
 
 @Entity
 @Table(name="role")
@@ -23,6 +24,8 @@ public class Role extends JpaAuditing implements Serializable{
 	private Integer rId;
 	@Column(name="role_name")
 	private String roleName;
+	@Version
+	private Integer version;
 	public Integer getrId() {
 		return rId;
 	}
@@ -34,6 +37,13 @@ public class Role extends JpaAuditing implements Serializable{
 	}
 	public void setRoleName(String role) {
 		this.roleName = role;
+	}
+	
+	public Integer getVersion() {
+		return version;
+	}
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 	@Override
 	public int hashCode() {

@@ -28,13 +28,19 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
-
+/**
+ * 文件工具类，方法：遍历查找文件、读写文件、获取项目路径
+ * @author litianlin
+ * @date   2019年7月30日下午12:51:22
+ * @Description TODO
+ */
 public class FileUtils {
 	private static final int K=1024;
 	private static String PROJECT_PATH;
 	private static final Logger log=LoggerFactory.getLogger(FileUtils.class);
-	private static final String JAVA_PRE="/src/main/java/".replaceAll("//", File.separator);
-	private static final String RESOURCE_PRE="/src/main/resources/".replaceAll("//", File.separator);
+	// /、$进行正则替换时，必须使用Matcher.quoteReplacement预处理
+	private static final String JAVA_PRE="/src/main/java/".replaceAll(Matcher.quoteReplacement("//"), File.separator);
+	private static final String RESOURCE_PRE="/src/main/resources/".replaceAll(Matcher.quoteReplacement("//"), File.separator);
 	public static final Charset DEFAULT_CHARSET=StandardCharsets.UTF_8;
 	static {
 		try {
@@ -243,12 +249,14 @@ public class FileUtils {
 		if(PROJECT_PATH==null) {
 			String str = FileUtils.class.getResource("/").toURI().toString().trim();
 			log.info("Project path is: {}",str);
-			//非jar包运行
+			//非jar包运行,剔除target/classes;jar包运行，剔除.jar!/及以后内容
 			if(str.indexOf(".jar!/")==-1) {
-				str = str.substring(str.indexOf("/"));
+				int end = str.endsWith("/target/classes/")?str.lastIndexOf("/target/classes/")
+						:str.lastIndexOf("/target/test-classes/");
+				PROJECT_PATH = str.substring(str.indexOf("/"),end);
 			}else{
 				str = str.substring(str.indexOf("/"), str.indexOf(".jar!/"));
-				str = str.substring(0, str.lastIndexOf("/")+1);
+				PROJECT_PATH = str.substring(0, str.lastIndexOf("/")+1);
 			}
 		}
 		return PROJECT_PATH;

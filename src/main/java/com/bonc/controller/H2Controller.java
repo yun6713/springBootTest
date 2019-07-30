@@ -30,6 +30,11 @@ public class H2Controller {
 		User u = h2Service.findUserById(id);
 		return Optional.ofNullable(u).map(User::getUsername).orElse("noSuchOne");
 	}
+	@RequestMapping("/findRole/{id}")
+	public Role findRole(@PathVariable("id") Integer id) {
+		Role r = h2Service.findRoleById(id);
+		return r;
+	}
 	@RequestMapping("/findAllUsers")
 	public Object findAllUsers() {
 		List<User> mybatis=uo.selectUsers();
