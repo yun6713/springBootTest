@@ -11,7 +11,6 @@ import com.bonc.entity.jpa.Role;
 public interface RoleRepository extends JpaRepository<Role,Integer> {
 
 	Role findByRoleName(String roleName);
-	//无法重写继承的方法
-	@Lock(LockModeType.READ)
+	@Lock(LockModeType.READ)//乐观锁，必须包含在事务中，实体类必须有java.persistence.Version标记的辅助字段
 	Optional<Role> findByRId(Integer rId);
 }

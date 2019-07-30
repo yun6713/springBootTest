@@ -8,8 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
-import org.springframework.data.annotation.Version;
+//import org.springframework.data.annotation.Version;
 
 @Entity
 @Table(name="role")
@@ -24,7 +25,7 @@ public class Role extends JpaAuditing implements Serializable{
 	private Integer rId;
 	@Column(name="role_name")
 	private String roleName;
-	@Version
+	@Version//乐观锁，必须使用java.persistence.Version标记辅助字段
 	private Integer version;
 	public Integer getrId() {
 		return rId;

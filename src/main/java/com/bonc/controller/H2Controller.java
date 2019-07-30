@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,8 @@ public class H2Controller {
 	UserRepository ur;
 	@Autowired
 	UserOperation uo;
+	@Autowired
+	SqlSessionFactory ssf;
 	@RequestMapping("/find/{id}")
 	public String find(@PathVariable("id") Integer id) {
 		User u = h2Service.findUserById(id);

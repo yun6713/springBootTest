@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
 
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.bonc.mapper.UserOperation;
 import com.bonc.utils.MapUtils;
@@ -31,15 +35,17 @@ import com.bonc.utils.MapUtils;
 sqlSessionFactoryRef="firstMybatis"
 )
 public class MybatisConfig {
+	@Autowired
+	DataSource dataSource;
 	@Bean("firstMybatis")
-	public SqlSessionFactoryBean first(DataSource dataSource,DatabaseIdProvider databaseIdProvider,
+	public SqlSessionFactoryBean first(DatabaseIdProvider databaseIdProvider,
 			@Value("${mybatis.mapper-locations:}")String locs) throws IOException {
 		SqlSessionFactoryBean sfb = new SqlSessionFactoryBean();
 		sfb.setDataSource(dataSource);
 		sfb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(locs));
 		sfb.setDatabaseIdProvider(databaseIdProvider);
-		sfb.setTypeAliasesPackage("com.bonc.entity.jpa");
-		
+		sfb.setTypeAliasesPackage("com.bonc.entity.jpa");TransactionManager tm;
+//		sfb.setTransactionFactory(transactionFactory());//默认值为SpringManagedTransactionFactory
 		return sfb;		
 	}
 	/*
@@ -58,5 +64,9 @@ public class MybatisConfig {
 		databaseIdProvider.setProperties(p);
 		return databaseIdProvider;
 	}
-	
+	// 事务配置，用于@Transactional，绑定编程式事务。
+	@Bean(name = "mybatisTransactionManager")
+	public PlatformTransactionManager primaryTransactionManager() {
+		return new DataSourceTransactionManager(dataSource);
+	}
 }
