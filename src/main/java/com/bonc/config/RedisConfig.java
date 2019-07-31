@@ -12,7 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -25,6 +28,9 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * 配置jpa-redis使用，配置RedisConnectionFactory、RedisCacheManager<p>
+ * 缓存在Configuration中配置序列化策略；nosql访问在Template中配置序列化策略。<p>
+ * 缓存操作为原子性操作。
+ * redis四种运行方式：单点、主从、哨兵、集群；对应4种连接方式。
  * @author Administrator
  *
  */
@@ -35,21 +41,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 		basePackageClasses = { RedisUserRepository.class }
 	)
 public class RedisConfig {
-//	public RedisConfiguration redisConfiguration(){
-//		
-//	}
+	@Bean
+	public RedisConfiguration redisConfiguration(){
+		RedisStandaloneConfiguration rc=new RedisStandaloneConfiguration();
+		return rc;
+	}
 	/**
 	 * 实现类：JedisConnectionFactory、LettuceConnectionFactory
 	 * springboot1.x用jedis，springboot2.x用lettuce
 	 * 传入配置RedisConfiguration、LettuceClientConfiguration
 	 * @return
 	 */
-//	@Bean
-//	@ConfigurationProperties(prefix="spring.redis")
-//	public RedisConnectionFactory redisConnectionFactory(){
-//		RedisConnectionFactory rcf = new LettuceConnectionFactory();
-//		return rcf;		
-//	}
+	@Bean
+	@ConfigurationProperties(prefix="spring.redis.lettuce")
+	public RedisConnectionFactory redisConnectionFactory(){
+		LettuceConnectionFactory lcf = new LettuceConnectionFactory(redisConfiguration());
+		return lcf;		
+	}
 	/**
 	 * 配置RedisTemplate，设置key，value序列化策略
 	 * @param redisConnectionFactory
@@ -104,7 +112,10 @@ public class RedisConfig {
         configMap.put("user", config.entryTtl(Duration.ofSeconds(120)));
 		return RedisCacheManager.builder(redisConnectionFactory)
 				.initialCacheNames(cacheNames)
+				.cacheDefaults(config)
+//				.disableCreateOnMissingCache()
 				.withInitialCacheConfigurations(configMap)
+//				.transactionAware()//put/evict事务
 				.build();
 	}
 }
