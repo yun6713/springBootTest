@@ -1,8 +1,6 @@
 package com.bonc.config;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,13 +11,11 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.util.ResourceUtils;
 
 import com.bonc.utils.FileUtils;
 /**
  * ehcache配置类，配置CacheManager、Cahce
+ * key--String(Object时取hashCode),value--jdk序列化
  * @author litianlin
  * @date   2019年7月5日下午5:13:12
  * @Description TODO
@@ -28,7 +24,7 @@ import com.bonc.utils.FileUtils;
 @ConditionalOnClass(net.sf.ehcache.CacheManager.class)
 public class EhcacheConfig {
 	/**
-	 * 配置ecacheManager
+	 * 配置ehcacheManager
 	 * @param loc
 	 * @return
 	 * @throws IOException 

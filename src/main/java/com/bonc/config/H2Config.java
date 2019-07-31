@@ -61,8 +61,10 @@ public class H2Config{
 	@Bean("h2DataSource")
 	@DependsOn("h2Server")
 	@Primary
+	@ConfigurationProperties(prefix="spring.datasource.first")
 	public DruidDataSource h2DataSource() {
-		return configDruidDataSource(firstDataSource(),druidConfig());
+		return new DruidDataSource();
+//		return configDruidDataSource(firstDataSource(),druidConfig());
 	}
 	private DruidDataSource configDruidDataSource(Properties dbProps,Properties dsProps){
 		Properties p = new Properties();

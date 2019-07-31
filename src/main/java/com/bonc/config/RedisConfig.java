@@ -1,5 +1,6 @@
 package com.bonc.config;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.bonc.repository.redis.RedisUserRepository;
@@ -57,6 +59,16 @@ public class RedisConfig {
 	public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
 		RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
+		
+
+        redisTemplate.setValueSerializer(jsonSerializer());
+        //使用StringRedisSerializer来序列化和反序列化redis的key值
+        redisTemplate.setKeySerializer(new StringRedisSerializer(StandardCharsets.UTF_8));
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer(StandardCharsets.UTF_8));
+        redisTemplate.setHashValueSerializer(jsonSerializer());
+		return redisTemplate;
+	}
+	private Jackson2JsonRedisSerializer<Object> jsonSerializer(){
 		//使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
@@ -64,19 +76,21 @@ public class RedisConfig {
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         serializer.setObjectMapper(mapper);
-
-        redisTemplate.setValueSerializer(serializer);
-        //使用StringRedisSerializer来序列化和反序列化redis的key值
-        redisTemplate.setKeySerializer(StringRedisSerializer.UTF_8);
-        redisTemplate.setHashKeySerializer(StringRedisSerializer.UTF_8);
-        redisTemplate.setHashValueSerializer(serializer);
-		return redisTemplate;
+        return serializer;
 	}
+	/**
+	 * 配置缓存序列换策略
+	 * @return
+	 */
 	@Bean
 	@ConfigurationProperties("spring.cache.redis")
 	public RedisCacheConfiguration config(){
-		return RedisCacheConfiguration.defaultCacheConfig();
+		return RedisCacheConfiguration.defaultCacheConfig()
+				.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer(StandardCharsets.UTF_8)))
+				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer()))
+				.disableCachingNullValues();
 	}
+	//配置spring CacheManager bean
 	@Bean
 	public RedisCacheManager redisCacheManager(RedisCacheConfiguration config,RedisConnectionFactory redisConnectionFactory){
         // 设置一个初始化的缓存空间set集合

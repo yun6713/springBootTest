@@ -1,16 +1,14 @@
 package com.bonc.test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.validation.constraints.NotNull;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.bonc.entity.jpa.Role;
 import com.bonc.utils.FileUtils;
 import com.bonc.utils.StringUtils;
 

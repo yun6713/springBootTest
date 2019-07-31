@@ -43,7 +43,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers("/test","/h2console/*","/oauth/*").permitAll()
+				.antMatchers("/test","/h2console/*","/oauth/*","/druid/*").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin().permitAll().defaultSuccessUrl("/test2") //loginPage()用于指定自定义的多路页面路径

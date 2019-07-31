@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
@@ -14,6 +16,7 @@ import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -22,7 +25,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.bonc.entity.jpa.Role.RoleSaveEvent;
 import com.bonc.entity.jpa.User;
 import com.bonc.repository.jpa.UserRepository;
 import com.bonc.security.springSecurity.UserDetailsImpl;
@@ -46,6 +51,7 @@ import com.bonc.security.springSecurity.UserDetailsImpl;
 @EnableJpaAuditing//开启审计
 @EnableTransactionManagement//开启注解驱动的transaction
 public class JpaConfig {
+	Logger log=LoggerFactory.getLogger(JpaConfig.class);
 	@Autowired
 	DataSource dataSource;
 
@@ -106,5 +112,13 @@ public class JpaConfig {
 			}
 			
 		};
+	}
+//	@EventListener//接收到事件后立即处理，会在事务提交前处理事件
+	public void handleRoleSaveEvent(RoleSaveEvent re) {
+		log.info("handleRoleSaveEvent:{}",re.getrId());
+	}
+	@TransactionalEventListener
+	public void handleRoleSaveEvent2(RoleSaveEvent re) {
+		log.info("handleRoleSaveEvent2:{}",re.getrId());
 	}
 }

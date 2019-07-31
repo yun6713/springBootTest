@@ -43,14 +43,15 @@ import org.springframework.data.redis.core.index.Indexed;
  * 关联关系：@JoinColumn、@JoinTable、@PrimaryKeyJoin、@NotFound<p>
  * 排序：@OrderColumn、@OrderBy<p>
  * 分组：@ElementCollection、@Embeddable<p>
+ * 事件：@DomainEvents、@AfterDomainEventPublication、@TransactionalEventListener；监听事件，默认事务提交后处理，使用@EventListener会在接收到事件后立即处理<p>
  * <b>注意：</b><p>
- * 1,锁必须在事务中执行。
- * 2,乐观锁，必须使用java.persistence.Version标记辅助字段
+ * 1,锁必须在事务中执行。<p>
+ * 2,乐观锁，必须使用java.persistence.Version标记辅助字段<p>
  * @author Administrator
  *
  */
 @Entity//jpa
-@RedisHash("{user}")//redis
+@RedisHash("{user}")//Redis
 @Table(name="user")
 //@RowId(value = "rowId")//根据rowId查询记录，需数据库支持rowId；否则报错
 @NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")//命名查询
