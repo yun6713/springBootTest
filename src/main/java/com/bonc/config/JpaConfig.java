@@ -28,9 +28,9 @@ import com.bonc.repository.jpa.UserRepository;
 import com.bonc.security.springSecurity.UserDetailsImpl;
 
 /**
- * 根据DataSource、TransactionManager配置jpa EntityManagerFactory、EntityManager
- * @EnableJpaRepositories，区分多个jpa。
- * @EnableJpaAuditing；开启审计。auditorAwareRef提供用户，dateTimeProviderRef提供时间,有默认
+ * 根据DataSource、TransactionManager配置jpa EntityManagerFactory、EntityManager<p>
+ * @EnableJpaRepositories，区分多个jpa。<p>
+ * @EnableJpaAuditing；开启审计。auditorAwareRef提供用户，dateTimeProviderRef提供时间,有默认<p>
  * 
  * @author litianlin
  * @date 2019年7月5日上午11:14:36
@@ -39,7 +39,7 @@ import com.bonc.security.springSecurity.UserDetailsImpl;
 @Configuration
 @EnableJpaRepositories(
 		entityManagerFactoryRef="entityManagerFactoryPrimary",
-		transactionManagerRef="primaryTransactionManager",
+		transactionManagerRef="primaryTransactionManager",//jpa增删改事务
 		basePackageClasses = { UserRepository.class },//默认本注解所在包
 		repositoryImplementationPostfix="Impl" //自实现类后缀，默认Impl；接口、实现类必须放在扫描包下
 	)
@@ -77,7 +77,12 @@ public class JpaConfig {
 				.build();
 	}
 
-	// 事务配置
+	/**
+	 * 事务配置，供spring使用；
+	 * jpa编程式事务使用EntityManager获取事务
+	 * @param builder
+	 * @return
+	 */
 	@Primary
 	@Bean(name = "primaryTransactionManager")
 	public PlatformTransactionManager primaryTransactionManager(EntityManagerFactoryBuilder builder) {

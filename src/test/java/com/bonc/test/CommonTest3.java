@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.validation.constraints.NotNull;
+
 import org.junit.Test;
 
 import com.bonc.utils.FileUtils;
@@ -35,5 +37,11 @@ public class CommonTest3 {
 		new CommonTest3().findArgs();
 		System.out.println("abc".indexOf("c",1));
 		System.out.println("abc".substring(0, 3));
+	}
+	@Test
+	public void test01() throws Exception {
+		String content=FileUtils.file2String("classpath:test2");
+		content = content.replaceAll("\r\n", "<p>\r\n")+"<p>";
+		System.out.println(content);
 	}
 }

@@ -11,7 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
+/**
+ * oauth用类
+ * @author litianlin
+ * @date   2019年7月31日上午11:21:31
+ * @Description TODO
+ */
 //建议重写hashCode，equals方法
 @Entity
 @Table(name = "oauth_client_details")

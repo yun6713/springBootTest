@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
- * 配置jpa-redis使用，配置RedisConnectionFactory、RedisCacheManager
+ * 配置jpa-redis使用，配置RedisConnectionFactory、RedisCacheManager<p>
  * @author Administrator
  *
  */

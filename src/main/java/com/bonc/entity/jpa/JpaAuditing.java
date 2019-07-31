@@ -14,6 +14,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * jpa审计
+ * @CreatedDate、@LastModifiedDate；时间
+ * @CreatedBy、@LastModifiedBy；用户，需实现AuditorAware以提供用户信息
  * @author Administrator
  *
  */

@@ -10,14 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-//import org.springframework.data.annotation.Version;
-
+/**
+ * 乐观锁，必须使用java.persistence.Version标记辅助字段<p>
+ * @author litianlin
+ * @date   2019年7月31日上午10:46:22
+ * @Description TODO
+ */
 @Entity
 @Table(name="role")
 public class Role extends JpaAuditing implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name="role_id")

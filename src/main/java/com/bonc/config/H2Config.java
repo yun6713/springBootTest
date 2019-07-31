@@ -18,7 +18,12 @@ import org.springframework.context.annotation.Primary;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.bonc.utils.MapUtils;
-
+/**
+ * 配置H2数据源，开启H2浏览器访问。
+ * @author litianlin
+ * @date   2019年7月31日上午10:54:11
+ * @Description TODO
+ */
 @Configuration
 @ConditionalOnExpression("${h2.enabled:false}==true")
 public class H2Config{

@@ -11,25 +11,25 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bonc.entity.jpa.User;
 import com.bonc.repository.jpa.integrate.UserMapper;
 /**
- * 空值注解：@NonNull、@Nullable
- * 前缀：find...By、count...By(数量)；方法名第一个By为分隔符
-	前缀关键词：Distinct、First[num]、Top[num]
-	逻辑：And、Or
-	关系表达式，列名[关键词]，关键词为空则为等于：
-	LessThan、GreaterThan；大小，
-	LessThanEqual、GreaterThanEqual；
-	Not；不等于，findBySexNot
-	Is、Equals；等于
-	After、Before；时间
-	IsNull、NotNull；空、非空
-	Like、NotLike；字符串
-	StartingWith、EndingWith、Containing；字符串，自动拼接%
-	IgnoreCase、AllIgnoreCase；不区分大小写
-	In、NotIn、Between；
-	TRUE、FALSE；为true、false；findByIsSuccessTrue
-	OrderBy；排序，默认Asc
-	参数：Sort排序、Pageable分页排序；位于形参最后
-	分类，group by；已通过@ElementCollection、@Embeddable实现。
+ * 空值注解：@NonNull、@Nullable<p>
+ * 前缀：find...By、count...By(数量)；方法名第一个By为分隔符<p>
+ * 前缀关键词：Distinct、First[num]、Top[num]<p>
+ * 逻辑：And、Or<p>
+ * 关系表达式，列名[关键词]，关键词为空则为等于：<p>
+ *   LessThan、GreaterThan；大小，<p>
+ *   LessThanEqual、GreaterThanEqual；<p>
+ *   Not；不等于，findBySexNot<p>
+ *   Is、Equals；等于<p>
+ *   After、Before；时间<p>
+ *   IsNull、NotNull；空、非空<p>
+ *   Like、NotLike；字符串<p>
+ *   StartingWith、EndingWith、Containing；字符串，自动拼接%<p>
+ *   IgnoreCase、AllIgnoreCase；不区分大小写<p>
+ *   In、NotIn、Between；<p>
+ *   TRUE、FALSE；为true、false；findByIsSuccessTrue<p>
+ *   OrderBy；排序，默认Asc<p>
+ * 参数：Sort排序、Pageable分页排序；位于形参最后<p>
+ * 分类，group by；已通过@ElementCollection、@Embeddable实现。<p>
  * @author litianlin
  * @date   2019年7月29日下午3:50:41
  * @Description TODO

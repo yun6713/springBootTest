@@ -18,7 +18,7 @@ spring:
       enabled: false
   security:
     oauth: true #启用oauth
-    enabled: false #是否拦截请求
+    enabled: true #是否拦截请求
     user:
       name: user
       password: user
@@ -39,9 +39,10 @@ spring:
       pool:
         max-active: 10
   jpa:
+    open-in-view: true #默认true，EntityManager在request期间绑定thread，防止懒加载错误
     show-sql: true    
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -50,8 +51,8 @@ spring:
     first:
       driver-class-name: org.h2.Driver
       url: jdbc:h2:tcp://localhost:9095/./h2test
-      username: li
-      password: tianlin
+      username: sa
+      password: ""
     druid:      
       #连接池等相关配置
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000

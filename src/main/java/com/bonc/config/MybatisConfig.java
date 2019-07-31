@@ -21,11 +21,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.bonc.mapper.UserOperation;
 import com.bonc.utils.MapUtils;
 /**
- * 配置mybatis SQLSessionFactoryBean（dataSource\transactionManager\mapperLocation）
- * mybatis跨库：配置DatabaseIdProvider，sql标签的databaseId属性，优先使用databaseId匹配的标签；
- * 设置类型别名包，SqlSessionFactoryBean#setTypeAliasesPackage；别名默认类名首字母小写，@Alias指定。
- * 日志扫描顺序：slf4j、jcl、log4j2、log4j、jul；
- * springboot可通过mybatis.configuration.*进行完全控制
+ * 配置mybatis SQLSessionFactoryBean（dataSource\transactionManager\mapperLocation）<p>
+ * mybatis跨库：配置DatabaseIdProvider，sql标签的databaseId属性，优先使用databaseId匹配的标签；<p>
+ * 设置类型别名包，SqlSessionFactoryBean#setTypeAliasesPackage；别名默认类名首字母小写，@Alias指定。<p>
+ * 日志扫描顺序：slf4j、jcl、log4j2、log4j、jul；<p>
+ * springboot可通过mybatis.configuration.*进行完全控制<p>
+ * 
  * @author litianlin
  * @date   2019年7月5日下午12:57:54
  * @Description TODO
@@ -66,7 +67,7 @@ public class MybatisConfig {
 	}
 	// 事务配置，用于@Transactional，绑定编程式事务。
 	@Bean(name = "mybatisTransactionManager")
-	public PlatformTransactionManager primaryTransactionManager() {
+	public PlatformTransactionManager mybatisTransactionManager() {
 		return new DataSourceTransactionManager(dataSource);
 	}
 }

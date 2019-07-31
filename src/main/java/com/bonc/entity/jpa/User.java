@@ -32,17 +32,20 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 /**
- * 注解优先使用java.persistence包。
- * 列注解：@Id、@Column、@Temporal；@ColumnTransformer、@Lob、@Formula
- * 值填充：@GeneratedValue、@CreationTimestamp、@UpdateTimestamp
- * generator：@SequenceGenerator、@TableGenerator、@GenericGenerator
- * 参考：https://www.jianshu.com/p/d04fd3256e59
- * 内嵌类：@Embeddable、@Embedded、@Target、@Parent
- * 主键：@Id、@EmbeddedId+@Embeddable(主键类)、@RowId、@NaturalId
- * 关联：@OneToOne、@OneToMany、@ManyToOne、@ManyToMany；双向时通过mappedBy将外键维护交由Many端。
- * 关联关系：@JoinColumn、@JoinTable、@PrimaryKeyJoin、@NotFound
- * 排序：@OrderColumn、@OrderBy
- * 分组：@ElementCollection、@Embeddable
+ * 注解优先使用java.persistence包。<p>
+ * 列注解：@Id、@Column、@Temporal；@ColumnTransformer、@Lob、@Formula<p>
+ * 值填充：@GeneratedValue、@CreationTimestamp、@UpdateTimestamp<p>
+ * generator：@SequenceGenerator、@TableGenerator、@GenericGenerator<p>
+ * 参考：<a href="https://www.jianshu.com/p/d04fd3256e59">jpa主键生成策略</a><p>
+ * 内嵌类：@Embeddable、@Embedded、@Target、@Parent<p>
+ * 主键：@Id、@EmbeddedId+@Embeddable(主键类)、@RowId、@NaturalId<p>
+ * 关联：@OneToOne、@OneToMany、@ManyToOne、@ManyToMany；双向时通过mappedBy将外键维护交由Many端。<p>
+ * 关联关系：@JoinColumn、@JoinTable、@PrimaryKeyJoin、@NotFound<p>
+ * 排序：@OrderColumn、@OrderBy<p>
+ * 分组：@ElementCollection、@Embeddable<p>
+ * <b>注意：</b><p>
+ * 1,锁必须在事务中执行。
+ * 2,乐观锁，必须使用java.persistence.Version标记辅助字段
  * @author Administrator
  *
  */

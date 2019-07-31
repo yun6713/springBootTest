@@ -248,7 +248,6 @@ public class FileUtils {
 	public static String getProjectPath() throws URISyntaxException {
 		if(PROJECT_PATH==null) {
 			String str = FileUtils.class.getResource("/").toURI().toString().trim();
-			log.info("Project path is: {}",str);
 			//非jar包运行,剔除target/classes;jar包运行，剔除.jar!/及以后内容
 			if(str.indexOf(".jar!/")==-1) {
 				int end = str.endsWith("/target/classes/")?str.lastIndexOf("/target/classes/")
@@ -258,6 +257,7 @@ public class FileUtils {
 				str = str.substring(str.indexOf("/"), str.indexOf(".jar!/"));
 				PROJECT_PATH = str.substring(0, str.lastIndexOf("/")+1);
 			}
+			log.info("Project path is: {}",PROJECT_PATH);
 		}
 		return PROJECT_PATH;
 	}

@@ -6,6 +6,7 @@
   <!-- OGNL标签：if、choose+when+otherwise、trim/where/set、foreach、bind等 -->
   <!-- OGNL表达式方法运算：e1[e2]、e.method()、e.field、@class@method()、@class@field -->
   <!-- 内置参数：_parameter、_databaseId -->
+  <!-- 比较单字符时，OGNL将'a'转换为字符a，使用"a",'a'.toString()表示字符串；否则一直返回false -->
   <resultMap id="user" type="user">
   	<id column="u_id" property="uId"/>
   	<result  column="username" property="username"/>
