@@ -1,5 +1,6 @@
 package com.bonc.utils;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,5 +28,16 @@ public class MapUtils {
 		public Map<K,V> build(){
 			return map;
 		}
+	}
+	/**
+	 * 获取单entry Map
+	 * @param k
+	 * @param v
+	 * @return
+	 */
+	public static <K,V> Map<K,V> of(K k,V v){
+		Map<K,V> map=new HashMap<>();
+		map.put(k, v);
+		return map;
 	}
 }

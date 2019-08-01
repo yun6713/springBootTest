@@ -1,12 +1,9 @@
 package com.bonc.service.impl;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +63,9 @@ public class H2ServiceImpl implements H2Service{
 		rr.deleteById(id);
 	}
 	@Override
+	@Cacheable()
 	public Role findRoleByName(String roleName) {
+		org.springframework.cache.interceptor.KeyGenerator k;
 		return rr.findByRoleName(roleName);
 	}
 	

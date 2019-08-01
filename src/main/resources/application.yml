@@ -33,10 +33,16 @@ spring:
       repositories:
         enabled: true
   redis:
+    sentinel:
+      master: abc #master名称
+      nodes: #哨兵节点，host:port,
+    cluster:
+      max-redirects: 3
+      nodes: #集群节点，host:port,
     host: localhost
     port: 6379
     lettuce:
-      pool: #common-pools对应参数？
+      pool: #common-pools对应参数
         max-active: 10
   jpa:
     open-in-view: true #默认true，EntityManager在request期间绑定thread，防止懒加载错误

@@ -2,20 +2,30 @@ package com.bonc.config;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConfiguration;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -26,6 +36,8 @@ import com.bonc.repository.redis.RedisUserRepository;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.lettuce.core.ReadFrom;
 /**
  * 配置jpa-redis使用，配置RedisConnectionFactory、RedisCacheManager<p>
  * 缓存在Configuration中配置序列化策略；nosql访问在Template中配置序列化策略。<p>
@@ -41,10 +53,83 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 		basePackageClasses = { RedisUserRepository.class }
 	)
 public class RedisConfig {
+//	环境配置
+	@Value("${spring.redis.host:localhost}")String host;
+	@Value("${spring.redis.port:6379}")int port;
+	@Value("${spring.redis.password:#{T(org.springframework.data.redis.connection.RedisPassword).none()}}")String password;
+	@Value("${spring.redis.database:0}")int database;
 	@Bean
-	public RedisConfiguration redisConfiguration(){
-		RedisStandaloneConfiguration rc=new RedisStandaloneConfiguration();
-		return rc;
+	public RedisStandaloneConfiguration standaloneConfiguration(){		
+		RedisStandaloneConfiguration rsc=new RedisStandaloneConfiguration();
+		rsc.setHostName(host);
+		rsc.setPort(port);
+		rsc.setPassword(password);
+		rsc.setDatabase(database);
+		return rsc;
+	}
+	@Value("${spring.redis.sentinel.master:}")String master;
+	@Value("${spring.redis.sentinel.nodes:}")String nodes;
+	@Bean
+	@ConditionalOnExpression("\"${spring.redis.sentinel.nodes:}\"!=\"\"")
+	public RedisSentinelConfiguration sentinelConfiguration(){
+		RedisSentinelConfiguration rsc=new RedisSentinelConfiguration();
+		if(!"".equals(master)) {
+			RedisNode masterNode=new RedisNode(host,port);
+			masterNode.setName(master);
+			rsc.setMaster(masterNode);			
+		}
+		if(!"".equals(nodes)) {
+			Arrays.asList(nodes.split(",")).stream()
+				.map(node->node.split(":"))
+				.filter(strs->strs.length==2)
+				.forEach(strs->rsc.addSentinel(new RedisNode(strs[0],Integer.valueOf(strs[1]))));
+		}
+		rsc.setPassword(password);
+		rsc.setDatabase(database);
+		return rsc;
+	}
+	@Value("${spring.redis.cluster.max-redirects:}")int maxRedirects;
+	@Value("${spring.redis.cluster.nodes:}")String clusterNodes;
+	@Bean
+	@ConditionalOnExpression("\"${spring.redis.cluster.nodes:}\"!=\"\"")
+	public RedisClusterConfiguration clusterConfiguration(){
+		RedisClusterConfiguration rcc=new RedisClusterConfiguration();
+		if(!"".equals(clusterNodes)) {
+			Arrays.asList(nodes.split(",")).stream()
+				.map(node->node.split(":"))
+				.filter(strs->strs.length==2)
+				.forEach(strs->rcc.addClusterNode(new RedisNode(strs[0],Integer.valueOf(strs[1]))));
+		}
+		rcc.setPassword(password);
+		rcc.setMaxRedirects(maxRedirects);
+		return rcc;
+	}
+	
+//	客户端配置
+	@Bean
+	@ConfigurationProperties("spring.redis.lettuce.pool")
+	public GenericObjectPoolConfig lettucePoolConfig() {
+		return new GenericObjectPoolConfig();
+	}
+	@Bean
+	@ConfigurationProperties("spring.redis.jedis.pool")
+	public GenericObjectPoolConfig jedisPoolConfig() {
+		return new GenericObjectPoolConfig();
+	}
+	@Value("${spring.redis.lettuce.shutdown-timeout:}")Duration shutdownTimeout;
+	@Bean//返回池化客户端配置，不使用连接池，LettuceClientConfiguration.builder()
+	public LettuceClientConfiguration lettuceClientConfiguration() {
+		return LettucePoolingClientConfiguration.builder()
+			      .readFrom(ReadFrom.SLAVE_PREFERRED) //优先读从
+			      .shutdownTimeout(shutdownTimeout)
+			      .poolConfig(lettucePoolConfig())
+			      .build();
+	}
+	public JedisClientConfiguration jedisClientConfiguration() {
+		return JedisClientConfiguration.builder()
+				.usePooling()//使用连接池
+				.poolConfig(jedisPoolConfig())
+				.build();
 	}
 	/**
 	 * 实现类：JedisConnectionFactory、LettuceConnectionFactory
@@ -53,11 +138,13 @@ public class RedisConfig {
 	 * @return
 	 */
 	@Bean
-	@ConfigurationProperties(prefix="spring.redis.lettuce")
 	public RedisConnectionFactory redisConnectionFactory(){
-		LettuceConnectionFactory lcf = new LettuceConnectionFactory(redisConfiguration());
-		return lcf;		
+		return new LettuceConnectionFactory(standaloneConfiguration(),lettuceClientConfiguration());		
 	}
+//	@Bean
+//	public RedisConnectionFactory jedisConnectionFactory(){
+//		return new JedisConnectionFactory(standaloneConfiguration(),jedisClientConfiguration());		
+//	}
 	/**
 	 * 配置RedisTemplate，设置key，value序列化策略
 	 * @param redisConnectionFactory
@@ -92,7 +179,7 @@ public class RedisConfig {
 	 */
 	@Bean
 	@ConfigurationProperties("spring.cache.redis")
-	public RedisCacheConfiguration config(){
+	public RedisCacheConfiguration redisCacheConfiguration(){
 		return RedisCacheConfiguration.defaultCacheConfig()
 				.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer(StandardCharsets.UTF_8)))
 				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer()))
