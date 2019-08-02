@@ -1,14 +1,17 @@
 package com.bonc.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.Test;
 
-import com.bonc.entity.jpa.Role;
 import com.bonc.utils.FileUtils;
 import com.bonc.utils.StringUtils;
 
@@ -38,8 +41,9 @@ public class CommonTest3 {
 	}
 	@Test
 	public void test01() throws Exception {
-		String content=FileUtils.file2String("classpath:test2");
-		content = content.replaceAll("\r\n", "<p>\r\n")+"<p>";
-		System.out.println(content);
+		String path="E:\\项目资料\\陕西经分\\sql4es使用说明文档.docx";
+//		String content=FileUtils.file2String("E:\\项目资料\\陕西经分\\sql4es使用说明文档.docx");
+//		content = content.replaceAll("\r\n", "<p>\r\n")+"<p>";
+		System.out.println(FileUtils.readPoi(new File(path)));
 	}
 }

@@ -2,6 +2,7 @@ package com.bonc.utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -21,6 +22,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -291,5 +295,42 @@ public class FileUtils {
 	public static void main(String[] args) throws Exception {
 		File r=FileUtils.getFile("classpath:es1");
 		System.out.println(r.length());
+	}
+	public static String readPoi(String path) throws IOException {
+		return readPoi(new File(path));
+	}
+	/**
+	 * poi读取doc、docx；xls、ppt缺
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readPoi(File file) throws IOException {
+		if(!file.exists()||file.isDirectory())
+			return "";
+		String content="",path=file.getPath().trim();
+		path=path.substring(path.lastIndexOf('.')+1);        
+		switch(path) {
+		case "doc":
+			try(HWPFDocument doc = new HWPFDocument(new BufferedInputStream(new FileInputStream(file)));){
+				content = doc.getDocumentText();
+			}
+			break;
+		case "docx":
+			try(
+					XWPFDocument docx = new XWPFDocument(new BufferedInputStream(new FileInputStream(file)));
+		            XWPFWordExtractor extractor = new XWPFWordExtractor(docx);){
+				content = extractor.getText();
+			}
+			break;
+		case "xls":
+			break;
+		case "xlsx":
+			break;
+		default:
+			break;
+		}
+		
+		return content;
 	}
 }

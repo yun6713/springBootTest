@@ -18,6 +18,8 @@
 		<java.version>1.8</java.version>
 		<commons-logging.version>1.2</commons-logging.version>
     	<log4j.version>1.2.17</log4j.version>
+    	<poi.version>3.15</poi.version>
+    	<slf4j2-log.scope>provided</slf4j2-log.scope>
 	</properties>
 
 	<dependencies>
@@ -44,23 +46,23 @@
 	    <!-- <dependency>
 	      <groupId>org.slf4j</groupId>
 	      <artifactId>slf4j-jcl</artifactId>
-	      <scope>test</scope>
+	      <scope>${slf4j2-log.scope}</scope>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
 	      <artifactId>slf4j-jdk14</artifactId>
-	      <scope>test</scope>
+	      <scope>${slf4j2-log.scope}</scope>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
 	      <artifactId>slf4j-log4j12</artifactId>
-	      <scope>test</scope>
+	      <scope>${slf4j2-log.scope}</scope>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.apache.logging.log4j</groupId>
 	      <artifactId>log4j-slf4j-impl</artifactId>
-	      <scope>test</scope>
-	    </dependency>  -->
+	      <scope>${slf4j2-log.scope}</scope>
+	    </dependency> -->
 		<!-- 导入桥接器，jcl、jul、log4j、log4j2到slf4j -->
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
@@ -206,6 +208,22 @@
 		    <artifactId>spring-security-oauth2</artifactId>
 		    <version>2.3.6.RELEASE</version>
 		</dependency>
+		<!-- 版本必须一致 -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-ooxml</artifactId>
+	        <version>${poi.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-scratchpad</artifactId>
+	        <version>${poi.version}</version>
+	    </dependency>
 	</dependencies>
 
 	<build>
