@@ -3,7 +3,8 @@ h2:
   enableAppServer: true #使用应用h2数据库
   data-path: classpath:data/data #entity
   relation-path: classpath:data/relation #关联表
-  serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
+#  serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
+  serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-baseDir,D:/h2/db
 #debug: true
 server:
   port: 8081
@@ -18,7 +19,7 @@ spring:
       enabled: false
   security:
     oauth: true #启用oauth
-    enabled: true #是否拦截请求
+    enabled: false #是否拦截请求
     user:
       name: user
       password: user
@@ -56,7 +57,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource    
     first:
       driver-class-name: org.h2.Driver
-      url: jdbc:h2:tcp://localhost:9095/./h2test
+      url: jdbc:h2:tcp://localhost:9095/./h2
       username: sa
       password: ""
       a: a

@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;

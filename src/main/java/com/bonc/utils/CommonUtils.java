@@ -20,7 +20,7 @@ public class CommonUtils {
 	 * 加载yml文件
 	 * @param rootName OriginTrackedMapPropertySource的key，不可为空串
 	 * @param loc
-	 * @return
+	 * @return yml文件使用"---"隔开为多个yml时，返回多个元素的List
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */

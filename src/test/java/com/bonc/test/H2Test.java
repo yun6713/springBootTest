@@ -3,13 +3,16 @@ package com.bonc.test;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.h2.tools.Server;
 import org.junit.Test;
+import org.springframework.core.env.PropertySource;
 import org.springframework.util.ResourceUtils;
 
+import com.bonc.utils.CommonUtils;
 import com.bonc.utils.DbUtils;
 
 public class H2Test {
@@ -30,8 +33,12 @@ public class H2Test {
 	@Test
 	public void testH2Connection(){
 		try {
-		    Class.forName("org.h2.Driver");
-		    Connection conn = DriverManager.getConnection("jdbc:h2:tcp://localhost/./test", "sa", "");
+		    PropertySource<?> ps=CommonUtils.loadYml("spring", "classpath:application.yml").get(0);
+		    Class.forName(ps.getProperty("spring.datasource.first.driver-class-name").toString());
+		    Connection conn = DriverManager.getConnection(ps.getProperty("spring.datasource.first.url").toString(),
+		    		ps.getProperty("spring.datasource.first.username").toString(), ps.getProperty("spring.datasource.first.password").toString());
+		    ResultSet rs = conn.createStatement().executeQuery("show columns from user");
+		    System.out.println(rs);
 		    conn.isClosed();
 		    } catch (Exception e) {
 		    	e.printStackTrace();;
