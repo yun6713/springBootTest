@@ -1,9 +1,11 @@
 package com.bonc.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,11 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.TemporalType;
 
 import org.springframework.core.env.PropertySource;
 /**
@@ -28,9 +27,9 @@ import org.springframework.core.env.PropertySource;
  * @Description TODO
  */
 public class JpaClassBuilder {
-	private static final String JAVA=FileUtils.getJavaPath(JpaClassBuilder.class,false)+"%1$s.java";
+	private static final String DEFAULT_JAVA=FileUtils.getJavaPath(JpaClassBuilder.class,false)+"%1$s.java";
 	//默认当前包
-	String packageName="";
+	String packageName="com.bonc";
 //	String tableName="oauth_client_details";
 	String tableName="user";
 	//默认转换表名
@@ -74,86 +73,83 @@ public class JpaClassBuilder {
 		String url=ps.getProperty(prefix+"url").toString();
 		String username=ps.getProperty(prefix+"username").toString();
 		String password=ps.getProperty(prefix+"password").toString();
-		String sql = null;
-		int type;
-		if(driver.contains("h2")||driver.contains("mysql")){
-			sql="show columns from "+tableName;
-			type=0;
-		}else if(driver.contains("oracle")){
-			sql=null;
-			type=1;
+		SqlProvider sp=null;
+		if(driver.contains(".h2.")){
+			sp=new H2Provider();
+		}else if(driver.contains(".mysql.")){
+			sp=new MysqlProvider();
+		}else if(driver.contains(".oracle.")){
+			sp=new OracleProvider();
 		}else{
 			throw new RuntimeException("不支持的数据库，驱动器："+driver);
 		}
-		if(sql==null) return;
 		Class.forName(driver);
 		try(
 				Connection conn = DriverManager.getConnection(url,username,password);
-				ResultSet rs = conn.createStatement().executeQuery("show columns from user");
+//				ResultSet rs = conn.createStatement().executeQuery("show columns from user");
+				ResultSet cols = conn.createStatement().executeQuery(sp.getColumnInfoSql("user"));
+				ResultSet ids = conn.createStatement().executeQuery(sp.getIdsSql("user"));
 	    ){
-			handleRs(rs,type);
+			handleCols(cols);
+			handleIds(ids);
 		}
 	}
-	//处理结果集，设置类构建参数
-	private void handleRs(ResultSet rs,int flag) throws Exception{
+	private void handleIds(ResultSet ids) throws SQLException {
 		idCol=new ArrayList<String>();
-		colField=new HashMap<String,String>();
-		switch(flag){
-		//h2、mysql；field、type、key、null、default。暂时只处理前三个。
-		case 0:
-			while(rs.next()){
-				String field=rs.getString("FIELD");
-				String type=rs.getString("TYPE");
-				String key=rs.getString("KEY");
-				colField.put(field, db2Java(type));
-				if(key!=null&&"".equals(key)){
-					idCol.add(key);
-				}
+		while(ids.next()){
+			String isPri=ids.getString("ISPRI");
+			if(isPri!=null&&Integer.valueOf(isPri)==1){
+				idCol.add(ids.getString("COL"));
 			}
-			break;
-		default:
-			break;
+		}
+		
+	}
+	//处理结果集，设置类构建参数
+	private void handleCols(ResultSet rs) throws Exception{
+		colField=new HashMap<String,String>();
+		while(rs.next()){
+			String colName=rs.getString("COL");
+			String type=rs.getString("TYPE");
+			String comment=Optional.ofNullable(rs.getString("COMMENT")).orElse("");
+			colField.put(colName, ","+db2Java(type)+","+comment);
 		}
 	}
 	//数据库类型to java类型
 	private String db2Java(String dbType){
 		String javaType="String";
 		if(dbType==null) return javaType;
-		if(dbType.indexOf('(')!=-1){
-			dbType=dbType.substring(0, dbType.indexOf('('));
-		}
-		dbType=dbType.trim().toUpperCase();
+		dbType=dbType.trim().toUpperCase().split("[\\s\\(]")[0];
 		switch(dbType){
 		case "CHAR":
-			return ",char";
+			return "char";
 		case "BIT":
-			return ",boolean";
+			return "boolean";
 		case "TINYINT":
-			return ",Byte";
+			return "Byte";
 		case "SMALLINT":
-			return ",Short";
+			return "Short";
 		case "INTEGER":
-			return ",Integer";
+			return "Integer";
 		case "BIGINT":
 			return ",Long";
 		case "FLOAT":
-			return ",Float";
+			return "Float";
 		case "DOUBLE":
-			return ",Double";
+			return "Double";
 		case "NUMERIC":
-			return ",BigDecimal";
+			return "BigDecimal";
 		case "DATE":
-			return ",DATE";
+			return "DATE";
 		case "TIME":
-			return ",TIME";//后期转Date
+			return "TIME";//后期转Date
 		case "TIMESTAMP":
-			return ",TIMESTAMP";//后期转Date
+			return "TIMESTAMP";//后期转Date
 		case "BLOB":
-			return ",BLOB";//后期转byte[]
+			return "BLOB";//后期转byte[]
 		case "CLOB":
-			return ",CLOB";//后期转String
+			return "CLOB";//后期转String
 		default:
-			return ","+javaType;
+			return javaType;
 		}
 	}
 	//构建类
@@ -161,8 +157,8 @@ public class JpaClassBuilder {
 		if(isBlank(tableName))
 			throw new RuntimeException("tableName不能为空");
 		if(isBlank(className)) {
-			className=toCamelName(tableName.trim().toLowerCase(), "(_[a-z])([a-z]*)").replaceAll("_", "");
-			className=toCamelName(className, "(\\w)(\\w*)");
+			className=StringUtils.toUpperCaseByReg(tableName.trim().toLowerCase(), "(_[a-z])([a-z]*)").replaceAll("_", "");
+			className=StringUtils.toUpperCaseByReg(className, "(\\w)(\\w*)");
 		}
 		if(isBlank(packageName)) {
 			packageName=JpaClassBuilder.class.getPackage().getName();
@@ -171,26 +167,31 @@ public class JpaClassBuilder {
 		StringBuilder mtdBuilder=new StringBuilder();
 		Set<String> idSet=new HashSet<>();
 		if(idCol==null||idCol.isEmpty()||isBlank(idCol.get(0))) {
-			varBuilder.append(idInfo);
+			varBuilder.append(Constant.idInfo);
 		}else{
 			idSet.addAll(idCol);
 		}
 		colField.forEach((k,v)->{
 			if(isBlank(k)) return;
 			if(idSet.contains(k)) {
-				varBuilder.append(idInfo);
+				varBuilder.append(Constant.idInfo);
 			}
 			v=v.trim();
 			if(isBlank(v)||v.indexOf(',')==0) {
-				v=toCamelName(k.trim().toLowerCase(), "(_[a-z])([a-z]*)").replaceAll("_", "")+v;
+				v=StringUtils.toUpperCaseByReg(k.trim().toLowerCase(), "(_[a-z])([a-z]*)").replaceAll("_", "")+v;
 			}
 			varBuilder.append(varStr(k,v));
 			mtdBuilder.append(methodStr(v));
 		});
-		String content=String.format(classTemplate, 
+		String content=String.format(Constant.classTemplate, 
 				packageName,tableName,className,varBuilder.toString()+mtdBuilder.toString());
 		System.out.println(content);
-		FileUtils.string2File(content, String.format(JAVA, className));
+		String path=FileUtils.getJavaPath(packageName, false);
+		if(new File(path).exists()){
+			FileUtils.string2File(content, path.endsWith(File.separator)?path+className+".java":path+File.separator+className+".java");
+		}else{
+			FileUtils.string2File(content, String.format(DEFAULT_JAVA, className));
+		}
 	}
 	//判定字符串是否为null，或者为空串、空白串
 	private boolean isBlank(String str) {
@@ -221,7 +222,25 @@ public class JpaClassBuilder {
 			temp="@Lob\n";
 			break;
 		}
-		return temp+String.format(varTemplate,col,getActualType(strs[0]),strs[1]);
+		return temp+String.format(Constant.varTemplate,col,getActualType(strs[0]),strs[1],strs[2]);
+	}
+	/**
+	 * 按逗号分隔，解析出变量名、变量类型,变量描述
+	 * @param str
+	 * @return [type,varName]
+	 */
+	private String[] parse(String str) {
+		String[] strs = str.split(",");
+		String type,varName,comment="";
+		if(strs.length>1) {	
+			varName=strs[0];		
+			type=strs[1];
+			comment=strs.length>2?strs[2]:"";
+		}else {
+			type="String";
+			varName=str;
+		}
+		return new String[] {type,varName,comment};
 	}
 	private String getActualType(String type){
 		switch(type){
@@ -245,76 +264,111 @@ public class JpaClassBuilder {
 	private String methodStr(String str) {
 		String[] strs=parse(str);
 		//首字母大写
-		String upperVarName=toCamelName(strs[1], "(\\w)(\\w*)");
-		return String.format(methodTemplate,getActualType(strs[0]),strs[1],upperVarName);
+		String upperVarName=StringUtils.toUpperCaseByReg(strs[1], "(\\w)(\\w*)");
+		return String.format(Constant.methodTemplate,getActualType(strs[0]),strs[1],upperVarName);
+	}
+	public static class Constant{
+		public static final String classTemplate=
+				"package %1$s;\n" + 
+				"\n" + 
+				"import java.io.Serializable;\r\n" + 
+				"import javax.persistence.Column;\r\n" + 
+				"import javax.persistence.Entity;\r\n" + 
+				"import javax.persistence.FetchType;\r\n" + 
+				"import javax.persistence.GeneratedValue;\r\n" + 
+				"import javax.persistence.GenerationType;\r\n" + 
+				"import javax.persistence.Id;\r\n" + 
+				"import javax.persistence.JoinColumn;\r\n" + 
+				"import javax.persistence.JoinTable;\r\n" + 
+				"import javax.persistence.ManyToMany;\r\n" + 
+				"import javax.persistence.Table;\n"+
+				"import javax.persistence.Temporal;\n"+
+				"import javax.persistence.TemporalType;\n"+
+				"import java.util.Date;\n"+
+				"//建议重写hashCode，equals方法\n"+
+				"@Entity\n" + 
+				"@Table(name=\"%2$s\")\n"+
+				"public class %3$s implements Serializable{\n" + 
+				"	private static final long serialVersionUID = 1L;\n" + 
+				"	%4$s\n"
+				+ "    }\n";
+		public static final String idInfo="@Id\n"
+						+ "//@GeneratedValue(strategy=GenerationType.SEQUENCE)\n";
+		public static final String varTemplate="@Column(name=\"%1$s\")//%4$s\n"
+						+ "private %2$s %3$s;\n";
+		public static final String methodTemplate=
+						"   public %1$s get%3$s() {\n" + 
+						"		return %2$s;\n" + 
+						"	}\n" + 
+						"	public void set%3$s(%1$s %2$s) {\n" + 
+						"		this.%2$s = %2$s;\n" + 
+						"	}\n";
 	}
 	/**
-	 * 按逗号分隔，解析出变量名、变量类型
-	 * @param str
-	 * @return [type,varName]
+	 * 提供查询主键、表列的sql
+	 * @author Administrator
+	 *
 	 */
-	private String[] parse(String str) {
-		int loc = str.indexOf(",");
-		String type,varName;
-		if(loc!=-1) {
-			type=str.substring(loc+1);
-			varName=str.substring(0, loc);
-		}else {
-			type="String";
-			varName=str;
-		}
-		return new String[] {type,varName};
+	public static interface SqlProvider{
+		/**
+		 * sql返回字段COL、TYPE、COMMENT
+		 * @param tableName
+		 * @return
+		 */
+		String getIdsSql(String tableName);
+		/**
+		 * sql返回字段COL、ISPRI(0,1)
+		 * @param tableName
+		 * @return
+		 */
+		String getColumnInfoSql(String tableName);
 	}
-	/**
-	 * @param str
-	 * @param reg 转大写的正则表达式，第一个捕获组转大写，默认([a-z])([a-z]*)
-	 * @return
-	 */
-	private String toCamelName(String str,String reg) {
-		if(reg==null||isBlank(reg)) {
-			reg="([a-z])([a-z]*)";
+	public static class MysqlProvider implements SqlProvider{
+		private static final String IDS_TMP="select column_name COL,case column_key when 'PRI' then 1 else 0 end ISPRI "+
+				"from information_schema.columns where table_name='%1$s'";
+		private static final String COL_TMP="select  column_name COL,column_type TYPE,column_comment COMMENT "+
+				"from information_schema.columns where table_name='%1$s'";
+		
+		@Override
+		public String getIdsSql(String tableName) {
+			return String.format(IDS_TMP, tableName);
 		}
-		//转为驼峰命名法
-		StringBuffer stringbf = new StringBuffer();
-		Matcher m = Pattern.compile(reg, Pattern.CASE_INSENSITIVE).matcher(str);
-		while (m.find()) {
-            m.appendReplacement(stringbf, m.group(1).toUpperCase() + m.group(2));
-        }
-		return m.appendTail(stringbf).toString();
+		@Override
+		public String getColumnInfoSql(String tableName) {
+			return String.format(COL_TMP, tableName);
+		}
+		
 	}
-	String classTemplate=
-	"package %1$s;\n" + 
-	"\n" + 
-	"import java.io.Serializable;\r\n" + 
-	"import javax.persistence.Column;\r\n" + 
-	"import javax.persistence.Entity;\r\n" + 
-	"import javax.persistence.FetchType;\r\n" + 
-	"import javax.persistence.GeneratedValue;\r\n" + 
-	"import javax.persistence.GenerationType;\r\n" + 
-	"import javax.persistence.Id;\r\n" + 
-	"import javax.persistence.JoinColumn;\r\n" + 
-	"import javax.persistence.JoinTable;\r\n" + 
-	"import javax.persistence.ManyToMany;\r\n" + 
-	"import javax.persistence.Table;\n"+
-	"import javax.persistence.Temporal;\n"+
-	"import javax.persistence.TemporalType;\n"+
-	"import java.util.Date;\n"+
-	"//建议重写hashCode，equals方法\n"+
-	"@Entity\n" + 
-	"@Table(name=\"%2$s\")\n"+
-	"public class %3$s implements Serializable{\n" + 
-	"	private static final long serialVersionUID = 1L;\n" + 
-	"	%4$s\n"
-	+ "    }\n";
-	String idInfo="@Id\n"
-			+ "//@GeneratedValue(strategy=GenerationType.SEQUENCE)\n";
-	String varTemplate="@Column(name=\"%1$s\")\n"
-			+ "private %2$s %3$s;\n";
-	String methodTemplate=
-			"   public %1$s get%3$s() {\n" + 
-			"		return %2$s;\n" + 
-			"	}\n" + 
-			"	public void set%3$s(%1$s %2$s) {\n" + 
-			"		this.%2$s = %2$s;\n" + 
-			"	}\n";
+	public static class H2Provider implements SqlProvider{
+		private static final String IDS_TMP="select column_name COL,1 ISPRI "+
+				"from  INFORMATION_SCHEMA.KEY_COLUMN_USAGE where table_name='%1$s'";
+		private static final String COL_TMP="select  column_name COL,type_name TYPE,'' COMMENT "+
+				"from information_schema.columns where table_name='%1$s'";
+		
+		@Override
+		public String getIdsSql(String tableName) {
+			return String.format(IDS_TMP, tableName.toUpperCase());
+		}
+		@Override
+		public String getColumnInfoSql(String tableName) {
+			return String.format(COL_TMP, tableName.toUpperCase());
+		}
+		
+	}
+	public static class OracleProvider implements SqlProvider{
+		private static final String IDS_TMP="select cu.column_name COL ,case cu.constraint_name when 'PK_%1$s' then 1 else 0 end ISPRI from user_cons_columns cu, "
+				+ "user_constraints au where cu.constraint_name = au.constraint_name and au.constraint_type = 'P' and au.table_name = '%1$s' ";
+		private static final String COL_TMP="select t.COLUMN_NAME COL,t.data_type TYPE,c.COMMENTS COMMENT from user_tab_columns t,user_col_comments c "
+				+ "where t.table_name = c.table_name and t.column_name = c.column_name and t.table_name = '%1$s'";
+		
+		@Override
+		public String getIdsSql(String tableName) {
+			return String.format(IDS_TMP, tableName.toUpperCase());
+		}
+		@Override
+		public String getColumnInfoSql(String tableName) {
+			return String.format(COL_TMP, tableName.toUpperCase());
+		}
+		
+	}
 }

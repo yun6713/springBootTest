@@ -242,9 +242,12 @@ public class FileUtils {
 	 * @return
 	 */
 	public static String getJavaPath(Class<?> clazz,boolean classpath) {		
+		return getJavaPath(clazz.getPackage().getName(),classpath);
+	}
+	public static String getJavaPath(String pkgName,boolean classpath) {		
 		return classpath?String.format("%1$s%2$s", PROJECT_PATH,RESOURCE_PRE)
 				:String.format("%1$s%2$s%3$s%4$s", PROJECT_PATH,JAVA_PRE,
-						clazz.getPackage().getName().replaceAll("\\.", Matcher.quoteReplacement(File.separator)),File.separator);
+						pkgName.replaceAll("\\.", Matcher.quoteReplacement(File.separator)),File.separator);
 	}
 	/**
 	 * 获取项目根路径
