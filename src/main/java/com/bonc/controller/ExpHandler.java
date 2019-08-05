@@ -21,6 +21,7 @@ public class ExpHandler {
 			reason="")
 	@ResponseBody
 	public String handleException(HttpServletRequest req,HttpServletResponse resp,Exception exp) {
+		exp.printStackTrace();
 		LOG.error(exp.getMessage());
 		return exp.getMessage();
 	}

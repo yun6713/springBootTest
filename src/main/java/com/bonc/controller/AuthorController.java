@@ -38,6 +38,7 @@ public class AuthorController {
 	public String test1() {
 		return "author2 success";
 	}
+	@PreAuthorize(value = "hasPermission('db')")
 	@RequestMapping("/author3")
 	public String test2() {
 		User user = getAuthUser();
