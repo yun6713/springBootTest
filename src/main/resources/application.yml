@@ -17,8 +17,8 @@ spring:
     favicon:
       enabled: false
   security:
-    oauth: true #启用oauth
-    enabled: false #是否拦截请求
+    oauth: false #启用oauth
+    enabled: true #是否拦截请求
     user:
       name: user
       password: user
@@ -48,7 +48,7 @@ spring:
     open-in-view: true #默认true，EntityManager在request期间绑定thread，防止懒加载错误
     show-sql: true    
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -78,3 +78,4 @@ spring:
       timeBetweenEvictionRunsMillis: 60000
       useGlobalDataSourceStat: true
       validationQuery: SELECT 'x'
+      db-type: H2

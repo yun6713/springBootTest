@@ -2,13 +2,14 @@ package com.bonc.security.springSecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -52,6 +53,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		}else {
 			http.authorizeRequests().anyRequest().permitAll();
 		}
+	}
+	@Bean
+	public GlobalMethodSecurityConfiguration  globalMethodSecurityConfiguration(PermissionEvaluatorImpl pei) {
+		return new GlobalMethodSecurityConfiguration() {
+
+    	    protected MethodSecurityExpressionHandler createExpressionHandler() {
+    	        System.out.println("MethodSecurityConfig.createExpressionHandler");
+    	        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+    	        expressionHandler.setPermissionEvaluator(pei);
+    	        return expressionHandler;
+    	    }
+
+    	};
 	}
 	/**
 	 * 配置本地验证服务，UserDetailsService

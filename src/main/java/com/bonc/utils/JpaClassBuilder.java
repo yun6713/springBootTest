@@ -90,66 +90,8 @@ public class JpaClassBuilder {
 				ResultSet cols = conn.createStatement().executeQuery(sp.getColumnInfoSql("user"));
 				ResultSet ids = conn.createStatement().executeQuery(sp.getIdsSql("user"));
 	    ){
-			handleCols(cols);
-			handleIds(ids);
-		}
-	}
-	private void handleIds(ResultSet ids) throws SQLException {
-		idCol=new ArrayList<String>();
-		while(ids.next()){
-			String isPri=ids.getString("ISPRI");
-			if(isPri!=null&&Integer.valueOf(isPri)==1){
-				idCol.add(ids.getString("COL"));
-			}
-		}
-		
-	}
-	//处理结果集，设置类构建参数
-	private void handleCols(ResultSet rs) throws Exception{
-		colField=new HashMap<String,String>();
-		while(rs.next()){
-			String colName=rs.getString("COL");
-			String type=rs.getString("TYPE");
-			String comment=Optional.ofNullable(rs.getString("COMMENT")).orElse("");
-			colField.put(colName, ","+db2Java(type)+","+comment);
-		}
-	}
-	//数据库类型to java类型
-	private String db2Java(String dbType){
-		String javaType="String";
-		if(dbType==null) return javaType;
-		dbType=dbType.trim().toUpperCase().split("[\\s\\(]")[0];
-		switch(dbType){
-		case "CHAR":
-			return "char";
-		case "BIT":
-			return "boolean";
-		case "TINYINT":
-			return "Byte";
-		case "SMALLINT":
-			return "Short";
-		case "INTEGER":
-			return "Integer";
-		case "BIGINT":
-			return ",Long";
-		case "FLOAT":
-			return "Float";
-		case "DOUBLE":
-			return "Double";
-		case "NUMERIC":
-			return "BigDecimal";
-		case "DATE":
-			return "DATE";
-		case "TIME":
-			return "TIME";//后期转Date
-		case "TIMESTAMP":
-			return "TIMESTAMP";//后期转Date
-		case "BLOB":
-			return "BLOB";//后期转byte[]
-		case "CLOB":
-			return "CLOB";//后期转String
-		default:
-			return javaType;
+			colField=sp.handleCols(cols);
+			idCol=sp.handleIds(ids);
 		}
 	}
 	//构建类
@@ -204,28 +146,11 @@ public class JpaClassBuilder {
 	 * @return
 	 */
 	private String varStr(String col,String field) {
-		//拼接特殊注解
-		String temp="";
 		String[] strs=parse(field);
-		switch(strs[0]){
-		case"DATE":
-			temp="@Temporal((TemporalType.DATE))\n";
-			break;
-		case"TIME":
-			temp="@Temporal((TemporalType.TIME))\n";
-			break;
-		case"TIMESTAMP":
-			temp="@Temporal((TemporalType.TIMESTAMP))\n";
-			break;
-		case"BLOB":
-		case"CLOB":
-			temp="@Lob\n";
-			break;
-		}
-		return temp+String.format(Constant.varTemplate,col,getActualType(strs[0]),strs[1],strs[2]);
+		return getTypeAnnotation(strs[0])+String.format(Constant.varTemplate,col,getActualType(strs[0]),strs[1],strs[2]);
 	}
 	/**
-	 * 按逗号分隔，解析出变量名、变量类型,变量描述
+	 * 按逗号分隔，解析出变量类型、变量名、变量描述
 	 * @param str
 	 * @return [type,varName]
 	 */
@@ -241,6 +166,28 @@ public class JpaClassBuilder {
 			varName=str;
 		}
 		return new String[] {type,varName,comment};
+	}
+	//拼接特殊注解
+	private String getTypeAnnotation(String type){
+		String temp="";
+		switch(type){
+		case"DATE":
+			temp="@Temporal((TemporalType.DATE))\n";
+			break;
+		case"TIME":
+			temp="@Temporal((TemporalType.TIME))\n";
+			break;
+		case"TIMESTAMP":
+			temp="@Temporal((TemporalType.TIMESTAMP))\n";
+			break;
+		case"BLOB":
+		case"CLOB":
+			temp="@Lob\n";
+			break;
+		default:
+			return temp;
+		}
+		return Constant.indent+temp;
 	}
 	private String getActualType(String type){
 		switch(type){
@@ -268,6 +215,7 @@ public class JpaClassBuilder {
 		return String.format(Constant.methodTemplate,getActualType(strs[0]),strs[1],upperVarName);
 	}
 	public static class Constant{
+		public static final String indent="\t";
 		public static final String classTemplate=
 				"package %1$s;\n" + 
 				"\n" + 
@@ -289,20 +237,20 @@ public class JpaClassBuilder {
 				"@Entity\n" + 
 				"@Table(name=\"%2$s\")\n"+
 				"public class %3$s implements Serializable{\n" + 
-				"	private static final long serialVersionUID = 1L;\n" + 
-				"	%4$s\n"
-				+ "    }\n";
-		public static final String idInfo="@Id\n"
-						+ "//@GeneratedValue(strategy=GenerationType.SEQUENCE)\n";
-		public static final String varTemplate="@Column(name=\"%1$s\")//%4$s\n"
-						+ "private %2$s %3$s;\n";
+				indent+"private static final long serialVersionUID = 1L;\n" + 
+				"%4$s\n"
+				+ "}\n";
+		public static final String idInfo=indent+"@Id\n"
+						+ indent+"//@GeneratedValue(strategy=GenerationType.SEQUENCE)\n";
+		public static final String varTemplate=indent+"@Column(name=\"%1$s\")//%4$s\n"
+						+ indent+"private %2$s %3$s;\n";
 		public static final String methodTemplate=
-						"   public %1$s get%3$s() {\n" + 
-						"		return %2$s;\n" + 
-						"	}\n" + 
-						"	public void set%3$s(%1$s %2$s) {\n" + 
-						"		this.%2$s = %2$s;\n" + 
-						"	}\n";
+				indent+"public %1$s get%3$s() {\n" + 
+						indent+indent+"return %2$s;\n" + 
+						indent+"}\n" + 
+						indent+"public void set%3$s(%1$s %2$s) {\n" + 
+						indent+indent+"this.%2$s = %2$s;\n" + 
+						indent+"}\n";
 	}
 	/**
 	 * 提供查询主键、表列的sql
@@ -322,6 +270,77 @@ public class JpaClassBuilder {
 		 * @return
 		 */
 		String getColumnInfoSql(String tableName);
+		/**
+		 * 处理ids结果集，返回主键列表
+		 * @param cols
+		 * @return
+		 * @throws Exception
+		 */
+		default List<String> handleIds(ResultSet ids) throws SQLException {
+			List<String> idCol=new ArrayList<String>();
+			while(ids.next()){
+				String isPri=ids.getString("ISPRI");
+				if(isPri!=null&&Integer.valueOf(isPri)==1){
+					idCol.add(ids.getString("COL"));
+				}
+			}
+			return idCol;
+		}
+		/**
+		 * 处理cols结果集，返回列类构建参数
+		 * @param cols
+		 * @return
+		 * @throws Exception
+		 */
+		default Map<String, String> handleCols(ResultSet cols) throws Exception{
+			Map<String,String> colField=new HashMap<String,String>();
+			while(cols.next()){
+				String colName=cols.getString("COL");
+				String type=cols.getString("TYPE");
+				String comment=Optional.ofNullable(cols.getString("COMMENT")).orElse("");
+				colField.put(colName, ","+db2Java(type)+","+comment);
+			}
+			return colField;
+		}
+
+		//数据库类型to java类型
+		default String db2Java(String dbType){
+			String javaType="String";
+			if(dbType==null) return javaType;
+			dbType=dbType.trim().toUpperCase().split("[\\s\\(]")[0];
+			switch(dbType){
+			case "CHAR":
+				return "char";
+			case "BIT":
+				return "boolean";
+			case "TINYINT":
+				return "Byte";
+			case "SMALLINT":
+				return "Short";
+			case "INTEGER":
+				return "Integer";
+			case "BIGINT":
+				return ",Long";
+			case "FLOAT":
+				return "Float";
+			case "DOUBLE":
+				return "Double";
+			case "NUMERIC":
+				return "BigDecimal";
+			case "DATE":
+				return "DATE";
+			case "TIME":
+				return "TIME";//后期转Date
+			case "TIMESTAMP":
+				return "TIMESTAMP";//后期转Date
+			case "BLOB":
+				return "BLOB";//后期转byte[]
+			case "CLOB":
+				return "CLOB";//后期转String
+			default:
+				return javaType;
+			}
+		}
 	}
 	public static class MysqlProvider implements SqlProvider{
 		private static final String IDS_TMP="select column_name COL,case column_key when 'PRI' then 1 else 0 end ISPRI "+

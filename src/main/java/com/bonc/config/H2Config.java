@@ -1,6 +1,7 @@
 package com.bonc.config;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -15,8 +16,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 
+import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import com.alibaba.druid.wall.WallConfig;
+import com.alibaba.druid.wall.WallFilter;
 import com.bonc.utils.MapUtils;
 /**
  * 配置H2数据源，开启H2浏览器访问。
@@ -61,15 +65,35 @@ public class H2Config{
 	@Bean("h2DataSource")
 	@DependsOn("h2Server")
 	@Primary
-	@ConfigurationProperties(prefix="spring.datasource.first")
+//	@ConfigurationProperties(prefix="spring.datasource.first")
 	public DruidDataSource h2DataSource() {
-		return new DruidDataSource();
+		DruidDataSource dds = configDruidDataSource(firstDataSource(),druidConfig());
+		List<Filter> filters=dds.getProxyFilters();
+		filters.add(wallFilter());
+		return dds;
 //		return configDruidDataSource(firstDataSource(),druidConfig());
+	}
+	/**
+	 * 手动配置防火墙，防止不必要报错
+	 * @return
+	 */
+	@Bean
+	public WallFilter wallFilter() {
+		WallConfig config=new WallConfig();
+		config.setNoneBaseStatementAllow(true);//执行DDL		
+		WallFilter wall=new WallFilter();	
+		wall.setConfig(config);
+		//sql解析错误时处理策略，log.err输出，不抛异常
+		wall.setLogViolation(true);
+		wall.setThrowException(false);
+		return wall;
 	}
 	private DruidDataSource configDruidDataSource(Properties dbProps,Properties dsProps){
 		Properties p = new Properties();
-		dbProps.forEach((k,v)->{p.setProperty("druid."+k, Objects.toString(v));});
-		dsProps.forEach((k,v)->{p.setProperty("druid."+k, Objects.toString(v));});
+		if(dbProps!=null)
+			dbProps.forEach((k,v)->{p.setProperty("druid."+k, Objects.toString(v));});
+		if(dsProps!=null)
+			dsProps.forEach((k,v)->{p.setProperty("druid."+k, Objects.toString(v));});
 		DruidDataSource dds = DruidDataSourceBuilder.create().build();
 		dds.configFromPropety(p);
 		return dds;

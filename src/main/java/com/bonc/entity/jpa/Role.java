@@ -1,17 +1,24 @@
 package com.bonc.entity.jpa;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.domain.AfterDomainEventPublication;
 import org.springframework.data.domain.DomainEvents;
 
@@ -34,6 +41,11 @@ public class Role extends JpaAuditing implements Serializable{
 	private String roleName;
 	@Version//乐观锁，必须使用java.persistence.Version标记辅助字段
 	private Integer version;
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name="role_permission",joinColumns= {@JoinColumn(name="r_id")},
+			inverseJoinColumns= {@JoinColumn(name="p_id")})
+	@NotFound(action=NotFoundAction.IGNORE)
+	List<Permission> permissons=new ArrayList<>();
 	public Integer getrId() {
 		return rId;
 	}
@@ -52,6 +64,13 @@ public class Role extends JpaAuditing implements Serializable{
 	}
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+	
+	public List<Permission> getPermissons() {
+		return permissons;
+	}
+	public void setPermissons(List<Permission> permissons) {
+		this.permissons = permissons;
 	}
 	@Override
 	public int hashCode() {

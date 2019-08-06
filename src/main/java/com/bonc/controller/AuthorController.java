@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,27 +32,28 @@ public class AuthorController {
 	//基于角色
 	@Secured(value = { "ROLE_admin" })
 	@RequestMapping("/author1")
-	public String test() {
+	public String test1() {
 		return "author1 success";
 	}
 	//spEL，判定角色、操作权permission
-	@PreAuthorize(value = "hasRole('db')")
+	@PreAuthorize(value = "hasAnyRole('ROLE_db','ROLE_admin')")
 	@RequestMapping("/author2")
-	public String test1() {
+	public String test2() {
 		return "author2 success";
 	}
-	@PreAuthorize(value = "hasPermission('db')")
+	//按权限操作
+	@PreAuthorize(value = "hasPermission('targetObject','select')")
 	@RequestMapping("/author3")
-	public String test2() {
+	public String test3() {
 		User user = getAuthUser();
-		return "author2 success,"+user.getUsername();
+		return "author3 success,"+user.getUsername();
 	}
 	/**
 	 * 添加db角色权限
 	 * @return
 	 */
 	@RequestMapping("/addDb")
-	public String test3() {
+	public String addDb() {
 		Authentication auth = getAuthentication();
 		List<GrantedAuthority> list = new ArrayList<>(auth.getAuthorities());
 		list.add(new SimpleGrantedAuthority("ROLE_db"));
