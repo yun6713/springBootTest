@@ -35,33 +35,6 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator{
 		}				
 		return permissions.contains(permission);
 	}
-	public boolean hasPermission(Authentication authentication, Object permission) {
-		boolean accessable = false;
-		if(authentication.getPrincipal().toString().compareToIgnoreCase("anonymousUser") != 0){
-			String privilege = permission.toString();
-			for(GrantedAuthority authority : authentication.getAuthorities()){
-				if(privilege.equalsIgnoreCase(authority.getAuthority())){
-					accessable = true;
-					break;
-				}
-			}
-		}				
-		return accessable;
-	}
-	public boolean hasPermission( String permission) {
-		boolean accessable = false;
-//		if(authentication.getPrincipal().toString().compareToIgnoreCase("anonymousUser") != 0){
-//			String privilege = permission.toString();
-//			for(GrantedAuthority authority : authentication.getAuthorities()){
-//				if(privilege.equalsIgnoreCase(authority.getAuthority())){
-//					accessable = true;
-//					break;
-//				}
-//			}
-//		}				
-		return accessable;
-	}
-
 	@Override
 	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
 			Object permission) {
