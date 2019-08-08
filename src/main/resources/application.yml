@@ -12,6 +12,9 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     database-id: h2 
+logging:
+  level:
+    com.bonc: info
 spring:
   mvc:
     favicon:
