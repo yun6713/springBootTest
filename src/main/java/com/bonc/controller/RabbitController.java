@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bonc.config.RabbitConfig;
+
 @RestController
 public class RabbitController {
 	@Autowired
@@ -20,7 +22,7 @@ public class RabbitController {
 	}
 	@RequestMapping("/rabbit1")
 	public String test1() {
-		at.convertAndSend("exchang1", "queueq", "hello world");
+		at.convertAndSend(RabbitConfig.EXCHANGE,RabbitConfig.QUEUE, "hello world");
 		
 		return "success";
 	}

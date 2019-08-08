@@ -64,7 +64,7 @@ public class RabbitConfig {
 	public Binding binding() {
 		return BindingBuilder.bind(queue())
 				.to(exchange())
-				.with("queue1")
+				.with(QUEUE)
 				.noargs();
 	}
 	@RabbitHandler(isDefault=true)
@@ -72,7 +72,7 @@ public class RabbitConfig {
 		LoggerFactory.getLogger(RabbitConfig.class).info("Message:{}",obj);
 	}
 	@RabbitHandler(isDefault=false)
-	public void queue1andler(Object obj) {
-		LoggerFactory.getLogger(RabbitConfig.class).info("queue1 Message:{}",obj);
+	public void queue1andler(String info) {
+		LoggerFactory.getLogger(RabbitConfig.class).info("queue1 Message:{}",info);
 	}
 }
