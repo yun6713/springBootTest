@@ -16,6 +16,9 @@ logging:
   level:
     com.bonc: info
 spring:
+  rabbitmq:
+    username: full_access
+    password: s3crEt
   mvc:
     favicon:
       enabled: false

@@ -41,7 +41,7 @@ public class RabbitConfig {
 //		return ccf;
 //	}
 	@Bean(initMethod="afterPropertiesSet")
-	@Scope("SCOPE_PROTOTYPE")
+//	@Scope("SCOPE_PROTOTYPE")
 	@Primary
 	public AmqpTemplate amqpTemplate(ConnectionFactory cf) {
 		RabbitTemplate rt=new RabbitTemplate(cf);	
