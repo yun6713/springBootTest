@@ -19,6 +19,7 @@ public class RabbitController {
 	AmqpTemplate at;
 	@RequestMapping("/rabbit1")
 	public String test() {
+		at.convertAndSend("exchang1", "queueq", "hello world");
 		
 		return "success";
 	}

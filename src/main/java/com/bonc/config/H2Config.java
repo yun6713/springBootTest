@@ -31,7 +31,7 @@ import com.bonc.utils.MapUtils;
 @Configuration
 @ConditionalOnExpression("${h2.enabled:false}==true")
 public class H2Config{
-	@Bean//启动webServer
+	@Bean//启动webServer，spring.h2.console.*自动配置。
 	public ServletRegistrationBean<WebServlet> registH2WebServlet() {
 		ServletRegistrationBean<WebServlet> srb = new ServletRegistrationBean<>(new WebServlet());
 		srb.setInitParameters(new MapUtils.MapBuilder<String, String>()
