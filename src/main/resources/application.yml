@@ -19,6 +19,11 @@ spring:
   rabbitmq:
     username: full_access
     password: s3crEt
+    publisher-confirms: true
+    template:
+      retry:
+        enabled: true
+    
   mvc:
     favicon:
       enabled: false
