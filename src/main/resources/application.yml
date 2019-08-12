@@ -19,7 +19,10 @@ spring:
   rabbitmq:
     username: test
     password: test
-    virtual-host: /    
+    publisher-confirms: true
+    template:
+      retry:
+        enabled: true
   mvc:
     favicon:
       enabled: false
