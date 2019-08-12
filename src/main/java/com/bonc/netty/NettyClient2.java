@@ -16,9 +16,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import com.bonc.netty.NettyServer;
 
 public class NettyClient2 {
 	public static final String HOST = "localhost";
@@ -51,7 +51,7 @@ class HelloClientInitializer2 extends ChannelInitializer<SocketChannel>{
 
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
-		ChannelPipeline cp = ch.pipeline();
+		ChannelPipeline cp = ch.pipeline();HttpRequestEncoder h;
 		cp.addLast("frame", new DelimiterBasedFrameDecoder(8192,Delimiters.lineDelimiter()));
 		cp.addLast("decoder",new StringDecoder());
 		cp.addLast("encoder",new StringEncoder());
