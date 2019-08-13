@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 public class MvcConfig extends WebMvcConfigurationSupport {
 	@Override
 	protected void addViewControllers(ViewControllerRegistry registry) {
-		registry.addRedirectViewController("/", "/test1");
+//		registry.addRedirectViewController("/", "/test1");
 	}
 
 	@Override

@@ -6,16 +6,39 @@ h2:
   serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
 #debug: true
 server:
-  port: 8081
+  port: 8080
 mybatis:
   #mapper-locations: classpath:mapper/user/UserOperation.xml
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
-    database-id: h2 
+    database-id: h2
+management:
+  cloudfoundry:
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    enabled-by-default: true        
+  endpoint:    
+    shutdown:
+      enabled: true
+    loggers:
+      enabled: true
 logging:
   level:
     com.bonc: info
 spring:
+  boot:
+    admin:
+      client:
+        url: "http://localhost:9998"
+  h2:
+    console: #h2浏览器监控界面
+      enabled: true
+      path: /h2console
+      settings:
+        web-allow-others: true #远程访问
   rabbitmq:
     username: test
     password: test
@@ -23,6 +46,10 @@ spring:
     template:
       retry:
         enabled: true
+  jmx:
+    default-domain: jmxmp
+    enabled: true  
+  
   mvc:
     favicon:
       enabled: false
@@ -43,12 +70,12 @@ spring:
       repositories:
         enabled: true
   redis:
-    sentinel:
-      master: abc #master名称
-      nodes: #哨兵节点，host:port,
-    cluster:
-      max-redirects: 3
-      nodes: #集群节点，host:port,
+#    sentinel:
+#      master: abc #master名称
+#      nodes: #哨兵节点，host:port,
+#    cluster:
+#      max-redirects: 3
+#      nodes: #集群节点，host:port,
     host: localhost
     port: 6379
     lettuce:
