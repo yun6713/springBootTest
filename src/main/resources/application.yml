@@ -89,3 +89,11 @@ spring:
       useGlobalDataSourceStat: true
       validationQuery: SELECT 'x'
       db-type: H2
+#httppool
+http-pool:
+    connect-timeout: 5000
+    connection-request-timeout: 1000
+    default-max-per-route: 100
+    max-total: 200
+    socket-timeout: 65000
+    validate-after-inactivity: 2000
