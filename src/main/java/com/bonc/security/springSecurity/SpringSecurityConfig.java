@@ -2,6 +2,7 @@ package com.bonc.security.springSecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -40,18 +41,25 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.headers().frameOptions().disable();
 		//开启验证
 		if(Boolean.valueOf(enable)) {
-			http
+ 			http.httpBasic()//开启http basic登录
+				.and()//endpoint安全配置，要求必须为admin角色
+				.requestMatcher(EndpointRequest.toAnyEndpoint())
+				.authorizeRequests()
+				.anyRequest().permitAll()//.hasRole("admin")
+				.and()//controller安全配置
 				.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers("/test","/h2console/*","/oauth/*","/druid/*").permitAll()
+				.antMatchers("/test","/h2console/*","/oauth/*","/druid/*")
+				.permitAll()
 				.anyRequest().authenticated()
-				.and()
+				.and()//自动构建登录界面，允许所有访问
 				.formLogin().permitAll().defaultSuccessUrl("/test2") //loginPage()用于指定自定义的多路页面路径
-				.and()
+				.and()//登出，清除JSESSIONID
 				.logout().permitAll().deleteCookies("JSESSIONID");
 		}else {
-			http.authorizeRequests().anyRequest().permitAll();
+			http.authorizeRequests().anyRequest().permitAll()
+				.and().csrf().disable();
 		}
 	}
 	@Bean

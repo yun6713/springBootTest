@@ -1,7 +1,10 @@
 package com.bonc;
 
+import javax.management.MBeanServer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -16,7 +19,8 @@ public class PathPrintCommandRunner implements CommandLineRunner{
 	private final static Logger LOG = LoggerFactory.getLogger(PathPrintCommandRunner.class);
 	@Value("${server.address:localhost}:${server.port:8080}/${server.servlet.context-path:}")
 	String addr;
-	
+	@Autowired
+	MBeanServer mbs;
 	@Override
 	public void run(String... args) throws Exception {
 		//输出项目路径

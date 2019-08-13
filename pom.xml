@@ -20,6 +20,7 @@
     	<log4j.version>1.2.17</log4j.version>
     	<poi.version>3.15</poi.version>
     	<slf4j2-log.scope>provided</slf4j2-log.scope>
+    	<springboot.version>2.1.5</springboot.version>
 	</properties>
 
 	<dependencies>
@@ -183,6 +184,10 @@
 			</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
@@ -222,6 +227,11 @@
 		    <artifactId>spring-security-oauth2</artifactId>
 		    <version>2.3.6.RELEASE</version>
 		</dependency>
+		<dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${springboot.version}</version>
+        </dependency>
 		<!-- 版本必须一致 -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -250,6 +260,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
 			</plugin>
 		    <plugin>
 		      <groupId>com.mysema.maven</groupId>

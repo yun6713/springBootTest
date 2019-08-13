@@ -54,7 +54,7 @@ import io.lettuce.core.ReadFrom;
 	)
 public class RedisConfig {
 //	环境配置
-	@Value("${spring.redis.host:localhost}")String host;
+	/*@Value("${spring.redis.host:localhost}")String host;
 	@Value("${spring.redis.port:6379}")int port;
 	@Value("${spring.redis.password:#{T(org.springframework.data.redis.connection.RedisPassword).none()}}")String password;
 	@Value("${spring.redis.database:0}")int database;
@@ -66,8 +66,8 @@ public class RedisConfig {
 		rsc.setPassword(password);
 		rsc.setDatabase(database);
 		return rsc;
-	}
-	@Value("${spring.redis.sentinel.master:}")String master;
+	}*/
+	/*@Value("${spring.redis.sentinel.master:}")String master;
 	@Value("${spring.redis.sentinel.nodes:}")String nodes;
 	@Bean
 	@ConditionalOnExpression("\"${spring.redis.sentinel.nodes:}\"!=\"\"")
@@ -130,17 +130,17 @@ public class RedisConfig {
 				.usePooling()//使用连接池
 				.poolConfig(jedisPoolConfig())
 				.build();
-	}
+	}*/
 	/**
 	 * 实现类：JedisConnectionFactory、LettuceConnectionFactory
 	 * springboot1.x用jedis，springboot2.x用lettuce
 	 * 传入配置RedisConfiguration、LettuceClientConfiguration
 	 * @return
 	 */
-	@Bean
+	/*@Bean
 	public RedisConnectionFactory redisConnectionFactory(){
-		return new LettuceConnectionFactory(standaloneConfiguration(),lettuceClientConfiguration());		
-	}
+		return new LettuceConnectionFactory(standaloneConfiguration());		
+	}*/
 //	@Bean
 //	public RedisConnectionFactory jedisConnectionFactory(){
 //		return new JedisConnectionFactory(standaloneConfiguration(),jedisClientConfiguration());		
