@@ -41,6 +41,12 @@ public class Application{
 			log.error("Start spring boot admin server failed, cause:{}", e.getMessage());
 			e.printStackTrace();
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			@Override
+			public void run() {
+				System.out.println("i want to everyday");
+			}
+		});
         System.setProperty("es.set.netty.runtime.available.processors","false");
         SpringApplication.run(Application.class, args);
 	}
