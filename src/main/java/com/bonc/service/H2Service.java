@@ -6,6 +6,7 @@ import com.bonc.entity.jpa.User;
 public interface H2Service {
 	User saveUser(User user,boolean encrypt);
 	User findUserById(Integer id);
+	User findUserByUsername(String username);
 	void deleteUserById(Integer id);
 	
 	Role saveRole(Role role);

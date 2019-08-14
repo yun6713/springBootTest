@@ -3,6 +3,8 @@ package com.bonc.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -45,5 +47,10 @@ public class CommonTest3 {
 //		String content=FileUtils.file2String("E:\\项目资料\\陕西经分\\sql4es使用说明文档.docx");
 //		content = content.replaceAll("\r\n", "<p>\r\n")+"<p>";
 		System.out.println(FileUtils.readPoi(new File(path)));
+	}
+	@Test
+	public void testProcess() throws Exception {
+		Process process=Runtime.getRuntime().exec("java -jar D:\\eclipse-workspace\\springboot01-3\\target\\springcloud01-0.0.1-SNAPSHOT.jar");
+		System.out.println(process.isAlive());
 	}
 }

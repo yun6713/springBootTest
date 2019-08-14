@@ -6,6 +6,8 @@ import javax.persistence.Embeddable;
 
 import org.hibernate.annotations.Parent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 复用，或构建多列id。
  * @Parent引用父级。
@@ -23,7 +25,8 @@ public class Address implements Serializable{
 	private String addr;
 	private String zipCode;
 	@Parent//引用父级
-	private User user;
+	@JsonIgnore//必须忽略，否则json序列化循环引用，报错
+	private transient User user;//循环引用，增加transient修饰
 //	public String getId() {
 //		return id;
 //	}

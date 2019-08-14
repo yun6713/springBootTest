@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>简单监控界面</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="./jsoneditor.min.css" rel="stylesheet"/>
+	<script src="./jsoneditor.min.js"></script>
+	<script src="./jquery.min.js"></script>
+</head>
+<body>
+   <div id="outerContainer">
+   	<p><a href="https://c.runoob.com/front-end/53" target="_blank">JSON在线解析</a></p>
+   	<div>
+   		<input type="url" id="url" style="width: 50%;" value="http://localhost:8080/actuator"/>
+   		<input type="button" id="changeBtn" value="查询"/>
+   	</div>
+	<div>
+   		<input type="text" id="jsonInfo" style="width: 50%;" placeholder="请输入待解析的json信息，必须为json对象"/>
+   		<input type="button" id="jsonBtn" value="解析"/>
+   	</div>
+	<div id="jsoneditor" style="height: 600px;"></div>
+   </div>
+<script>
+var URL=$("#url").val();
+// create the editor
+var container = document.getElementById('jsoneditor');
+var optionsOutput = {
+	mode : 'tree',
+	//modes : [ 'view', 'form', 'text','code', 'tree'], // allowed modes
+	onError : function(err) {
+		alert('EF1 ->' + err.toString());
+	}
+};
+var editor = new JSONEditor(container, optionsOutput, {"note1":"现查询地址为默认地址，按实际情况修改",
+	"note2":"点击查询按钮，查询数据","note3":"解析输入的内容必须为json对象",
+	"note4":"右上角输入框，可检索","note5":"按住ctrl，点击链接；会新打开页面访问"});
+$("#changeBtn").click(function changeUrl(){
+	URL=$("#url").val();
+	search();
+});
+$("#jsonBtn").click(function changeUrl(){
+	show(JSON.parse($("#jsonInfo").val()));
+});
+function search(){
+	$.ajax({
+		url:URL,
+		async:true,
+		dataType:"json",
+		username:"a",//basic验证
+		password:"b",
+		success:function(info){	
+			show(info);
+		},
+		error:function(xhr,msg,excp){
+			console.log(xhr,msg,excp);
+			alert("Error!");
+		}
+	});
+};
+function show(info){
+	console.log(info);		
+	if(editor){
+		//更新editor内容
+		editor.setText(JSON.stringify(info, null, 2));
+		editor.setMode("tree");
+	}else{//新建
+		editor = new JSONEditor(container, optionsOutput, info);
+	}
+	editor.expandAll();
+}
+</script>
+
+</body>
+</html>

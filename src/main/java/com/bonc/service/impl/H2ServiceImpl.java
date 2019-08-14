@@ -3,7 +3,10 @@ package com.bonc.service.impl;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +27,12 @@ public class H2ServiceImpl implements H2Service{
 	UserOperation uo;
 	@Autowired
 	EntityManager entityManager;
+	Cache redisCache;
 	@Autowired
 	PasswordEncoder pe;
+	public H2ServiceImpl(@Qualifier("redisCacheManager")RedisCacheManager rcm) {
+		redisCache=rcm.getCache("user");
+	}
 	@Override
 	public User saveUser(User user,boolean encrypt) {
 		if(user.getuId()==null&&ur.findByUsername(user.getUsername())!=null)
@@ -44,6 +51,18 @@ public class H2ServiceImpl implements H2Service{
 //		users = ur.selectUsers();
 		User u=ur.findByUId(id);
 		return u;
+	}
+	@Override
+	@Cacheable(cacheManager="cacheManager",cacheNames="data")
+	public User findUserByUsername(String username) {		
+		User user;
+		if(redisCache.get(username)!=null) {
+			user= (User) redisCache.get(username).get();
+		}else {
+			user=ur.findByUsername(username);
+			redisCache.putIfAbsent(username, user);
+		}
+		return ur.findByUsername(username);
 	}
 	@Override
 	public void deleteUserById(Integer id) {
