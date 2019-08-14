@@ -32,6 +32,11 @@ spring:
   boot:
     admin:
       client:
+        instance:
+          metadata:
+            user: 
+              name: a
+              password: b
         url: "http://localhost:9998"
   h2:
     console: #h2浏览器监控界面
