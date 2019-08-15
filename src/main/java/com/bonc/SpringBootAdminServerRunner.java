@@ -28,9 +28,11 @@ public class SpringBootAdminServerRunner implements CommandLineRunner{
 	private final static Logger LOG = LoggerFactory.getLogger(SpringBootAdminServerRunner.class);
 	@Value("${spring.boot.admin.server.start-command:}")
 	String command;
+	@Value("${spring.boot.admin.server.pid-command:}")
+	String pidCommand;
 	@Override
 	public void run(String... args) throws Exception {
-		//TODO 关闭之前启动的server
+		stopPreProcess();//可能会误关闭其他占用指定端口的进程，慎用
 		start();
 	}
 	private void start() {
@@ -40,6 +42,29 @@ public class SpringBootAdminServerRunner implements CommandLineRunner{
 		} catch (IOException e) {
 			LOG.error("Start spring boot admin server failed, cause:{}", e.getMessage());
 			e.printStackTrace();
+		}
+	}
+	//关闭占用端口的进程;可能会误关闭其他占用指定端口的进程，慎用
+	private void stopPreProcess() throws IOException {
+		//找到pid
+		if(pidCommand==null||"".equals(pidCommand.trim()))
+			return;
+		String[] cmds= {"cmd.exe","/c",pidCommand};
+		Process process=Runtime.getRuntime().exec(cmds);
+		byte[] b=new byte[8*1024];
+		process.getInputStream().read(b);
+		process.destroy();
+		String str=new String(b);
+		String[] strs=str.split("\r\n");
+		for (int i = 0; i < strs.length; i++) {
+			String[] temp=strs[i].split("\\s+");
+			if(!temp[temp.length-1].equals("0")){
+				//按pid关闭
+				cmds[2]="taskkill /F /PID "+temp[temp.length-1];
+				process=Runtime.getRuntime().exec(cmds);
+				process.destroy();
+				break;
+			}
 		}
 	}
 	@RequestMapping("/stopSpringbootAdminServer")

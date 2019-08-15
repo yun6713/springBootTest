@@ -1,17 +1,10 @@
 package com.bonc.test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.Test;
 
 import com.bonc.utils.FileUtils;
@@ -50,7 +43,24 @@ public class CommonTest3 {
 	}
 	@Test
 	public void testProcess() throws Exception {
-		Process process=Runtime.getRuntime().exec("java -jar D:\\eclipse-workspace\\springboot01-3\\target\\springcloud01-0.0.1-SNAPSHOT.jar");
-		System.out.println(process.isAlive());
+		String command="netstat -ano|findstr /r /c:\"9998 *\\[\"";
+		Process process=Runtime.getRuntime().exec(new String[]{"cmd.exe","/c",command});
+		byte[] b=new byte[8*1024];
+		process.getInputStream().read(b);
+		String str=new String(b);
+		String[] strs=str.split("\r\n");
+		String result="";
+		for (int i = 0; i < strs.length; i++) {
+			String[] temp=strs[i].split("\\s+");
+			if(!temp[temp.length-1].equals("0")){
+				result=temp[temp.length-1];
+				break;
+			}
+		}
+		System.out.println(result);
+	}
+	@Test
+	public void testClass() {
+		System.out.println(Object.class.isInstance(CommonTest3.class));
 	}
 }
