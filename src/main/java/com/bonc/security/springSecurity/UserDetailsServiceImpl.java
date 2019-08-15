@@ -6,15 +6,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.bonc.entity.jpa.User;
-import com.bonc.repository.jpa.UserRepository;
+import com.bonc.service.H2Service;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
-	UserRepository ur;
+	H2Service hs;
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return new UserDetailsImpl(ur.findByUsername(username));
+		return new UserDetailsImpl(hs.findUserByUsername(username));
 	}
 
 }

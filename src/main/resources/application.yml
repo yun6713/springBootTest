@@ -31,7 +31,15 @@ logging:
 spring:
   boot:
     admin:
+      #server jar包启动命令，通过Runtime启动
+      server.start-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
+      server.stop-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
       client:
+        instance:
+          metadata:
+            user: 
+              name: a
+              password: b
         url: "http://localhost:9998"
   h2:
     console: #h2浏览器监控界面

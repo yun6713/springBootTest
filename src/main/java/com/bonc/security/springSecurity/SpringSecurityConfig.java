@@ -42,10 +42,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		//开启验证
 		if(Boolean.valueOf(enable)) {
  			http.httpBasic()//开启http basic登录
-				.and()//endpoint安全配置，要求必须为admin角色
-				.requestMatcher(EndpointRequest.toAnyEndpoint())
-				.authorizeRequests()
-				.anyRequest().permitAll()//.hasRole("admin")
+//				.and()//endpoint安全配置，要求必须为admin角色
+//				.requestMatcher(EndpointRequest.toAnyEndpoint())
+//				.authorizeRequests()
+//				.anyRequest().permitAll()//.hasRole("admin")
 				.and()//controller安全配置
 				.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)

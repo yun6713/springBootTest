@@ -154,7 +154,7 @@ public class RedisConfig {
 	public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
 		RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
-
+		
         redisTemplate.setValueSerializer(jsonSerializer());
         //使用StringRedisSerializer来序列化和反序列化redis的key值
         redisTemplate.setKeySerializer(new StringRedisSerializer(StandardCharsets.UTF_8));
