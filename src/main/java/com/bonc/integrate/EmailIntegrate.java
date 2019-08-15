@@ -1,5 +1,7 @@
 package com.bonc.integrate;
 
+import java.io.FileNotFoundException;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -10,6 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +26,7 @@ public class EmailIntegrate {
 	@Value("${spring.mail.from:}")
 	String from;
 	@RequestMapping("/email/{content}")
-	public String sendSimpleEmail(@PathVariable String content) throws MessagingException {
+	public String sendSimpleEmail(@PathVariable String content) throws MessagingException, FileNotFoundException {
 		if(!StringUtils.hasText(from))
 			return "from is null";
 		sendSimpleEmail(content,"1052023708@qq.com");
@@ -38,7 +41,7 @@ public class EmailIntegrate {
 		jms.send(sm);
 	}
 
-	public void sendEmail() throws MessagingException {
+	public void sendEmail() throws MessagingException, FileNotFoundException {
 		MimeMessage message=jms.createMimeMessage();
 		message.setFrom(from);
 		// use the true flag to indicate you need a multipart message
@@ -51,7 +54,7 @@ public class EmailIntegrate {
 		// let's include the infamous windows Sample file (this time copied to c:/)
 		ClassPathResource cpr = new ClassPathResource("application.yml");
 		helper.addInline("identifier1234", cpr);
-		
+		helper.addAttachment("config", ResourceUtils.getFile("classpath:application.yml"));
 		jms.send(message);
 	}
 }
