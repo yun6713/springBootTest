@@ -7,9 +7,15 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyOverrideConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.boot.env.PropertySourceLoader;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertyResolver;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 /**
  * 操作bean Configuration metadata<br/>
  * 获取bean操作会跳过BeanPostProcessor<br/>
@@ -25,7 +31,19 @@ public class BeanFactoryHandler implements BeanFactoryPostProcessor {
 	PropertyOverrideConfigurer b;
 	EnvironmentPostProcessor e;
 	AutowiredAnnotationBeanPostProcessor f;
+	PropertyResolver f2;
 	Environment g;
+	ConfigurableEnvironment h;
+	PropertySource i;
+	PropertySources j;
+	PropertySourceLoader k;
+	
+	
+	
+	ObjectUtils o;
+	
+	
+	
 	
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
