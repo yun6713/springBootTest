@@ -2,11 +2,11 @@ package com.bonc.test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.springframework.expression.spel.standard.SpelExpression;
 
 import com.bonc.utils.FileUtils;
 import com.bonc.utils.StringUtils;
@@ -63,10 +63,7 @@ public class CommonTest3 {
 	@Test
 	public void testClass() {
 		System.out.println(Object.class.isInstance(CommonTest3.class));
-	}
-	@Test
-	public void testSpel() {
-		SpelExpression spel=new SpelExpression("1+1",null,null);
-		System.out.println(spel.getValue());
+		System.out.println(Arrays.toString(new Class[] {CommonTest3.class,CommonTest3.class}));
+		
 	}
 }

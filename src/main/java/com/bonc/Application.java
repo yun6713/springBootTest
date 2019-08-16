@@ -31,13 +31,13 @@ public class Application{
 	public static void main(String[] args) {
 		// 设置环境变量，解决Es的netty与Netty服务本身不兼容问题
 		System.setProperty("es.set.netty.runtime.available.processors","false");
-        SpringApplication.run(Application.class, args);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
 				System.out.println("lalalalalala");
 			}
 		});
+		SpringApplication.run(Application.class, args);
 	}
 	/**
 	 * 配置异步执行线程池TaskExecutor。

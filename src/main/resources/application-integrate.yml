@@ -1,0 +1,47 @@
+#不再增删配置项的配置
+h2:
+  enabled: true
+  enableAppServer: true #使用应用h2数据库
+  data-path: classpath:data/data #entity
+  relation-path: classpath:data/relation #关联表
+  serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
+jasypt: #jasypt加密
+  encryptor:
+    password: helloworld #密码盐
+management:
+  cloudfoundry:
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    enabled-by-default: true        
+  endpoint:    
+    shutdown:
+      enabled: true
+    loggers:
+      enabled: true
+spring:
+  mail:
+    host: mail.bonc.com.cn
+    username: ENC(4EeDDgC+TkUFFOvzvrcQQlTW7l63nXbj)
+    password: ENC(GgGXGupv5WHdbmyYrO07DMl+myfDV3ew)
+    from: ENC(Obl+8eDsle8eeU3Lps/76xKxBKash/1VD1Apez2YRQs=)
+  boot:
+    admin:
+      #server jar包启动命令，通过Runtime启动
+      server.start-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
+      server.pid-command: "netstat -ano|findstr /r /c:\"9998 *\\[\""
+      client:
+        instance:
+          metadata:
+            user: 
+              name: ENC(WLfNsRLhoszYVb3Cyv+0Qg==)
+              password: ENC(JTVHN3UHf2UVZt8Kc2IdtQ==)
+        url: "http://localhost:9998"
+  h2:
+    console: #h2浏览器监控界面
+      enabled: true
+      path: /h2console
+      settings:
+        web-allow-others: true #远程访问

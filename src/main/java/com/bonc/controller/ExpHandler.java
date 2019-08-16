@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,15 +15,14 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import com.alibaba.fastjson.JSON;
-import com.bonc.H2InitCommandRunner;
+import com.bonc.utils.HttpUtils;
 
 @RestControllerAdvice
 public class ExpHandler implements ResponseBodyAdvice<Object>{
-	private final static Logger LOG = LoggerFactory.getLogger(H2InitCommandRunner.class);
+	private final static Logger LOG = LoggerFactory.getLogger(ExpHandler.class);
 	@ExceptionHandler({Exception.class})
 	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR,
 			reason="")
@@ -33,8 +33,12 @@ public class ExpHandler implements ResponseBodyAdvice<Object>{
 	}
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		
-		return true;
+		HttpServletRequest req=HttpUtils.getRequest();
+		boolean flag=EndpointRequest.toAnyEndpoint().matches(req);
+		if(flag && LOG.isDebugEnabled()) {
+			LOG.debug("request url:{}",req.getRequestURL().toString());
+		}
+		return !flag;
 	}
 	@Override
 	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
