@@ -29,11 +29,16 @@ logging:
   level:
     com.bonc: info
 spring:
+  mail:
+    host: mail.bonc.com.cn
+    username: litianlin
+    password: P@ssw0rd1
+    from: litianlin@bonc.com.cn
   boot:
     admin:
       #server jar包启动命令，通过Runtime启动
       server.start-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
-      server.stop-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
+      server.pid-command: "netstat -ano|findstr /r /c:\"9998 *\\[\""
       client:
         instance:
           metadata:
