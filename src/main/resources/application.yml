@@ -1,9 +1,3 @@
-h2:
-  enabled: true
-  enableAppServer: true #使用应用h2数据库
-  data-path: classpath:data/data #entity
-  relation-path: classpath:data/relation #关联表
-  serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
 #debug: true
 server:
   port: 8080
@@ -12,57 +6,15 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     database-id: h2
-management:
-  cloudfoundry:
-    enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-    enabled-by-default: true        
-  endpoint:    
-    shutdown:
-      enabled: true
-    loggers:
-      enabled: true
 logging:
   level:
     com.bonc: info
 spring:
-  mail:
-    host: mail.bonc.com.cn
-    username: litianlin
-    password: P@ssw0rd1
-    from: litianlin@bonc.com.cn
-  boot:
-    admin:
-      #server jar包启动命令，通过Runtime启动
-      server.start-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
-      server.pid-command: "netstat -ano|findstr /r /c:\"9998 *\\[\""
-      client:
-        instance:
-          metadata:
-            user: 
-              name: a
-              password: b
-        url: "http://localhost:9998"
-  h2:
-    console: #h2浏览器监控界面
-      enabled: true
-      path: /h2console
-      settings:
-        web-allow-others: true #远程访问
-  rabbitmq:
-    username: test
-    password: test
-    publisher-confirms: true
-    template:
-      retry:
-        enabled: true
-  jmx:
-    default-domain: jmxmp
-    enabled: true  
-  
+  profiles:
+    active:
+    - dev #db、redis、es、rabbitmq连接信息
+    include:
+    - integrate #集成框架配置信息，自定义配置信息
   mvc:
     favicon:
       enabled: false
@@ -76,24 +28,7 @@ spring:
   cache:
     ehcache:
       config: classpath:ehcache-spring.xml
-  data:
-    elasticsearch:
-      cluster-name: ltl
-      cluster-nodes: localhost:9300 #必须填tcp port
-      repositories:
-        enabled: true
-  redis:
-#    sentinel:
-#      master: abc #master名称
-#      nodes: #哨兵节点，host:port,
-#    cluster:
-#      max-redirects: 3
-#      nodes: #集群节点，host:port,
-    host: localhost
-    port: 6379
-    lettuce:
-      pool: #common-pools对应参数
-        max-active: 10
+
   jpa:
     open-in-view: true #默认true，EntityManager在request期间绑定thread，防止懒加载错误
     show-sql: true    
@@ -105,11 +40,6 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource    
     first:
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:tcp://localhost:9095/./h2
-      username: sa
-      password: ""
-      a: a
     #druid:      
       #连接池等相关配置
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
@@ -129,7 +59,6 @@ spring:
       useGlobalDataSourceStat: true
       validationQuery: SELECT 'x'
       db-type: H2
-#httppool
 http-pool:
     connect-timeout: 5000
     connection-request-timeout: 1000
@@ -137,3 +66,37 @@ http-pool:
     max-total: 200
     socket-timeout: 65000
     validate-after-inactivity: 2000
+---
+spring: #db、redis、es、rabbitmq连接信息,username、password加密
+  profiles: dev #声明当前块profile
+  datasource:  
+    first:
+      driver-class-name: org.h2.Driver
+      url: jdbc:h2:tcp://localhost:9095/./h2
+      username: ENC(GMJOsvo+/haBEReVI+4LZg==)
+      password: ENC(0Z96xwmyhA6KtCa7bG5NfA==)
+  redis:
+#    sentinel:
+#      master: abc #master名称
+#      nodes: #哨兵节点，host:port,
+#    cluster:
+#      max-redirects: 3
+#      nodes: #集群节点，host:port,
+    host: localhost
+    port: 6379
+    lettuce:
+      pool: #common-pools对应参数
+        max-active: 10
+  data:
+    elasticsearch:
+      cluster-name: ltl
+      cluster-nodes: localhost:9300 #必须填tcp port
+      repositories:
+        enabled: true
+  rabbitmq:
+    username: ENC(peVPISDBoSyYChlcct8r9w==)
+    password: ENC(peVPISDBoSyYChlcct8r9w==)
+    publisher-confirms: true
+    template:
+      retry:
+        enabled: true         

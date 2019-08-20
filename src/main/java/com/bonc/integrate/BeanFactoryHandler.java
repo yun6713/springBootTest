@@ -1,19 +1,25 @@
 package com.bonc.integrate;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyOverrideConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.PropertySourceLoader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 /**
@@ -37,12 +43,13 @@ public class BeanFactoryHandler implements BeanFactoryPostProcessor {
 	PropertySource i;
 	PropertySources j;
 	PropertySourceLoader k;
-	
-	
-	
+	ApplicationContext l;
+	InitializingBean m;
+	DisposableBean n;
 	ObjectUtils o;
-	
-	
+	BeanDefinitionBuilder p;
+	ResourceLoader q;
+	MessageSource r;
 	
 	
 	@Override

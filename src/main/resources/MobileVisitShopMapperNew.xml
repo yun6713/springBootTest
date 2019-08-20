@@ -1,0 +1,2764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.bonc.ssp.dao.ssp.MobileVisitShopNewMapper">
+<!-- 1、八 巡店 接口1.	巡店一级页面获取所选渠道（店铺 获得渠道电话和联系人-->
+  <select id="getTotalSelfCount" resultClass="java.util.HashMap">
+	      select nvl(count(*),0) "total",        
+		         nvl(v.gm_id,'-') "gmId"
+		    from pm.dm_visit_info_d v
+		   where 1 = 1
+		    and nvl(v.is_self,'0') ='1'
+		    and v.gm_id =#loginId#
+		   Group by v.gm_id
+  </select>
+  
+  <select id="getMainUnFinishTasksListExe" resultClass="java.util.HashMap">
+			select v.* from (
+			
+			select l.task_id "taskid",
+			       '' "imgurl",
+			       nvl(l.visit_name, '-') "taskname",
+			       nvl(l.task_description, '-') "desc",
+			       l.start_date "starttime",
+			       l.end_date "endtime",
+			       nvl(sum(decode(t.visit_stutas, '0', 1, 0)), 0) "unfinish",
+			       nvl(sum(decode(t.visit_stutas, '1', 1, 0)), 0) "finish",
+			       nvl(count(t.gm_id), 0) "countNum",
+			       trim(to_char(decode(nvl(count(t.gm_id), 0),
+			                           0,
+			                           100,
+			                           round(nvl(nvl(sum(decode(t.visit_stutas,
+			                                                    '1',
+			                                                    1,
+			                                                    0)),
+			                                         0),
+			                                     0) / nvl(count(t.gm_id), 0) * 100,
+			                                 2)),
+			                    'fm9990.00')) || '%' "finishperent",
+			       l.xf_type "xfType"
+			  from (select *
+			          from pm.dm_visit_log l
+			         WHERE l.end_date &gt;= to_char(sysdate, 'yyyymmdd')
+			          <isNotNull property="loginUserId">
+				             <isNotEmpty property="loginUserId" prepend="and">
+				      			    l.login_user_id in ('$loginUserId$')
+				             </isNotEmpty>
+		                 </isNotNull>
+			             <isNotNull property="dateStr">
+				             <isNotEmpty property="dateStr" prepend="and">
+				         		   substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+				             </isNotEmpty>
+			           </isNotNull>
+			             <isNotNull property="taskName">
+				             <isNotEmpty property="taskName" prepend="and">
+				           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+				             </isNotEmpty>
+			           </isNotNull> 
+			           
+			           <isNotNull property="xfType">
+                              <isNotEmpty   property="xfType" >
+                                 and  l.xf_type = #xfType# 
+                              </isNotEmpty>
+                       </isNotNull>
+			          
+			         ) l,
+			       pm.dm_visit_info_d t 
+			      <!--  pmdev.org_organization_mod a -->
+				           
+			 where l.task_id = t.visit_task_id
+			   and nvl(t.is_self, '0') != '1'
+			    <!--and t.execute_id=a.id-->
+			   <!-- and A.DELFLAG = '0'-->
+		       <!-- and a.orgrank LIKE '%/' || #orgNo# || '%'-->
+		       and t.execute_id in  (
+                        select a.id  from  pmdev.org_organization_mod a  where a.login_id =#loginId#
+                        union
+                        select m.id  from pmdev.org_organization_mod m
+                         where  1=1 
+                           and  instr(m.name, '失效')=0  
+                       start with m.id in (select b.org_id  from pmdss.sc_login_user b   where b.login_id = #loginId#)
+                       connect by prior m.id = m.parent_id)
+			 Group by l.task_id,
+			          l.visit_name,
+			          l.task_description,
+			          l.start_date,
+			          l.end_date ,
+			          l.xf_type  
+			          ) v where v."unfinish" !=0
+			    order by v."taskid" desc        
+  </select>
+  <!-- <select id="getMainUnFinishTasksList" resultClass="java.util.HashMap">	
+		select q.*,
+		       nvl(q."countNum"-q."unfinish", 0) "finish",
+		       round(nvl(round(nvl(q."countNum"-q."unfinish", 0))/round(q."countNum", 0)* 100,0),2)||'%' "finishperent"
+		  from (select l.task_id "taskid",
+		               '' "imgurl",
+		                nvl(l.visit_name,'-') "taskname",
+		               round(nvl((select count(t.gm_id)
+		                  from pm.dm_visit_info_d t
+		                 where t.visit_task_id = l.task_id
+		                   and t.gm_id=#loginId#
+		                   and t.visit_stutas = '0'), 0)) "unfinish",
+		               nvl(count(tt.gm_id),0) "countNum",
+		               nvl(l.task_description,'-') "desc",		               
+		               l.start_date "starttime",
+		               l.end_date   "endtime"
+		          from pm.dm_visit_log l, pm.dm_visit_info_d tt
+		         where l.task_id = tt.visit_task_id
+		           and tt.gm_id = #loginId#
+		           and  round(nvl((select count(t.gm_id)
+                      from pm.dm_visit_info_d t
+                     where t.visit_task_id = l.task_id
+                       and t.gm_id=#loginId#
+                       and t.visit_stutas = '0'), 0)) !=0
+		           and to_date(tt.end_date,'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')
+		         group by l.task_id,
+		                  l.visit_name,
+		                  l.task_description,
+		                  l.start_date,
+		                  l.end_date) q
+                  </select>	 -->
+                   <select id="getMainUnFinishTasksList" resultClass="java.util.HashMap" >
+                  WITH TA AS
+				 (select t.visit_task_id,
+				         sum(decode(t.visit_stutas, '0', 1, 0)) unfinish,
+				         sum(decode(t.visit_stutas, '1', 1, 0)) finished,
+				         count(t.gm_id) countNum
+				    from pm.dm_visit_info_d t
+				   where 1 = 1
+				     and nvl(t.is_self, '0') != '1'
+					 <isNotEqual property="orgNo" compareValue="root" >
+				     and t.execute_id in
+				         (
+				         select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                      union
+				         
+				         select a.id
+				            from pmdev.org_organization_mod a
+				           where 1 = 1
+				             and A.DELFLAG = '0'
+				             and a.orgrank LIKE '%/' || #orgNo# || '%'
+<!--				           start with a.id in (select b.ORG_ID-->
+<!--				                                 from pmdss.sc_login_user b-->
+<!--				                                where b.login_id = #loginId#)-->
+<!--				          connect by prior a.id = a.parent_id-->
+				          
+				          )
+						</isNotEqual>  
+				   group by t.visit_task_id)
+				select l.task_id "taskid",
+				       '' "imgurl",
+				       nvl(l.visit_name, '-') "taskname",
+				       nvl(l.task_description, '-') "desc",
+				       l.start_date "starttime",
+				       l.end_date "endtime",
+				       nvl(m.unfinish, 0) "unfinish",
+				       nvl(m.countNum, 0) "countNum",
+				       nvl(m.finished, 0) "finish",
+				       trim(to_char(  decode(m.countNum,
+                               0,
+                               100,
+                               round(nvl(m.finished, 0) / m.countNum * 100, 2)),'fm9990.00')) || '%' "finishperent",
+                       l.xf_type "xfType"
+				  from (select *
+				          from pm.dm_visit_log l
+				         WHERE l.end_date >= to_char(sysdate, 'yyyymmdd')
+				           <isNotNull property="loginUserId">
+				             <isNotEmpty property="loginUserId" prepend="and">
+				      			    l.login_user_id in ('$loginUserId$')
+				             </isNotEmpty>
+		                 </isNotNull>
+			             <isNotNull property="dateStr">
+				             <isNotEmpty property="dateStr" prepend="and">
+				         		   substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+				             </isNotEmpty>
+			           </isNotNull>
+			             <isNotNull property="taskName">
+				             <isNotEmpty property="taskName" prepend="and">
+				           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+				             </isNotEmpty>
+			           </isNotNull> 
+			           <isNotNull property="xfType">
+                         <isNotEmpty   property="xfType" >
+                               and  l.xf_type = #xfType# 
+                         </isNotEmpty>
+                </isNotNull>
+							         
+				         ) l,
+				       (select * from TA m WHERE m.unfinish != 0) m
+				 where l.task_id = m.visit_task_id
+				 order by "starttime" desc  
+                  </select>
+                  
+                  <select id="getMainFinishTasksList" resultClass="java.util.HashMap" >
+                  
+                  WITH TA AS
+					 (select t.visit_task_id,
+					         sum(decode(t.visit_stutas, '0', 1, 0)) unfinish,
+					         sum(decode(t.visit_stutas, '1', 1, 0)) finished,
+					         count(t.gm_id) countNum
+					    from pm.dm_visit_info_d t
+					   where 1 = 1
+					     and nvl(t.is_self, '0') != '1'
+						 <isNotEqual property="orgNo"  compareValue="root">
+					     and t.execute_id in
+					         (
+					         select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                           union
+					         select a.id
+					            from pmdev.org_organization_mod a
+					           where 1 = 1
+					             and A.DELFLAG = '0'
+					              and a.orgrank LIKE '%/' || #orgNo# || '%'
+<!--					           start with a.id in (select b.ORG_ID-->
+<!--					                                 from pmdss.sc_login_user b-->
+<!--					                                where b.login_id = #loginId#)-->
+<!--					          connect by prior a.id = a.parent_id-->
+					          
+					          )
+						</isNotEqual>	  
+					   group by t.visit_task_id)
+					select l.task_id "taskid",
+					       '' "imgurl",
+					       nvl(l.visit_name, '-') "taskname",
+					       nvl(l.task_description, '-') "desc",
+					       l.start_date "starttime",
+					       l.end_date "endtime",
+					       m.unfinish "unfinish",
+					       m.countNum "countNum",
+					       nvl(m.finished, 0) "finish",
+					       trim(to_char(  decode(m.countNum,
+                               0,
+                               100,
+                               round(nvl(m.finished, 0) / m.countNum * 100, 2)),'fm9990.00')) || '%' "finishperent",
+                           l.xf_type "xfType"
+                         
+					  from (select *
+					          from pm.dm_visit_log l
+					         WHERE l.end_date &lt; to_char(sysdate, 'yyyymmdd')
+					          <isNotNull property="loginUserId">
+					             <isNotEmpty property="loginUserId" prepend="and">
+					     		     l.login_user_id in ('$loginUserId$')
+					             </isNotEmpty>
+			          		 </isNotNull>
+			            
+				            <isNotNull property="dateStr">
+					             <isNotEmpty property="dateStr" prepend="and">
+					           		 substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+					             </isNotEmpty>
+				           </isNotNull>
+				           
+				             <isNotNull property="taskName">
+					             <isNotEmpty property="taskName" prepend="and">
+					           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+					             </isNotEmpty>
+				           </isNotNull> 
+				           
+				           <isNotNull property="xfType">
+                              <isNotEmpty   property="xfType" >
+                                 and  l.xf_type = #xfType# 
+                              </isNotEmpty>
+                       </isNotNull>
+					         
+					         
+					         ) L,
+					       TA M
+					 where 1 = 1
+					   and l.task_id = m.visit_task_id
+					union
+					select l.task_id "taskid",
+					       '' "imgurl",
+					       nvl(l.visit_name, '-') "taskname",
+					       nvl(l.task_description, '-') "desc",
+					       l.start_date "starttime",
+					       l.end_date "endtime",
+					       m.unfinish "unfinish",
+					       m.countNum "countNum",
+					       nvl(m.finished, 0) "finish",
+					      trim(to_char(  decode(m.countNum,
+                               0,
+                               100,
+                               round(nvl(m.finished, 0) / m.countNum * 100, 2)),'fm9990.00')) || '%' "finishperent",
+                           l.xf_type "xfType"
+					  from (select *
+					          from pm.dm_visit_log l
+					         WHERE l.end_date >= to_char(sysdate, 'yyyymmdd')
+					         
+					         <isNotNull property="loginUserId">
+					             <isNotEmpty property="loginUserId" prepend="and">
+					     		     l.login_user_id in ('$loginUserId$')
+					             </isNotEmpty>
+				             </isNotNull>
+				            
+				            <isNotNull property="dateStr">
+					             <isNotEmpty property="dateStr" prepend="and">
+					           		 substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+					             </isNotEmpty>
+				           </isNotNull>
+				           
+				             <isNotNull property="taskName">
+					             <isNotEmpty property="taskName" prepend="and">
+					           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+					             </isNotEmpty>
+				           </isNotNull>  
+				           
+				           <isNotNull property="xfType">
+                              <isNotEmpty   property="xfType" >
+                                 and  l.xf_type = #xfType# 
+                              </isNotEmpty>
+                       </isNotNull>
+					         
+					         
+					         
+					         ) L,
+					       (select * from TA M WHERE m.unfinish = 0) M
+					 where 1 = 1
+					   and l.task_id = m.visit_task_id
+					 order by "starttime" desc
+					                  
+                  
+                  </select>
+                  
+                  
+                  
+                  
+      <select id="getMainUnFinishTasksList0322" resultClass="java.util.HashMap" >            
+            select       l.task_id "taskid",
+                   '' "imgurl",
+                   nvl(l.visit_name,'-') "taskname",
+                   nvl(l.task_description,'-') "desc",                   
+                   l.start_date "starttime",
+                   l.end_date   "endtime",
+                   nvl( m.unfinish,0)  "unfinish" ,
+                   nvl(m.countNum ,0) "countNum",
+                   nvl(m.finished, 0) "finish",
+                   decode(m.countNum ,0,100,round(nvl(m.finished, 0)/ m.countNum * 100, 2)) || '%' "finishperent"
+              from pm.dm_visit_log l, 
+                   ( select    t.visit_task_id,
+                               sum( decode(t.visit_stutas,'0',1,0) )  unfinish,
+                               sum( decode(t.visit_stutas,'1',1,0) )  finished,
+                               count(t.gm_id)  countNum
+                              from pm.dm_visit_info_d t
+                              where   1=1  
+                                    and nvl(t.is_self,'0') != '1'
+<!--                                    and t.gm_id in  (select a.login_id 
+                                                          from pmdev.org_organization_mod  a
+                                                          where a.login_id is not null  
+                                                                and  instr(a.name, '失效')=0  
+                                                                start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+                                                                connect by prior a.id = a.parent_id)   -->
+                                    and t.execute_id in (select a.id 
+                                                          from pmdev.org_organization_mod  a
+                                                          where  1=1 
+<!--                                                                and  a.login_id is not null  -->
+                                                                and  instr(a.name, '失效')=0  
+                                                                start with  a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+                                                                connect by prior a.id = a.parent_id)                                                 
+                                  group by t.visit_task_id )  m
+             where l.task_id = m.visit_task_id
+              and m.unfinish !=0
+              and to_date(l.end_date,'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')
+                 
+           <isNotNull property="loginUserId">
+		             <isNotEmpty property="loginUserId" prepend="and">
+		      			    l.login_user_id in ('$loginUserId$')
+		             </isNotEmpty>
+           </isNotNull>
+             <isNotNull property="dateStr">
+	             <isNotEmpty property="dateStr" prepend="and">
+	         		   substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+	             </isNotEmpty>
+           </isNotNull>
+             <isNotNull property="taskName">
+	             <isNotEmpty property="taskName" prepend="and">
+	           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+	             </isNotEmpty>
+           </isNotNull> 
+           
+           order by  "starttime"  desc     
+                            
+    </select>     
+  
+  <select id="getMainUnFinishTasksListbak011319" resultClass="java.util.HashMap">
+  select q.*,
+           nvl(q."countNum"-q."unfinish", 0) "finish",
+           round(nvl(round(nvl(q."countNum"-q."unfinish", 0))/round(q."countNum", 0)* 100,0),2)||'%' "finishperent"
+      from (select l.task_id "taskid",
+                   '' "imgurl",
+                    nvl(l.visit_name,'-') "taskname",
+                   round(nvl((select count(t.gm_id)
+                      from pm.dm_visit_info_d t
+                     where t.visit_task_id = l.task_id
+                       and t.gm_id in (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+         and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                       and t.visit_stutas = '0'), 0)) "unfinish",
+                       
+                        round(nvl((select count(t.gm_id)
+                      from pm.dm_visit_info_d t
+                     where t.visit_task_id = l.task_id
+                       and t.gm_id in (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+         and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                       ), 0)) "countNum",
+                  
+                   nvl(l.task_description,'-') "desc",                   
+                   l.start_date "starttime",
+                   l.end_date   "endtime"
+              from pm.dm_visit_log l, pm.dm_visit_info_d tt
+             where l.task_id = tt.visit_task_id
+                  
+                    <isNotNull property="loginUserId">
+				   	<isNotEmpty property="loginUserId" prepend="and">
+				  l.login_user_id in ('$loginUserId$')
+				   	</isNotEmpty>
+				   </isNotNull>
+				     <isNotNull property="dateStr">
+				   	<isNotEmpty property="dateStr" prepend="and">
+				    substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+				   	</isNotEmpty>
+				   </isNotNull>
+               and tt.gm_id in (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+         and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+               and  round(nvl((select count(t.gm_id)
+                      from pm.dm_visit_info_d t
+                     where t.visit_task_id = l.task_id
+                       and t.gm_id in (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                       and t.visit_stutas = '0'), 0)) !=0
+               and to_date(tt.end_date,'yyyy-mm-dd') >=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')
+             group by l.task_id,
+                      l.visit_name,
+                      l.task_description,
+                      l.start_date,
+
+                      l.end_date
+                  order by  "starttime"  desc     
+                      
+                      ) q
+
+  </select>
+  
+  
+  
+  <!-- <select id="getMainFinishTasksList" resultClass="java.util.HashMap">	
+		select q.*,
+		       nvl(q."countNum" - q."unfinish", 0) "finish",
+		       round(nvl(round(nvl(q."countNum" - q."unfinish", 0)) /
+		                 round(q."countNum", 0) * 100,
+		                 0),
+		             2) || '%' "finishperent"
+		  from (select l.task_id "taskid",
+		               '' "imgurl",
+		               nvl(l.visit_name, '-') "taskname",
+		               round(nvl((select count(t.gm_id)
+		                           from pm.dm_visit_info_d t
+		                          where t.visit_task_id = l.task_id
+		                            and t.gm_id=#loginId#
+		                            and t.visit_stutas = '0'),
+		                         0)) "unfinish",
+		               nvl(count(tt.gm_id), 0) "countNum",
+		               nvl(l.task_description, '-') "desc",
+		               l.start_date "starttime",
+		               l.end_date "endtime"
+		          from pm.dm_visit_log l, pm.dm_visit_info_d tt
+		         where l.task_id = tt.visit_task_id
+		           and tt.gm_id = #loginId#
+		           and nvl(tt.is_self,'0') != '1'
+		           and to_date(tt.end_date, 'yyyy-mm-dd') &lt;
+		               to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+		         group by l.task_id,
+		                  l.visit_name,
+		                  l.task_description,
+		                  l.start_date,
+		                  l.end_date
+		        union
+		        select l.task_id "taskid",
+		               '' "imgurl",
+		               nvl(l.visit_name, '-') "taskname",
+		               round(nvl((select count(t.gm_id)
+		                           from pm.dm_visit_info_d t
+		                          where t.visit_task_id = l.task_id
+		                          and t.gm_id=#loginId#
+		                            and t.visit_stutas = '0'),
+		                         0)) "unfinish",
+		               nvl(count(tt.gm_id), 0) "countNum",
+		               nvl(l.task_description, '-') "desc",
+		               l.start_date "starttime",
+		               l.end_date "endtime"
+		          from pm.dm_visit_log l, pm.dm_visit_info_d tt
+		         where l.task_id = tt.visit_task_id
+		           and tt.gm_id = #loginId#
+		           and tt.visit_stutas='1'
+		           and nvl(tt.is_self,'0') !='1'
+	               and  round(nvl((select count(t.gm_id)
+                                     from pm.dm_visit_info_d t
+                                    where t.visit_task_id = l.task_id
+                                      and t.gm_id=tt.gm_id
+                                      and t.visit_stutas = '0'),
+                            0)) =0
+               and nvl(tt.is_self,'0') !='1'
+		           and to_date(tt.end_date, 'yyyy-mm-dd') &gt;= 
+		               to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+		         group by l.task_id,
+		                  l.visit_name,
+		                  l.task_description,
+		                  l.start_date,
+		                  l.end_date        
+		        ) q		
+  </select> -->
+  
+  <select id="getMainFinishTasksList0322" resultClass="java.util.HashMap"  >
+      select       l.task_id "taskid",
+                   '' "imgurl",
+                   nvl(l.visit_name, '-') "taskname",
+                   nvl(l.task_description, '-') "desc",
+                   l.start_date "starttime",
+                   l.end_date "endtime",
+                   m.unfinish  "unfinish" ,
+                   m.countNum  "countNum",
+                   nvl(m.finished, 0) "finish",
+                   decode(m.countNum ,0,100,round(nvl(m.finished, 0)/ m.countNum * 100, 2)) || '%' "finishperent"
+              from pm.dm_visit_log l,  
+              (   select    t.visit_task_id,
+                               sum( decode(t.visit_stutas,'0',1,0) )  unfinish,
+                               sum( decode(t.visit_stutas,'1',1,0) )  finished,
+                               count(t.gm_id)  countNum
+                              from pm.dm_visit_info_d t
+                              where   1=1  
+                                    and nvl(t.is_self,'0') != '1'
+<!--                                    and t.gm_id in  (select a.login_id 
+                                                          from pmdev.org_organization_mod  a
+                                                          where a.login_id is not null  
+                                                                and  instr(a.name, '失效')=0  
+                                                                start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+                                                                connect by prior a.id = a.parent_id)  -->
+                                    and  t.execute_id  in  (select a.id 
+                                                          from pmdev.org_organization_mod  a
+                                                          where 1=1 
+<!--                                                               and a.login_id is not null  -->
+                                                                and  instr(a.name, '失效')=0  
+                                                                start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+                                                                connect by prior a.id = a.parent_id)  
+                                                                                  
+                                  group by t.visit_task_id )  m
+             where  1=1    
+               and l.task_id= m.visit_task_id
+               and to_date(l.end_date, 'yyyy-mm-dd')  &lt;   to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') 
+          
+          <isNotNull property="loginUserId">
+		             <isNotEmpty property="loginUserId" prepend="and">
+		     		     l.login_user_id in ('$loginUserId$')
+		             </isNotEmpty>
+           </isNotNull>
+            
+            <isNotNull property="dateStr">
+	             <isNotEmpty property="dateStr" prepend="and">
+	           		 substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+	             </isNotEmpty>
+           </isNotNull>
+           
+             <isNotNull property="taskName">
+	             <isNotEmpty property="taskName" prepend="and">
+	           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+	             </isNotEmpty>
+           </isNotNull> 
+            union
+            select l.task_id "taskid",
+                   '' "imgurl",
+                   nvl(l.visit_name, '-') "taskname",
+                   nvl(l.task_description, '-') "desc",
+                   l.start_date "starttime",
+                   l.end_date "endtime",
+                   m.unfinish  "unfinish" ,
+                   m.countNum  "countNum",  
+                   nvl(m.finished, 0) "finish",
+                   decode(m.countNum ,0,100,round(nvl(m.finished, 0)/ m.countNum * 100, 2)) || '%' "finishperent"
+              from pm.dm_visit_log l, 
+                    (   select    t.visit_task_id,
+                               sum( decode(t.visit_stutas,'0',1,0) )  unfinish,
+                               sum( decode(t.visit_stutas,'1',1,0) )  finished,
+                               count(t.gm_id)  countNum
+                              from pm.dm_visit_info_d t
+                              where   1=1  
+                                    and nvl(t.is_self,'0') != '1'
+<!--                                    and t.gm_id in  (select a.login_id 
+                                                          from pmdev.org_organization_mod  a
+                                                          where a.login_id is not null  
+                                                                and  instr(a.name, '失效')=0  
+                                                                start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+                                                                connect by prior a.id = a.parent_id)  -->
+                                                                
+                                    and t.execute_id in  (select a.id 
+                                                          from pmdev.org_organization_mod  a
+                                                          where  1=1 
+<!--                                                                and  a.login_id is not null  -->
+                                                                and  instr(a.name, '失效')=0  
+                                                                start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+                                                                connect by prior a.id = a.parent_id)
+                                                                                             
+                                  group by t.visit_task_id )  m
+              
+             where  1=1 
+              and l.task_id= m.visit_task_id
+               and m.unfinish=0
+                and to_date(l.end_date, 'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+              <isNotNull property="loginUserId">
+		             <isNotEmpty property="loginUserId" prepend="and">
+		         		 l.login_user_id in ('$loginUserId$')
+		             </isNotEmpty>
+           </isNotNull>
+            
+            <isNotNull property="dateStr">
+	             <isNotEmpty property="dateStr" prepend="and">
+	           			 substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+	             </isNotEmpty>
+           </isNotNull>
+             <isNotNull property="taskName">
+	             <isNotEmpty property="taskName" prepend="and">
+	           		nvl(l.visit_name, '-') like '%'||#taskName#||'%'
+	             </isNotEmpty>
+           </isNotNull> 
+           
+        order by  "starttime"  desc
+  
+  
+  </select>
+  
+  
+  
+  <select id="getMainFinishTasksListbak011319" resultClass="java.util.HashMap">
+    select q.*,
+           nvl(q."countNum" - q."unfinish", 0) "finish",
+           round(nvl(round(nvl(q."countNum" - q."unfinish", 0)) /
+                     round(q."countNum", 0) * 100,
+                     0),
+                 2) || '%' "finishperent"
+      from (select l.task_id "taskid",
+                   '' "imgurl",
+                   nvl(l.visit_name, '-') "taskname",
+                   round(nvl((select count(t.gm_id)
+                               from pm.dm_visit_info_d t
+                              where t.visit_task_id = l.task_id
+                                and t.gm_id in  (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null  
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                                and t.visit_stutas = '0'),
+                             0)) "unfinish",
+                             
+                         round(nvl((select count(t.gm_id)
+                               from pm.dm_visit_info_d t
+                              where t.visit_task_id = l.task_id
+                                and t.gm_id in  (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                                ),
+                             0)) "countNum",   
+                               
+                  
+                   nvl(l.task_description, '-') "desc",
+                   l.start_date "starttime",
+                   l.end_date "endtime"
+              from pm.dm_visit_log l, pm.dm_visit_info_d tt
+             where l.task_id = tt.visit_task_id
+                 
+          
+          <isNotNull property="loginUserId">
+				   	<isNotEmpty property="loginUserId" prepend="and">
+				  l.login_user_id in ('$loginUserId$')
+				   	</isNotEmpty>
+				   </isNotNull>
+				    
+				     <isNotNull property="dateStr">
+				   	<isNotEmpty property="dateStr" prepend="and">
+				    substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+				   	</isNotEmpty>
+				   </isNotNull>
+				   
+               and tt.gm_id in  (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+               and nvl(tt.is_self,'0') != '1'
+               and to_date(tt.end_date, 'yyyy-mm-dd') &lt;
+                   to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+             group by l.task_id,
+                      l.visit_name,
+                      l.task_description,
+                      l.start_date,
+                      l.end_date
+            union
+            select l.task_id "taskid",
+                   '' "imgurl",
+                   nvl(l.visit_name, '-') "taskname",
+                   round(nvl((select count(t.gm_id)
+                               from pm.dm_visit_info_d t
+                              where t.visit_task_id = l.task_id
+                              and t.gm_id in  (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                                and t.visit_stutas = '0'),
+                             0)) "unfinish",
+                             
+                       round(nvl((select count(t.gm_id)
+                               from pm.dm_visit_info_d t
+                              where t.visit_task_id = l.task_id
+                              and t.gm_id in  (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                                ),
+                             0)) "countNum",       
+                  
+                   nvl(l.task_description, '-') "desc",
+                   l.start_date "starttime",
+                   l.end_date "endtime"
+              from pm.dm_visit_log l, pm.dm_visit_info_d tt
+             where l.task_id = tt.visit_task_id
+             
+              <isNotNull property="loginUserId">
+				   	<isNotEmpty property="loginUserId" prepend="and">
+				  l.login_user_id in ('$loginUserId$')
+				   	</isNotEmpty>
+				   </isNotNull>
+				    
+				     <isNotNull property="dateStr">
+				   	<isNotEmpty property="dateStr" prepend="and">
+				    substr( l.start_date,0,6)=substr(#dateStr#,0,6)
+				   	</isNotEmpty>
+				   </isNotNull>
+             
+             
+               and tt.gm_id in  (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+               and tt.visit_stutas='1'
+               and nvl(tt.is_self,'0') !='1'
+               
+                  and  round(nvl((select count(t.gm_id)
+                      from pm.dm_visit_info_d t
+                     where t.visit_task_id = l.task_id
+                       and t.gm_id in (select a.login_id 
+  from pmdev.org_organization_mod  a
+  where a.login_id is not null
+        and  instr(a.name, '失效')=0  
+ start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+ connect by prior a.id = a.parent_id)
+                       and t.visit_stutas = '0'), 0)) =0
+               
+               and to_date(tt.end_date, 'yyyy-mm-dd') >= 
+                   to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+             group by l.task_id,
+                      l.visit_name,
+                      l.task_description,
+                      l.start_date,
+
+                      l.end_date  
+                      order by  "starttime"  desc
+            ) q
+  </select>
+  
+  
+   <!-- <select id="getSelfFinishTasksList" resultClass="java.util.HashMap">	
+    select nvl(t.channel_no_desc,'-') "channelname",
+           nvl(t.channel_no,'-') "channelid",
+           nvl((select FLOOR(avg(v.score)) + CASE
+                     WHEN avg(v.score) - FLOOR(avg(v.score)) >= 0.5 THEN
+                      0.5
+                     ELSE
+                      0.0
+                   end
+              from pm.dm_visit_info_d v
+             where v.gm_id = #loginId#),'0') "starlevl",
+           t.img_url "imgurl",           
+           nvl((select  round(nvl(nvl(count(v.visit_id), 0) /
+                   max((select nvl(count(d.visit_id), 0)
+                         from pm.dm_visit_info_d d
+                        where d.gm_id = #loginId#
+                          and d.chnl_id = t.channel_no)) * 100,
+                     0),2) || '%'
+            from pm.dm_visit_info_d v
+           where v.visit_stutas = '0'
+             and v.chnl_id = t.channel_no
+             and v.gm_id =  #loginId#
+             and to_date(v.end_date,'yyyy-mm-dd') &gt;= to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')),'0%') "completionrate",           
+           '好久不见' "geetings",
+           nvl(t.longitude, 0) "longitude",
+           nvl(t.latitude, 0) "latitude",
+           nvl(t.chnl_addr, '-') "address",
+           to_char(max(dd.VISIT_DATE),'yyyy-MM-dd')  "visit_date"
+      from pmdev.dmcode_channel t, pm.PM_APP_CHANNEL_INFO_M v,pm.dm_visit_info_d dd
+     where t.channel_no = v.chnl_code
+       and dd.chnl_id=t.channel_no  
+       and dd.is_self='1'
+       and dd.gm_id=#loginId#
+       and dd.visit_stutas='1'
+     Group by t.channel_no,
+              t.channel_no_desc,
+              t.img_url,
+              t.longitude,
+              t.latitude,
+              t.chnl_addr
+         order by 5 desc,2 desc
+    </select>-->
+    
+    <select id="getSelfFinishTasksList" resultClass="java.util.HashMap">
+   select case when  nvl( t.xf_type ,'01')='01' 
+               then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+               else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+           nvl(t.channel_no,'-') "channelid",
+           nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+           t.img_url "imgurl", 
+           '0' "completionrate",            
+           '好久不见' "geetings",
+           nvl(t.longitude, 0) "longitude",
+           nvl(t.latitude, 0) "latitude",
+           pm.GetDistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude# ) "distance",
+           nvl(t.chnl_addr, '-') "address",
+           to_char(max(dd.VISIT_DATE),'yyyy-MM-dd')  "visit_date",
+           dd.gm_id "gm_id",
+           dd.gm_name "gm_name",
+           t.xf_type "xfType"
+    from pmdev.dmcode_channel t,
+        (SELECT star_level, ZB_CHL_ID
+		  FROM PMDEV.DMCODE_CHANNE_STAR
+		 where YEAR_ID || JIDU_ID in
+       (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+        pm.dm_visit_info_d dd
+        <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		  <isEqual property="isChoosedSale" compareValue="1">
+        ,
+		(select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+           from pm.pm_app_channel_sales_m t
+          where 1=1
+          
+            <isNotNull property="startSalesTime">
+               <isNotEmpty   property="startSalesTime" >
+                  and t.acct_month = #startSalesTime#
+               </isNotEmpty>
+            </isNotNull>
+            
+            <!-- 
+            <isNotNull property="endSalesTime">
+               <isNotEmpty   property="endSalesTime" >
+                   and t.acct_month <![CDATA[<=]]> #endSalesTime#
+               </isNotEmpty>
+            </isNotNull> -->
+            
+         and t.product_type = '00' 
+         and t.level_type = '01'
+      group by t.channel_no )mm
+        </isEqual>
+       </isNotEmpty>
+	  </isNotNull>
+   where dd.chnl_id=t.channel_no 
+     and t.channel_no = st.ZB_CHL_ID(+)
+     
+      <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+			 <isEqual property="isChoosedSale" compareValue="1">
+			  and t.channel_no = mm.channelNo(+)
+		  	 </isEqual>
+	     </isNotEmpty>
+      </isNotNull>
+      
+	  <isNotNull property="channelNoDesc">
+		<isNotEmpty property="channelNoDesc">
+			and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+		</isNotEmpty>
+	  </isNotNull> 
+	  
+      <isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+     <isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+    
+	  <isNotNull property="xfType">
+         <isNotEmpty   property="xfType" >
+             and  t.xf_type = #xfType# 
+         </isNotEmpty>
+      </isNotNull>
+	  
+	  <isNotNull property="startSales">
+		<isNotEmpty property="startSales">
+			and mm.developSum<![CDATA[>=]]>#startSales#
+		</isNotEmpty>
+	  </isNotNull>
+	  
+	  <isNotNull property="endSales">
+		<isNotEmpty property="endSales">
+			and mm.developSum<![CDATA[<=]]>#endSales#
+		</isNotEmpty>
+	  </isNotNull>
+	  
+	 <isNotNull property="startSalesTime">
+		<isNotEmpty property="startSalesTime">
+		  and mm.channelNo is not null
+        </isNotEmpty>
+	 </isNotNull>
+	 
+	 <!-- 
+	 <isNotNull property="endSalesTime">
+		<isNotEmpty property="endSalesTime">
+			and mm.channelNo is not null
+        </isNotEmpty>
+	 </isNotNull>
+	  -->
+	  
+       and t.xf_type = '01'
+       and dd.is_self='1'
+       and dd.gm_id in (select a.login_id 
+		  from pmdev.org_organization_mod  a
+		  where a.login_id is not null
+		  start with a.id  in (
+			   <isNotEmpty property="orgId">
+			 	  select qq.id from  pmdev.org_organization_mod  qq start with qq.id=#orgId# connect by prior qq.id=qq.parent_id)
+					 connect by prior a.id = a.parent_id
+					 union
+					 select #orgId# from dual)
+			   </isNotEmpty>
+			   <isEmpty  property="orgId">
+			 	  select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+					 connect by prior a.id = a.parent_id
+					 union
+					 select #loginId# from dual)
+			   </isEmpty>
+       and dd.visit_stutas='1'
+       and  to_char(dd.VISIT_DATE,'yyyyMM') =#dateStr#
+     Group by t.channel_no,
+              t.channel_no_desc,
+              t.jx_channel_type_desc,
+              t.img_url,
+              t.longitude,
+              t.latitude,
+              st.STAR_LEVEL,
+              t.chnl_addr,
+              dd.gm_id,
+              dd.gm_name,
+              t.xf_type
+              
+   union all
+         
+    select case when  nvl( t.xf_type ,'01')='01' 
+                then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+           nvl(t.channel_no,'-') "channelid",
+           nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+           t.img_url "imgurl", 
+           '0' "completionrate",            
+           '好久不见' "geetings",
+           nvl(t.longitude, 0) "longitude",
+           nvl(t.latitude, 0) "latitude",
+           pm.GetDistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+           nvl(t.chnl_addr, '-') "address",
+           to_char(max(dd.VISIT_DATE),'yyyy-MM-dd')  "visit_date",
+           dd.gm_id "gm_id",
+           dd.gm_name "gm_name",
+           t.xf_type "xfType"
+     from pmdev.dmcode_channel t,
+          (SELECT star_level, ZB_CHL_ID
+		     FROM PMDEV.DMCODE_CHANNE_STAR
+		    where YEAR_ID || JIDU_ID in
+          (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+          pm.dm_visit_info_d dd
+          <isNotNull property="isChoosedSale">
+		 	<isNotEmpty property="isChoosedSale">
+		 	 <isEqual property="isChoosedSale" compareValue="1">
+          ,
+		  (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+             from pm.pm_app_channel_sales_m t
+            where 1=1
+             
+             <isNotNull property="startSalesTime">
+                <isNotEmpty   property="startSalesTime" >
+                   and t.acct_month = #startSalesTime#
+                </isNotEmpty>
+             </isNotNull>
+             
+             <!-- 
+             <isNotNull property="endSalesTime">
+                <isNotEmpty   property="endSalesTime" >
+                   and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                </isNotEmpty>
+             </isNotNull>
+              -->
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+               </isEqual>
+         </isNotEmpty>
+	    </isNotNull>
+    where dd.chnl_id=t.channel_no 
+     and t.channel_no = st.ZB_CHL_ID(+)
+     
+	 <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		  <isEqual property="isChoosedSale" compareValue="1">
+			 and t.channel_no = mm.channelNo(+)
+		  </isEqual>
+		</isNotEmpty>
+	 </isNotNull>
+ 
+  	  <isNotNull property="channelNoDesc">
+		<isNotEmpty property="channelNoDesc">
+			and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+		</isNotEmpty>
+	  </isNotNull>
+	   
+	  <isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+      
+      <isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStatetArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+      
+	  <isNotNull property="xfType">
+         <isNotEmpty   property="xfType" >
+             and  t.xf_type = #xfType# 
+         </isNotEmpty>
+      </isNotNull>
+
+	<isNotNull property="startSales">
+		<isNotEmpty property="startSales">
+			and mm.developSum<![CDATA[>=]]>#startSales#
+		</isNotEmpty>
+	</isNotNull>
+	
+	<isNotNull property="endSales">
+		<isNotEmpty property="endSales">
+			and mm.developSum<![CDATA[<=]]>#endSales#
+		</isNotEmpty>
+	</isNotNull>
+	
+	<isNotNull property="startSalesTime">
+		<isNotEmpty property="startSalesTime">
+			and mm.channelNo is not null
+        </isNotEmpty>
+	</isNotNull>
+	
+	<!-- 
+	<isNotNull property="endSalesTime">
+		<isNotEmpty property="endSalesTime">
+			and mm.channelNo is not null
+        </isNotEmpty>
+	</isNotNull>
+	 -->
+	
+   and t.xf_type = '02'
+   and dd.is_self='1'
+   and dd.gm_id in (select a.login_id 
+			  from pmdev.org_organization_mod  a
+			 where a.login_id is not null
+			  start with a.id  in (
+		   <isNotEmpty property="orgId">
+		 	  select qq.id from  pmdev.org_organization_mod  qq start with qq.id=#orgId# connect by prior qq.id=qq.parent_id)
+				 connect by prior a.id = a.parent_id
+				 union
+				 select #orgId# from dual)
+		   </isNotEmpty>
+		   <isEmpty  property="orgId">
+		 	  select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+				 connect by prior a.id = a.parent_id
+				 union
+				 select #loginId# from dual)
+		   </isEmpty>
+      and dd.visit_stutas='1'
+      and  to_char(dd.VISIT_DATE,'yyyyMM') =#dateStr#
+     Group by t.channel_no,
+              t.channel_no_desc,
+              t.jx_channel_type_desc,
+              t.img_url,
+              t.longitude,
+              t.latitude,
+              st.STAR_LEVEL,
+              t.chnl_addr,
+              dd.gm_id,
+              dd.gm_name,
+              t.xf_type
+     order by "distance" 
+   </select>
+    <select id="getOldSelfList" resultClass="java.util.HashMap">
+		select tt.*
+		  from (
+				select nvl(t.visit_id,'-')  "taskeid",
+				       nvl(t.visit_name,'-') "taskname",
+				       nvl(ceil(sysdate-t.visit_date),0)  "completeddays" ,
+				       'true' "isfinished"
+				  from pm.dm_visit_info_d  t
+				 where 1=1
+				   and t.chnl_id=#channelId#
+				   and t.visit_stutas='1'
+				   and t.is_self='1'
+				   and to_char(t.visit_date,'YYYYMMdd') >= #startTime#
+				   <isNotNull property="gm_id">
+				   	<isNotEmpty property="gm_id" prepend="and">
+				   	t.gm_id=#gm_id#
+				   	</isNotEmpty>
+				   </isNotNull>
+				   
+				   <!-- and t.gm_id=#loginId# -->						   
+		  ) tt
+		 order by  "completeddays", "taskname" desc
+				   
+   </select> 
+   
+   <!-- 查询单个渠道信息 -->
+	<select id="selectSellArea" resultClass="java.util.HashMap">
+		 select t.ID as "orgno",
+           t.NAME as "orgname",
+<!--           t.DELFLAG as "state",-->
+<!--           t.ORG_TYPE as "grade",-->
+<!--           t.ORD as "ord",-->
+           (case
+             when exists (select 1
+                     from pmdev.org_organization_mod a
+                    where a.PARENT_ID =t.ID) then
+              1
+             else
+              0
+           end) "leaf",
+            u.ROLE_LEVEL,
+            u.LOGIN_NAME
+      from pmdev.org_organization_mod t,pmdss.sc_login_user  u
+     where 
+     t.id=u.org_id and t.delflag='0'
+     and u.login_id = #loginId#
+
+	</select>
+	
+	<!--  查询渠道列表 -->
+	<select id="selectSellAreaList" resultClass="java.util.HashMap">
+	<!-- changzhigang add   and t.GRADE <> 6 for forbit more .....date.... dead!! -->
+	   select * from(    select t.ID as "orgno",
+           t.NAME as "orgname",
+<!--           t.DELFLAG as "state",-->
+<!--           t.ORG_TYPE as "grade",-->
+<!--           t.ORD as "ord",-->
+                  (case
+         when exists (select 1
+                         from pmdev.org_organization_mod a
+                        where a.parent_id=t.id
+                        ) then
+          1
+         else
+          0
+       end) "leaf"
+<!--       ,-->
+<!--       -->
+<!--           (case-->
+<!--             when exists (  select  1    from pm.dm_visit_info_d v      where   rownum=1-->
+<!--       and v.visit_task_id = #taskId#   and v.gm_id in  (select a.login_id -->
+<!--      from pmdev.org_organization_mod  a   where a.login_id is not null  start with a.id=t.id  connect by prior a.id = a.parent_id )-->
+<!--  ) then-->
+<!--              1-->
+<!--             else-->
+<!--              0-->
+<!--           end) "leaf2"-->
+      from pmdev.org_organization_mod t
+     where 
+     t.parent_id  =#orgId#
+     and t.delflag='0') kk  
+<!--     where kk."leaf2"=1-->
+	</select>
+	
+   <select id="selectpositList" resultClass="java.util.HashMap">
+     
+      select distinct t.posit_no  "posit_no", t.posit_name  "posit_name",'0' "leaf"
+        from pm.dm_visit_info_d v, pmdev.org_organization_mod t
+       where v.gm_id = t.login_id
+         and v.visit_task_id = #taskId#
+         and v.gm_id in (select a.login_id
+                           from pmdev.org_organization_mod a
+                          where a.login_id is not null
+                          start with a.id   in (select b.ORG_ID    from pmdss.sc_login_user b
+                                           where b.login_id = #loginId#)
+                         connect by prior a.id = a.parent_id)
+   
+   </select>
+   
+   
+		<!--  查询任务发布人信息列表 -->
+	<select id="faburenlist" resultClass="java.util.HashMap">
+ select  distinct l.login_user_id "login_user_id",
+                 u.login_name  "login_name",
+                 u.area_no  "area_no",
+                 '0' "leaf"
+           from pm.dm_visit_log l, pmdss.sc_login_user u,pm.dm_visit_info_d v
+         where 1 = 1
+          and v.visit_task_id = l.task_id
+          and l.login_user_id = u.login_id
+            <isNotNull property="dateStr">
+				   	<isNotEmpty property="dateStr" prepend="and">
+				    substr( l.start_date,0,6)>=substr(#dateStr#,0,6)
+				   	</isNotEmpty>
+				   </isNotNull>
+         
+          
+          and v.execute_id in  (select a.id
+                                          from pmdev.org_organization_mod a
+                                         where  1=1 
+<!--                                          and  a.login_id is not null-->
+                                         
+<!--                                         start with a.id =#orgNo#-->
+<!--                                         in-->
+<!--                                                    (select b.ORG_ID-->
+<!--                                                       from pmdss.sc_login_user b-->
+<!--                                                      where b.login_id = #loginId#)-->
+<!--                                        connect by prior a.id = a.parent_id-->
+                                        
+                                        and   a.orgrank LIKE '%' || #orgNo# || '%'
+                                        )
+
+	</select>
+	
+		<!--  查询任务发布人组织结构信息列表 -->
+	<select id="fabuzuzhilist" resultClass="java.util.HashMap">
+ select kk.*  from(                       
+select  m.id "login_user_id",m.name "login_name",m.id "area_no",'1' "leaf" 
+from pmdev.org_organization_mod m where 
+m.id='root' or m.parent_id='root'  order by  m.orgrank) kk 
+where rownum &lt;15
+	</select>
+	
+	
+	<select id="selectpositListSelf" resultClass="java.util.HashMap">
+     
+      select distinct t.posit_no  "posit_no", t.posit_name  "posit_name",'0' "leaf"
+        from pm.dm_visit_info_d v, pmdev.org_organization_mod t
+       where v.gm_id = t.login_id
+         and v.is_self='1'
+       and v.visit_stutas='1'
+         and v.gm_id in (select a.login_id
+                           from pmdev.org_organization_mod a
+                          where a.login_id is not null
+                          start with a.id   in (select b.ORG_ID    from pmdss.sc_login_user b
+                                           where b.login_id = #loginId#)
+                         connect by prior a.id = a.parent_id)
+   
+   </select>
+	
+	<select id="getThoseNotInOrgTree" resultClass="java.util.HashMap">
+		 select distinct a.gm_id,e.ROLE_LEVEL,e.LOGIN_NAME
+   from pm.dm_visit_info_d a,pmdss.sc_login_user e
+  where a.is_self = '1'
+    and a.visit_stutas = '1'
+    <!-- and a.gm_id in
+        (select c.login_id
+           from pmdev.org_organization_mod c
+          where c.login_id is not null
+          start with c.id in (select b.ORG_ID
+                                from pmdss.sc_login_user b
+                               where b.login_id = #loginId#)
+         connect by prior c.id = c.parent_id
+         union
+         select #loginId# from dual) -->
+          and e.LOGIN_ID=a.gm_id
+         and ( e.ROLE_LEVEL in ('1') or a.gm_id in (#loginId#))
+         order by e.ROLE_LEVEL 
+	</select>
+	
+	<select id="selectSellAreaListSelf" resultClass="java.util.HashMap">
+		 select * from(    select t.ID as "orgno",
+	           t.NAME as "orgname",
+	                  (case
+	         when exists (select 1
+	                         from pmdev.org_organization_mod a
+	                        where a.parent_id=t.id
+	                        ) then
+	          1
+	         else
+	          0
+	       end) "leaf"
+<!--	       ,       -->
+<!--	           (case-->
+<!--	             when exists (  select  1    from pm.dm_visit_info_d v      where   rownum=1-->
+<!--	   and     v.is_self = '1'-->
+<!--	   and v.visit_stutas = '1'-->
+<!--	       and v.gm_id in  (select a.login_id -->
+<!--	      from pmdev.org_organization_mod  a   where a.login_id is not null  start with a.id=t.id  connect by prior a.id = a.parent_id )-->
+<!--	  ) then-->
+<!--	              1-->
+<!--	             else-->
+<!--	              0-->
+<!--	           end) "leaf2"-->
+	      from pmdev.org_organization_mod t
+	     where 
+	     t.parent_id  =#orgId# 
+	     and t.delflag='0') kk  
+	     
+<!--	     where kk."leaf2"=1-->
+	</select>
+	
+	
+	 <select id="selectSellAreaListSelfNew" resultClass="java.util.HashMap">
+		 select distinct decode(a.posit_name, '', a.name, '【' || a.POSIT_NAME || '】' || a.NAME)  "orgname",
+                    a.id  "orgno",
+                    a.grade "grade",
+                    a.parent_id "parentId",
+                    '0' "leaf"
+      from pmdev.org_organization_mod a
+     where 1 = 1
+      start with a.login_id  in (
+                       select  distinct  v.gm_id   from pm.dm_visit_info_d v  
+                                     where   1=1
+                                          and v.is_self = '1'
+                                          and v.visit_stutas = '1'
+                                          and  to_char(v.VISIT_DATE,'yyyyMM') =#dateStr#
+                     ) connect by prior  a.parent_id =a.id  
+     order by a.grade ,a.id
+	     
+	</select>
+	
+	<select id="selectSellAreaListSelfUndo" resultClass="java.util.HashMap">
+	
+        select t.ID as "orgno",
+           t.NAME as "orgname",
+           (case
+             when exists (select 1
+                     from pmdev.org_organization_mod a
+                    where a.parent_id = t.id) then
+              1
+             else
+              0
+           end) "leaf"
+      from pmdev.org_organization_mod t
+     where t.parent_id = #orgId#
+       and t.delflag = '0'
+       <isNotEmpty property="orgId">
+       	<isEqual property="orgId" compareValue="root">
+       		and t.id in (select distinct c.area_no
+                      from pm.PM_APP_CHANNEL_INFO_M c
+                     where SUBSTR(c.acct_month, 0, 6) =
+                           (select SUBSTR(max(mm.acct_month), 0, 6)
+                              from pm.PM_APP_CHANNEL_INFO_M mm))
+       	</isEqual>
+       </isNotEmpty>
+      order by t.ID 
+      
+ 
+      
+	</select>
+	
+	<select id="selectSellAreaListSelfUndoNew" resultClass="java.util.HashMap">
+  
+        select distinct decode(a.posit_name, '', a.name, '【' || a.POSIT_NAME || '】' || a.NAME)  "name",
+                    a.id  "code",
+                    a.grade "grade",
+                    a.parent_id "parentId",
+                    '0' "leaf"
+      from pmdev.org_organization_mod a
+     where 1 = 1
+     start with a.id in
+                (select distinct v.execute_id
+                   from pmdev.dmcode_channel t, pm.PM_APP_CHANNEL_INFO_M v
+                  where t.channel_no = v.chnl_code
+                    and v.org_type = '3'
+                    and v.acct_month =
+                        (select max(mm.acct_month)
+                           from pm.PM_APP_CHANNEL_INFO_M mm))
+    connect by prior a.parent_id = a.id
+     order by a.grade ,a.id
+  </select>
+  
+  
+	
+	<select id="selectpositListSelfUndo" resultClass="java.util.HashMap">
+		  select distinct t.posit_no "posit_no",
+                  t.posit_name "posit_name",
+                  '0' "leaf"
+    from pm.dm_visit_info_d v, pmdev.org_organization_mod t
+   where v.gm_id = t.login_id
+     and v.visit_stutas = '0'
+     and v.gm_id in
+         (select a.login_id
+            from pmdev.org_organization_mod a
+           where a.login_id is not null
+           start with a.id in (select b.ORG_ID
+                                 from pmdss.sc_login_user b
+                                where b.login_id = #loginId#)
+          connect by prior a.id = a.parent_id)
+	</select>
+	
+<!-- 任务巡店-->
+	<select id="visitshopOrgId" resultClass="java.util.HashMap">
+	 <!-- select   distinct  a.id  from pmdev.org_organization_mod  a  
+      where 1=1  start with a.id  in (
+              select  distinct v.execute_id  from  pm.dm_visit_info_d v where 1=1
+       and v.visit_task_id = #taskId# ) 
+       connect by prior  a.parent_id =a.id -->
+       select     distinct  a.id "code",
+                    a.grade "grade",
+                    a.parent_id "parentId",
+                    '0' "leaf",
+                    a.id "orgno", 
+                    a.NAME as "orgname"
+      from pmdev.org_organization_mod a
+     where 1 = 1
+     start with a.id in
+                (select distinct v.execute_id
+                   from PM.DM_VISIT_INFO_D v 
+                  where v.visit_task_id=#taskId#)
+    connect by prior a.parent_id = a.id
+     order by a.grade 
+	</select>
+	<!-- 自主巡店-->
+	<select id="zizhuOrgId" resultClass="String">
+	    select   distinct  a.id  from pmdev.org_organization_mod  a  
+      where 1=1  start with a.id  in (
+            select  distinct  v.execute_id   from pmdev.dmcode_channel t,
+                      pm.PM_APP_CHANNEL_INFO_M v
+                     where t.channel_no = v.chnl_code  
+                          and v.execute_id!='root'
+                          and v.execute_id is not null 
+                       and SUBSTR(v.acct_month, 0, 6) =  (select  SUBSTR(max(mm.acct_month), 0, 6) from  pm.PM_APP_CHANNEL_INFO_M mm )
+            ) connect by prior  a.parent_id =a.id  
+	
+	</select>
+	
+	<!-- 自主巡店   已作任务-->
+	<select id="zizhuSelfOrgId" resultClass="String"  >
+	select   distinct  a.id  from pmdev.org_organization_mod  a  
+               where 1=1  start with a.login_id  in (
+                       select  distinct  v.gm_id    from pm.dm_visit_info_d v  
+                                     where   1=1
+                                          and     v.is_self = '1'
+                                          and v.visit_stutas = '1'
+                     ) connect by prior  a.parent_id =a.id  
+	
+	</select>
+	
+	<insert id="insertShareposition">
+	  insert into pm.dm_app_share_position
+       
+      select  nvl(m2.id ,m3.id),
+              nvl(m2.name ,m3.name),
+              m.grid_no,
+              m.net_grid_name,
+              t.LOGIN_ID ,
+              t.LOGIN_NAME,
+              nvl(m.id ,m3.id),
+              $longitude$ ,
+              $latitude$,
+              sysdate,
+              #channelId#,
+              #taskeId#,
+              #isSelf#,
+               nvl((   select max(t.create_time)  from   pm.dm_app_share_position  t 
+			            where t.login_id=#loginId#
+			            and  t.latitude!=#latitude# and t.longitude!=#longitude#  
+			            and to_char(t.create_time,'yyyyMMdd')=to_char(sysdate,'yyyyMMdd')) ,sysdate),
+            
+            (  select     case  when floor((sysdate- max(t.create_time))*24*60 )>10  then '1'
+                                when floor((sysdate- max(t.create_time))*24*60 ) is null then '-1'
+                               else '0'  end diffmin from     pm.dm_app_share_position  t 
+	            where t.login_id=#loginId#
+	            and to_char(t.create_time,'yyyyMMdd')=to_char(sysdate,'yyyyMMdd'))
+              
+        from pmdss.sc_login_user t,
+         pmdev.org_organization_mod m,
+         pmdev.org_organization_mod m2,
+         pmdev.org_organization_mod m3
+       where t.login_id = m.login_id(+)
+            and m.areacode=m2.id(+)
+            and t.org_id=m3.id(+)
+            and t.LOGIN_ID=#loginId#
+	</insert>
+	
+	<!--渠道销量信息-->
+   	<select id="getChannleSalesInfo" resultClass="java.util.HashMap">
+	SELECT ACCT_MONTH        "acctMonth",
+	       CHANNEL_NO        "channelNo",
+	       CHANNEL_NO_DESC   "channelNoDesc",
+	       PRODUCT_TYPE      "productType",
+	       PRODUCT_TYPE_DESC "productTypeDesc",
+	       trim(NVL(DEVELOP_T,0))         "developT",
+	       trim(NVL(DEVELOP_L,0))         "developL",
+	       trim(NVL(DEVELOP_LY,0))        "developLy",
+	       nvl( round((decode( instr(nvl(HB_PER,0),'.'),1,'0'||nvl(HB_PER,0),replace(nvl(HB_PER,0),'-.','-0.'))*100),2)||'%','-') "hbPer",
+	        case when  nvl( develop_ly ,0)=0 then  '-'
+           else  nvl( round((decode( instr(nvl(tb_per,0),'.'),1,'0'||nvl(tb_per,0),replace(nvl(tb_per,0),'-.','-0.'))*100),2)||'%','-') end  "tbPer",
+           trim(NVL(YUJI_CHANNEL_JF,0)) "yuJiChannelJF"
+	  FROM PM.PM_APP_CHANNEL_SALES_M T
+	 WHERE T.CHANNEL_NO = #channelId#
+	 		and t.PRODUCT_TYPE is not null
+	 		and t.level_type = '01'
+            AND T.ACCT_MONTH = #acctDate#
+       	order by product_type  desc 
+	</select>
+	
+	<!--渠道销量信息 套餐下钻-->
+   	<select id="getChannleTaoCan" resultClass="java.util.HashMap">
+	    SELECT  CHANNEL_NO        "channelNo",
+                CHANNEL_NO_DESC   "channelNoDesc",
+                trim(NVL(YUJI_CHANNEL_JF,0)) "yuJiChannelJF",
+                trim(NVL(DEVELOP_T,0))         "developT"
+          FROM  PM.PM_APP_CHANNEL_SALES_M T
+         WHERE  T.UP_LEVEL = #channelId# || #productType#
+           AND  T.ACCT_MONTH = #acctDate#
+           <isNotNull property="taoCanName">
+		      <isNotEmpty property="taoCanName">
+		        AND  T.CHANNEL_NO_DESC like '%'||#taoCanName#||'%'
+		      </isNotEmpty>		    	
+	       </isNotNull>
+           order by DEVELOP_T  DESC 
+	</select>
+	
+	<!--销量信息最大账期-->
+   	<select id="getMaxSalesDate" resultClass="java.util.HashMap">
+		 SELECT nvl(max(ACCT_MONTH),' ')      "acctMonth"
+		  FROM PM.PM_APP_CHANNEL_SALES_M T
+		 WHERE T.CHANNEL_NO = #channelId# 
+		 <!-- SELECT MAX(T.ACCT_MONTH)"acctMonth"
+          FROM DW.DW_EXECUTE_LOG_BCA T
+         WHERE T.PROCNAME = UPPER('P_PM_APP_CHANNEL_SALES_M')-->
+	</select>
+	
+	<!--渠道拜访信息-->
+   	<select id="getChannleVisitInfo2" resultClass="java.util.HashMap">
+	SELECT    
+	   NVL(decode(kk.maxvisitdate,'','--', to_char(kk.maxvisitdate,'yyyy-mm-dd')),'') "maxvisitdate",
+       NVL(kk.times,'') "times",
+       NVL(decode(kk.maxvisitdateself,'','--', to_char(kk.maxvisitdateself,'yyyy-mm-dd')),'') "maxvisitdateself",
+       NVL(kk.timesself,'') "timesself"
+	    FROM PMDEV.DMCODE_CHANNEL T, (
+	     
+	     select  cm.chnl_code chnl_id,
+	             cm.chnl_code_desc chnl_name,
+	             cm.execute_id,
+	             sum(case when tt.id = cm.execute_id then 1 else 0 end) times,
+	             max(case when tt.id = cm.execute_id then tt.visit_date end) maxvisitdate,
+	             sum(case  when tt.id = cm.execute_id then  0 else  1 end) timesself,
+	             max(case when tt.id != cm.execute_id then tt.visit_date end) maxvisitdateself
+	      from  
+	               ( select * from pm.dm_visit_info_d t,
+	                 pmdev.org_organization_mod a where  
+	                  t.gm_id = a.login_id(+)
+	                   and a.grade >= 3
+	                    and to_char(t.visit_date, 'yyyymmdd') >= #startTime#
+	                    AND TO_CHAR(T.VISIT_DATE, 'yyyymmdd') <![CDATA[<]]> 
+	                    TO_CHAR(SYSDATE, 'yyyymmdd'))
+	                                  tt  ,
+	                            (select distinct cm.chnl_code,cm.chnl_code_desc, cm.execute_id
+	                               from pm.pm_app_channel_info_m cm
+	                              where 1 = 1 and
+	                              org_type IN ('3', '4')
+	                                and cm.acct_month =(select max(cc.acct_month) from pm.pm_app_channel_info_m cc)
+	                                
+	<isNotNull property="orgNo">
+	  <isNotEmpty prepend="and" property="orgNo">
+	  	<isNotEqual property="orgNo" compareValue="">
+	      cm.execute_id in (SELECT m.id  FROM PMDEV.ORG_ORGANIZATION_MOD M
+	         WHERE   1=1
+	        <!--  M.DELFLAG = '0'  -->
+	         
+	         CONNECT BY PRIOR M.ID = M.PARENT_ID START WITH M.ID = #orgNo#)
+	                                    
+	     </isNotEqual>
+	     </isNotEmpty>		    	
+	</isNotNull>  
+	                                      ) cm
+	                      where 1 = 1
+	                      and cm.execute_id !='root'
+	                        and tt.chnl_id(+) = cm.chnl_code
+	                      group by cm.chnl_code, cm.chnl_code_desc, cm.execute_id
+	                      
+	                      
+	                               ) kk,
+	               pmdev.org_organization_mod o,
+	              pure.pure_user x
+	   where 1=1 
+	         and t.channel_no =kk.chnl_id
+	         and kk.execute_id=o.id
+	         and o.login_id=x.login_id(+)
+	         and t.state='10'
+			 and T.CHANNEL_NO = #channelId#
+	</select>
+	<!--渠道拜访信息-->
+   	<select id="getChannleVisitInfo" resultClass="java.util.HashMap">
+		 select
+                          
+                nvl( sum(case when tt.visit_id is not null and ( nvl(tt.is_self,'0')!='1' or tt.id = cm.execute_id ) then    1 else  0  end) ,0)  "timesself",
+                nvl( to_char( max(case  when   tt.visit_id is not null and ( nvl(tt.is_self,'0')!='1' or tt.id = cm.execute_id ) then    tt.visit_date   end)  ,'yyyymmdd'),' ') "maxvisitdateself",
+                nvl(sum(case  when  tt.visit_id is not null and  nvl(tt.is_self,'0'）='1'  and (tt.id is null or tt.id != cm.execute_id )  then    1   else   0  end) ,0) "times",
+                nvl( to_char( max(case when  tt.visit_id is not null and  nvl(tt.is_self,'0'）='1'  and (tt.id is null or  tt.id != cm.execute_id ) then tt.visit_date  end) ,'yyyymmdd') ,' ')    "maxvisitdate"
+                        from  
+                         (select *
+                                  from pm.dm_visit_info_d t, (select * from   pmdev.org_organization_mod a where 1=1  and a.delflag='0' ) a  
+                                  where t.gm_id = a.login_id(+)
+                                   
+                                  and t.visit_date is not null
+                                  and t.chnl_id=#channelId#
+                                  and to_char(t.visit_date, 'yyyymmdd') >= #startTime#
+                                  AND TO_CHAR(T.VISIT_DATE, 'yyyymmdd') <![CDATA[<=]]> 
+                                  TO_CHAR(SYSDATE, 'yyyymmdd')       ) tt,
+                                          
+                                 
+                          (      select         cm.chnl_code,
+                                                cm.chnl_code_desc,
+                                                cm.execute_id
+                                              from pm.pm_app_channel_info_m cm
+                                             where 1 = 1
+                                               and org_type IN ('3', '4')
+                                               and cm.chnl_code=#channelId#
+                                               and cm.acct_month =(select max(cc.acct_month) from pm.pm_app_channel_info_m cc)
+                                                    
+                                                                                              ) cm
+                       where 1 = 1
+                       and tt.chnl_id(+) = cm.chnl_code 
+		
+	</select>
+	
+	<!--渠道拜访信息-->
+   	<select id="getChannleVisitInfoCommony" resultClass="java.util.HashMap">
+		 select
+                          
+                nvl( sum(case when tt.visit_id is not null and ( nvl(tt.is_self,'0')!='1' or tt.id = cm.execute_id ) then    1 else  0  end) ,0)  "timesself",
+                nvl( to_char( max(case  when   tt.visit_id is not null and ( nvl(tt.is_self,'0')!='1' or tt.id = cm.execute_id ) then    tt.visit_date   end)  ,'yyyymmdd'),' ') "maxvisitdateself",
+                nvl(sum(case  when  tt.visit_id is not null and  nvl(tt.is_self,'0'）='1'  and (tt.id is null or tt.id != cm.execute_id )  then    1   else   0  end) ,0) "times",
+                nvl( to_char( max(case when  tt.visit_id is not null and  nvl(tt.is_self,'0'）='1'  and (tt.id is null or  tt.id != cm.execute_id ) then tt.visit_date  end) ,'yyyymmdd') ,' ')    "maxvisitdate"
+                        from  
+                         (select *
+                                  from pm.dm_visit_info_d t,(select * from   pmdev.org_organization_mod a where 1=1  and a.delflag='0'   ) a
+                                  where t.gm_id = a.login_id(+)
+                                   
+                                  and t.visit_date is not null
+                                  and t.chnl_id=#channelId#
+                                  and to_char(t.visit_date, 'yyyymmdd') >= #startTime#
+                                  AND TO_CHAR(T.VISIT_DATE, 'yyyymmdd') <![CDATA[<=]]> 
+                                  TO_CHAR(SYSDATE, 'yyyymmdd')       ) tt,
+                                          
+                                 
+                          (      select  al.channel_no  chnl_code ,al.channel_no_desc chnl_code_desc ,al.exe_id  execute_id  from  pmdev.dmcode_channel     al                                                
+                                                  ) cm
+                       where 1 = 1
+                       and tt.chnl_id(+) = cm.chnl_code 
+		
+	</select>
+	
+	<!--积分信息-->
+   	<select id="getChannleScoreInfo" resultClass="java.util.HashMap">
+		select t.ACCT_MONTH "acctMonth",
+		       t.zb_channel_no "channelNo",
+		       t.zb_channel_name "channelName",
+		       nvl(trim(TO_CHAR(t.CHANNEL_SCORE, 'FM999999990.00')),'-') "channelScore",
+		       
+		       nvl(trim(TO_CHAR(t.score_money_js, 'FM999999990.00')),'-') "scoreMoneyJs",
+		       nvl(trim(TO_CHAR(f.REAL_SCORE, 'FM999999990.00')),'-') "realScore", 
+		       nvl(trim(TO_CHAR(t.SCORE_MONEY, 'FM999999990.00')),'-') "scoreMoney"，
+		       nvl(to_char(t.ratio,'FM999999990.00'),'-') "ratio"
+		  from pm.pm_chl_jf_m t ,PM.PM_CHL_JF_CAL_LOG a  , PM.PM_CHL_SCORE_M f
+		 where  1=1 
+		   and f.acct_month=t.acct_month
+		   and f.ZB_CHANNEL_NO=t.zb_channel_no
+		   and a.acct_month=t.acct_month
+		   and  a.is_publish='1'
+		   and  t.acct_month = #acctDate#
+		   and t.zb_channel_no = #channelId#
+	</select>
+	<!--积分信息最大账期-->
+   	<select id="getMaxScoreDate" resultClass="java.util.HashMap">
+		select nvl(MAX(t.ACCT_MONTH),' ') "maxAcctDate"
+		  from pm.pm_chl_jf_m t  , PM.PM_CHL_JF_CAL_LOG a  , PM.PM_CHL_SCORE_M f
+		  where 1=1 
+		    and f.acct_month=t.acct_month
+		    and f.ZB_CHANNEL_NO=t.zb_channel_no
+		    and a.acct_month=t.acct_month
+		    and  a.is_publish='1'
+		    and  t.zb_channel_no = #channelId#
+	</select>
+	
+	
+	<!--获取巡店轨迹  isleader executeId acctDate  loginId orgNo -->
+   	<select id="getVisitShopPositions" resultClass="java.util.HashMap">
+SELECT nvl(t1.AREA_NO,' ') "areaNo",
+       nvl(t1.AREA_NAME ,' ') "areaName",
+       nvl(t1.GRID_NO,' ') "gridNo",
+       nvl(t1.GRID_NAME,' ') "gridName",
+       t1.LOGIN_ID "loginId",
+       t1.LOGIN_NAME "loginName",
+       t1.EXECUTE_ID "executeId",
+       NVL(t1.LONGITUDE, '') "longitude",
+       NVL(t1.LATITUDE, '') "latitude",
+       to_char(t1.CREATE_TIME, 'HH24:mi') "createTime",
+       to_char(t1.PRECREATE_TIME, 'HH24:mi') "precreateTime",
+       nvl(t1.IS_SELF,'-1')  "locType",
+       decode(t1.IS_OUTTIME, '1', '1', '0') "isOuttime",
+       nvl(t1.CHANNEL_NO, ' ') "channelNo",
+       nvl(t2.channel_no_desc, ' ') "chnlCodeDesc"
+  FROM (select *
+          from (                
+                select ROW_NUMBER() over(PARTITION by t.execute_id, t.longitude, t.latitude, t.precreate_time order by t.is_self desc, t.create_time desc) nummm,
+                        t.*
+                  FROM PM.DM_APP_SHARE_POSITION t
+                 where (t.create_time != t.precreate_time or t.is_self != '-1' or  t.is_outtime = '-1')
+                <isNotNull property="isleader">
+                    <isNotEmpty property="isleader">
+                              <isEqual  property="isleader" compareValue="1">
+                                   and t.execute_id in (select rr.id from  pmdev.org_organization_mod rr  start with  rr.id=#orgNo# connect by prior rr.id=rr.parent_id ) 
+                               <isNotNull  property="executeId">
+                                 <isNotEmpty property="executeId" >
+                                           <isNotEqual property="executeId" compareValue="" >
+                                                  and t.execute_id=#executeId#
+                                          </isNotEqual>
+                                 </isNotEmpty>
+                               </isNotNull>                   
+                               <isNotNull property="orgId">
+                                   <isNotEmpty property="orgId">
+                                          and t.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+                                   </isNotEmpty>
+                               </isNotNull>
+                               <isNotNull property="positList">
+                                   <isNotEmpty property="positList">
+                                        and t.EXECUTE_ID in (select tt.id from pmdev.org_organization_mod tt where tt.posit_no in ('$positList$'))
+                                   </isNotEmpty>
+                               </isNotNull>
+                               <isNotNull property="executeIdList">
+                                    <isNotEmpty property="executeIdList">
+                                        and t.EXECUTE_ID in ('$executeIdList$')
+                                    </isNotEmpty>
+                                </isNotNull>                   
+                         </isEqual> 
+                        <isEqual property="isleader" compareValue="0">
+                                and  ( t.EXECUTE_ID  in ( select m.id from pmdev.org_organization_mod m where m.login_id=#loginId#) 
+                              <isNotNull  property="executeId">
+                                  <isNotEmpty property="executeId" >
+                                        <isNotEqual property="executeId" compareValue="" >
+                                             or  t.execute_id=#executeId#
+                                       </isNotEqual>
+                                 </isNotEmpty>
+                              </isNotNull>
+                                )       
+                     </isEqual>
+         </isNotEmpty>
+   </isNotNull>         
+   <isNotNull  property="xfType">
+           <isNotEmpty property="xfType" >
+               <isEqual property="xfType"  compareValue="01" >
+                    and  t.IS_SELF in('0','1')
+               </isEqual>
+               <isNotEqual property="xfType" compareValue="01" >
+                    and t.IS_SELF in('2','3')
+               </isNotEqual>
+           </isNotEmpty>
+   </isNotNull>      
+         and to_char(t.create_time, 'yyyyMMdd') = #acctDate#        
+    order by t.create_time desc) tt
+      where tt.nummm = 1) t1,
+       pmdev.dmcode_channel t2
+ WHERE 1 = 1
+   and t1.CHANNEL_NO = t2.channel_no(+)
+ order by t1.CREATE_TIME
+	</select>
+	
+
+<!--地图巡店  计薪渠道类型  -->
+	<select id="leadermapjxChannelTypeList" resultClass="java.util.HashMap">
+	 select distinct NVL(t.jx_channel_type_desc ,' ') "name",
+	                 NVL(t.jx_channel_type,'CH000')  "value"
+     from pmdev.dmcode_channel       t,
+          pm.PM_APP_CHANNEL_INFO_M   v
+    where t.channel_no = v.chnl_code
+      and v.org_type = '3'
+      and t.jx_channel_type is not null 
+      and v.execute_id in  (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgNo# connect by prior rr.id=rr.parent_id)
+      and v.acct_month =
+          (select max(mm.acct_month)
+             from pm.PM_APP_CHANNEL_INFO_M mm)
+     
+       union  select  '全部' "name" ,' ' "value" from dual 
+      
+     order by "value"        
+	</select>
+	<!--列表巡访 计薪渠道未完成类型 -->
+	<select id="leadermapjxChannelTypeUndoList" resultClass="java.util.HashMap">
+	   select distinct NVL(t.jx_channel_type_desc ,' ') "name",
+                   NVL(t.jx_channel_type,'CH000')  "value"
+	     from pmdev.dmcode_channel       t,
+	          pm.PM_APP_CHANNEL_INFO_M   v
+	    where t.channel_no = v.chnl_code
+	      and v.org_type = '3'
+	      and t.jx_channel_type is not null 
+	      and v.execute_id in  (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgNo# connect by prior rr.id=rr.parent_id)
+	      and v.acct_month =
+	          (select max(mm.acct_month)
+	             from pm.PM_APP_CHANNEL_INFO_M mm)
+	     
+	       union  select  '全部' "name" ,' ' "value" from dual 
+	      
+	     order by "value"    
+	</select>
+	<!--列表巡访 渠道状态类型 -->
+	<select id="channelTypeList" resultClass="java.util.HashMap">
+	    SELECT DISTINCT T.STATE "state", T.STATE_DESC "stateDesc"
+		  FROM PMDEV.DMCODE_CHANNEL T
+		 WHERE T.XF_TYPE = '01'
+		 order by T.STATE   
+	</select>
+	<!--列表巡访 计薪渠道已完成类型-->
+	<select id="leadermapjxChannelTypedoneList" resultClass="java.util.HashMap">
+	   select distinct NVL(t.jx_channel_type_desc ,' ') "name",
+	                   NVL(t.jx_channel_type,'CH000')  "value"
+	     from pmdev.dmcode_channel       t,
+	          pm.PM_APP_CHANNEL_INFO_M   v
+	    where t.channel_no = v.chnl_code
+	      and v.org_type = '3'
+	      and t.jx_channel_type is not null 
+	      and v.execute_id in  (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgNo# connect by prior rr.id=rr.parent_id)
+	      and v.acct_month =
+	          (select max(mm.acct_month)
+	             from pm.PM_APP_CHANNEL_INFO_M mm)
+	     
+	       union  select  '全部' "name" ,' ' "value" from dual 
+	      
+	     order by "value"     
+	</select>
+<!--地图巡店  组织树结构  -->	
+	<select id="leadermaptree" resultClass="java.util.HashMap">
+	   select distinct decode(a.posit_name, '', a.name, '【' || a.POSIT_NAME || '】' || a.NAME) "name",
+                    a.id "code",
+                    a.grade "grade",
+                    a.parent_id "parentId",
+                    '0' "leaf"
+      from pmdev.org_organization_mod a
+     where 1 = 1
+     start with a.id in
+                (select distinct v.execute_id
+                   from pmdev.dmcode_channel t, pm.PM_APP_CHANNEL_INFO_M v
+                  where t.channel_no = v.chnl_code
+                    and v.org_type = '3'
+                    and v.acct_month =
+                        (select max(mm.acct_month)
+                           from pm.PM_APP_CHANNEL_INFO_M mm))
+    connect by prior a.parent_id = a.id
+     order by a.grade 
+	</select>
+<!--领导实时位置查看  岗位筛选  -->	
+	<select id="leaderShareMapPositList" resultClass="java.util.HashMap">
+	  select distinct  a.posit_name "name" , a.posit_no "value"
+    
+      from pmdev.org_organization_mod a
+     where 1 = 1
+       and a.posit_no is not null
+     start with a.id in (select distinct v.execute_id
+                           from pm.dm_app_share_position v
+                          where 1 = 1
+                          <isNotNull property="type">
+                          <isNotEmpty property="type">
+                          <isEqual property="type" compareValue="0">
+                            and to_char(v.create_time, 'yyyyMMdd') =
+                                to_char(sysdate, 'yyyyMMdd')
+                            </isEqual>
+                            </isNotEmpty>
+                            </isNotNull>
+                         intersect
+                         select distinct m.id
+                           from pmdev.org_organization_mod m
+                          where 1 = 1
+                          start with m.id = #orgNo#
+                         connect by prior m.id = m.parent_id)
+    connect by prior a.parent_id = a.id
+     union  select  '全部' "name" ,' ' "value" from dual 
+      
+     order by "value"
+	</select>
+	
+	<!--巡楼、巡访 实时位置查看 和 巡楼轨迹查看 岗位筛选数据  -->	
+	<select id="realTimeAndVisitWayPositList" resultClass="java.util.HashMap">
+	     select distinct a.posit_name "name", a.posit_no "value"
+		   from PMDEV.ORG_ORGANIZATION_MOD a
+		  where 1 = 1
+		    and a.posit_no is not null
+		    and a.orgrank like '%/' || #orgNo# || '%'
+		  start with a.id in (select distinct v.execute_id
+		                        from PM.PM_CHANNEL_BUILD_POSITION v)
+		 connect by prior a.parent_id = a.id
+		 union
+		 select '全部' "name", ' ' "value" from dual order by "value"
+	</select>
+
+    <!-- 巡楼、巡访 实时位置查看 和 巡楼轨迹查看 营销单元筛选数据   -->	
+	<select id="realTimeAndVisitWaytree" resultClass="java.util.HashMap">
+	       select distinct decode(a.posit_name, '',a.name, '【' || a.posit_name || '】' || a.name) "name",
+                  a.id "orgNo",
+                  to_char(a.grade) "grade",
+                  a.parent_id "parentId",
+                  '0' "leaf"
+	        from PMDEV.ORG_ORGANIZATION_MOD a
+	       where a.orgrank like '%/' || #orgNo# || '%'
+	       start with a.id in (select distinct v.execute_id from PM.PM_CHANNEL_BUILD_POSITION v)
+	       connect by prior a.parent_id = a.id
+	       order by a.grade ,a.id
+	</select>
+	
+    <!--领导实时位置查看  组织数据结构树  -->	
+	<select id="leaderShareMaptree" resultClass="java.util.HashMap">
+	             
+    select distinct decode(a.posit_name,
+                           '',
+                           a.name,
+                           '【' || a.POSIT_NAME || '】' || a.NAME) "name",
+                    a.id "code",
+                    a.grade "grade",
+                    a.parent_id "parentId",
+                    '0' "leaf"
+      from pmdev.org_organization_mod a
+     where 1 = 1
+     start with a.id in (select distinct v.execute_id
+                           from pm.dm_app_share_position v
+                          where 1 = 1
+                          <isNotNull property="type">
+                          <isNotEmpty property="type">
+                          <isEqual property="type" compareValue="0">
+                            and to_char(v.create_time, 'yyyyMMdd') =
+                                to_char(sysdate, 'yyyyMMdd')
+                           </isEqual>
+                           </isNotEmpty>
+                           </isNotNull>
+                         intersect
+                         select distinct m.id
+                           from pmdev.org_organization_mod m
+                          where 1 = 1
+                          start with m.id = #orgNo#
+                         connect by prior m.id = m.parent_id)
+    connect by prior a.parent_id = a.id
+     order by a.grade ,a.id
+
+	</select>
+	
+	
+	<!--  领导实时查看最新实时人员   人名列表-->
+	<select id="leaderShareMapPersonList" resultClass="java.util.HashMap">
+	 select distinct decode(a.posit_name,
+                             '',
+                             a.name,
+                             '【' || a.POSIT_NAME || '】' || a.NAME) "name",
+                      
+                      nvl(t.execute_id, '-') "value"
+      
+        FROM PM.DM_APP_SHARE_POSITION t, pmdev.org_organization_mod a
+       where  1=1 
+       <isNotNull property="type">
+        <isNotEmpty property="type">
+        <isEqual property="type" compareValue="0">
+         and to_char(t.create_time, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
+        </isEqual>
+        </isNotEmpty>
+        </isNotNull>     
+         and a.id = t.execute_id
+         and t.execute_id in
+             (select m.id
+                from pmdev.org_organization_mod m
+               start with m.id = #orgNo#
+              connect by prior m.id = m.parent_id)
+	 union  select  '全部' "name" ,' ' "value" from dual 
+        order by  "value"
+	
+	</select>
+	
+	
+<!--	是否工作日-->
+	<select id="shareisworkday" resultClass="java.lang.String">
+		 SELECT  t.is_work||''  isWorkday FROM  NDIM.DIM_DATE_TRANS T  where t.day_id=to_char(sysdate,'yyyyMMdd')
+	</select>
+	<select id="shareisleader" resultClass="java.lang.String">
+		
+		
+	</select>
+	
+	<select id="shareisworker" resultClass="java.lang.String">
+			select  sum("isWorker") "isWorker"
+		from (
+		select count(*) "isWorker"
+		  from pmdev.dmcode_channel       t,
+		       pm.pm_app_channel_info_m   v,
+		       pmdev.org_organization_mod ss
+		      <!-- tb                         AA-->
+		 where t.channel_no = v.chnl_code
+		   and ss.id = v.execute_id
+		   and ss.login_id = #loginId#
+		   AND T.XF_TYPE = '01'
+		   and v.org_type = '3'
+		   and v.acct_month = (select max(mm.acct_month) acct_month from pm.PM_APP_CHANNEL_INFO_M mm)
+		   
+		  UNION ALL
+		    SELECT count(*) "isWorker"
+		      FROM PMDEV.DMCODE_CHANNEL T, PMDEV.ORG_ORGANIZATION_MOD ss
+		     WHERE T.EXE_ID = ss.ID
+		       AND ss.DELFLAG = '0'
+		       AND T.XF_TYPE = '02'
+		       and ss.login_id = #loginId#)
+	</select>
+	
+	
+	<select id="isShareStart" resultClass="java.lang.String">
+		select case
+           when sysdate > to_date(to_char(sysdate, 'yyyyMMdd') || ' 17:00', 'yyyyMMdd hh24:mi')
+                 or  sysdate &lt; to_date(to_char(sysdate, 'yyyyMMdd') || ' 08:30', 'yyyyMMdd hh24:mi')
+            then
+            '0'
+           else
+            '1'
+         end isShareStart
+       from dual
+			            
+	</select>
+	
+    <!--领导实时查看最新实时人员分享	 orgId  positList  executeIdList-->
+	<select id="leaderShowNewestPositionList" resultClass="java.util.HashMap">
+	 select rownum  "ranknum", t.*
+      from (select ROW_NUMBER() over(PARTITION by t.execute_id order by t.create_time desc) numfirst,
+                   nvl(t.area_no,'-') "areaNo",
+                   nvl(t.login_id,'-') "loginId",
+                   nvl(t.login_name,'-') "loginName",
+                   nvl(t.execute_id,'-') "executeId",
+                   nvl(t.longitude,0)  "longitude",
+                   nvl(t.latitude,0) "latitude",
+                   nvl(t.is_self ,'-1') "isSelf",
+                   nvl(to_char(t.create_time ,'hh24:mi'),'-')  "createTime" 
+              FROM PM.DM_APP_SHARE_POSITION t 
+              where to_char(t.create_time,'yyyymmdd')=to_char(sysdate,'yyyymmdd')
+              and t.execute_id in (
+              select m.id  from pmdev.org_organization_mod m   start with m.id=#orgNo# connect by prior m.id=m.parent_id
+              )
+              
+			      <isNotNull property="orgId">
+			       <isNotEmpty property="orgId">
+			         and t.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+			       </isNotEmpty>
+			       </isNotNull>
+			       <isNotNull property="positList">
+			       <isNotEmpty property="positList">
+			         and t.EXECUTE_ID in (select tt.id from pmdev.org_organization_mod tt where tt.posit_no in ('$positList$'))
+			       </isNotEmpty>
+			       </isNotNull>
+			       <isNotNull property="executeIdList">
+			        <isNotEmpty property="executeIdList">
+			        and t.EXECUTE_ID in ('$executeIdList$')
+			        </isNotEmpty>
+			      </isNotNull>
+			     
+               order by t.create_time desc) t
+     where numfirst = 1
+	
+	
+	</select>
+	
+	 <!--实时位置查看最新实时人员分享(巡小区、巡门店、巡楼宇)-->
+	<select id="realTimePositionList" resultClass="java.util.HashMap">
+	   select rownum  "ranknum", t.* from(
+          select row_number() over(partition by t.execute_id order by t.create_time desc) "numFirst",
+                 nvl(t.area_no, '-') "areaNo",
+                 nvl(t.login_id, '-') "loginId",
+                 nvl(t.login_name, '-') "loginName",
+                 nvl(t.execute_id, '-') "executeId",
+                 nvl(t.longitude, 0) "longitude",
+                 nvl(t.latitude, 0) "latitude",
+                 nvl(decode(t.is_self,'2','0','3','1',t.is_self),'-1') "isSelf",
+                 nvl(to_char(t.create_time, 'hh24:mi'), '-') "createTime",
+                 t.vtype "vType"
+            from PM.PM_CHANNEL_BUILD_POSITION t,PMDEV.ORG_ORGANIZATION_MOD m
+            where 1=1
+            and t.execute_id=m.id
+            and m.orgrank like  '%/' ||#orgNo#|| '%'
+            
+            <isNotNull property="vType">
+	             <isNotEmpty   property="vType" >
+	                 <isEqual property="channelOrVillage" compareValue="0">
+	                 	 and t.vType in
+		               <iterate property="vTypeArr" conjunction="," open="(" close=")">
+		                 #vTypeArr[]#
+		               </iterate>
+			         </isEqual>
+			         
+			         <isEqual property="channelOrVillage" compareValue="1">
+	                 	 and (t.vType in
+		               <iterate property="vTypeArr" conjunction="," open="(" close=")">
+		                 #vTypeArr[]#
+		               </iterate>
+		                  or t.vType is null)
+			         </isEqual>
+			         
+	             </isNotEmpty>
+	        </isNotNull>
+            
+            <isNotNull property="acctDate">
+	             <isNotEmpty property="acctDate">
+	               and to_char(t.CREATE_TIME,'yyyymmdd') = #acctDate#
+	             </isNotEmpty>
+            </isNotNull>
+            
+            <isNotNull property="positList">
+	             <isNotEmpty property="positList">
+	               and m.posit_no in ('$positList$')
+	             </isNotEmpty>
+            </isNotNull>
+             
+            <isNotNull property="multiAreaNo">
+	             <isNotEmpty   property="multiAreaNo" >
+	                   and m.areacode in
+	               <iterate property="multiAreaNoArr" conjunction="," open="(" close=")">
+	                 #multiAreaNoArr[]#
+	               </iterate>       
+	             </isNotEmpty>
+             </isNotNull>
+              
+	        <isNotNull property="multiGridNo">
+	            <isNotEmpty   property="multiGridNo" >
+	                and m.grid_no  in
+	                <iterate property="multiGridNoArr" conjunction="," open="(" close=")">
+	                   #multiGridNoArr[]#
+	                </iterate>       
+	            </isNotEmpty>
+	        </isNotNull>
+               
+	        <isNotNull property="multiExeId">
+	             <isNotEmpty   property="multiExeId" >
+	                and  m.id in
+		            <iterate property="multiExeIdArr" conjunction="," open="(" close=")">
+		                 #multiExeIdArr[]#
+		            </iterate>       
+	             </isNotEmpty>
+	        </isNotNull>
+            
+             order by t.create_time desc)t
+	   where t."numFirst" = 1
+	</select>
+	
+	 <!--巡访轨迹查看 (巡小区、巡门店、巡楼宇)-->
+	<select id="visitingPositionList" resultClass="java.util.HashMap">
+	   select *  from (
+          select row_number() over(partition by t1.execute_id, t1.longitude, t1.latitude, t1.precreate_time order by t1.is_self desc, t1.create_time desc) "numm",
+                 nvl(t1.area_no,'') "areaNo",
+                 nvl(t1.area_name,'') "areaName",
+                 nvl(t1.grid_no,'') "gridNo",
+                 nvl(t1.grid_name, '') "gridName",
+                 t1.login_id "loginId",
+                 t1.login_name "loginName",
+                 t1.execute_id "executeId",
+                 nvl(t1.longitude, 0) "longitude",
+                 nvl(t1.latitude, 0) "latitude",
+                 to_char(t1.create_time, 'HH24:mi') "createTime",
+                 to_char(t1.precreate_time, 'HH24:mi') "precreateTime",
+                 nvl(decode(t1.is_self,'2','0','3','1',t1.is_self),'-1') "isSelf",
+                 decode(t1.is_outtime, '1', '1', '0') "isOuttime",
+                 nvl(t1.channel_no, '') "channelNo",
+                 nvl(t1.channel_no_desc, '') "chnlCodeDesc",
+                 t1.visit_task_id "flowId",
+                 t1.vtype "vType"
+            from PM.PM_CHANNEL_BUILD_POSITION  t1, PMDEV.ORG_ORGANIZATION_MOD rr
+           where 1 = 1
+              and t1.execute_id = rr.id
+              and (t1.create_time != t1.precreate_time or t1.is_self != '-1' or  t1.is_outtime = '-1')
+              and rr.orgrank like  '%/' ||#orgNo#|| '%'
+              
+	             <isNotNull property="executeId">
+		             <isNotEmpty   property="executeId" >
+		                 and t1.execute_id =#executeId#
+		             </isNotEmpty>
+	             </isNotNull>
+	            
+	             <isNotNull property="vType">
+		             <isNotEmpty   property="vType" >
+		             	<isEqual property="channelOrVillage" compareValue="0">
+			             	  and t1.vType in
+			               <iterate property="vTypeArr" conjunction="," open="(" close=")">
+			                 #vTypeArr[]#
+			               </iterate>  
+		             	</isEqual>
+		             	<isEqual property="channelOrVillage" compareValue="1">
+		                 	 and (t1.vType in
+			               <iterate property="vTypeArr" conjunction="," open="(" close=")">
+			                 #vTypeArr[]#
+			               </iterate>
+			                  or t1.vType is  null)
+			         	</isEqual>
+		             </isNotEmpty>
+	             </isNotNull>
+	            
+	            <isNotNull property="acctDate">
+		             <isNotEmpty property="acctDate">
+		               and to_char(t1.CREATE_TIME,'yyyymmdd') = #acctDate#
+		             </isNotEmpty>
+	            </isNotNull>
+	            
+	            <isNotNull property="positList">
+		             <isNotEmpty property="positList">
+		               and rr.posit_no in ('$positList$')
+		             </isNotEmpty>
+	            </isNotNull>
+	             
+	            <isNotNull property="multiAreaNo">
+		             <isNotEmpty   property="multiAreaNo" >
+		                   and rr.areacode in
+		               <iterate property="multiAreaNoArr" conjunction="," open="(" close=")">
+		                 #multiAreaNoArr[]#
+		               </iterate>       
+		             </isNotEmpty>
+	             </isNotNull>
+	              
+		        <isNotNull property="multiGridNo">
+		            <isNotEmpty   property="multiGridNo" >
+		                and rr.grid_no  in
+		                <iterate property="multiGridNoArr" conjunction="," open="(" close=")">
+		                   #multiGridNoArr[]#
+		                </iterate>       
+		            </isNotEmpty>
+		        </isNotNull>
+	               
+		        <isNotNull property="multiExeId">
+		             <isNotEmpty   property="multiExeId" >
+		                and  rr.id in
+			            <iterate property="multiExeIdArr" conjunction="," open="(" close=")">
+			                 #multiExeIdArr[]#
+			            </iterate>       
+		             </isNotEmpty>
+		        </isNotNull>
+	         order by t1.create_time desc
+                 ) t
+           where t."numm" = 1
+	</select>
+	
+    <!--地图巡店   orgId   channelNoDesc  jxChannelType	-->
+	<select id="visitShopMapList20170614"  resultClass="java.util.HashMap" >
+	  select nvl(t.jx_channel_type, 'CH000') "jxchanneltype",
+             NVL(t.jx_channel_type_desc, ' ') "jxchanneltypedesc",
+             case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+             t.channel_no "channelid",
+             NVL(m.ACCT_MONTH,to_char(sysdate,'yyyymm')) "acctMonth",
+             nvl(t.longitude, 0) "longitude",
+             nvl(t.latitude, 0) "latitude",
+             nvl( m.develop_t||'','-') "developt"  , 
+             nvl( round((decode( instr(nvl(m.hb_per,0),'.'),1,'0'||nvl(m.hb_per,0),replace(nvl(m.hb_per,0),'-.','-0.'))*100),2)||'%','-') "hbper",
+             case when  nvl( m.develop_ly ,0)=0 then  '-'
+               else  nvl( round((decode( instr(nvl(m.tb_per,0),'.'),1,'0'||nvl(m.tb_per,0),replace(nvl(m.tb_per,0),'-.','-0.'))*100),2)||'%','-') end  "tbper",
+              '截止'|| nvl(substr(m.update_time ,-2),'昨')||'日24:00'  "updatetime",
+              v.area_no "areaNo",
+               t.xf_type "xfType"
+        from pmdev.dmcode_channel t,
+             pm.PM_APP_CHANNEL_INFO_M v,
+             (select *
+                from pm.pm_app_channel_sales_m m
+               where m.acct_month = ( select max(m.acct_month) from  pm.pm_app_channel_sales_m m )
+                 and m.product_type = '00' and m.level_type = '01')  m
+       where t.channel_no = v.chnl_code
+         and t.channel_no=m.channel_no(+)
+         and v.org_type   in ('3','4')
+         and v.acct_month =
+             (select max(mm.acct_month)
+                from pm.PM_APP_CHANNEL_INFO_M mm)
+         and v.execute_id in
+             (select rr.id
+                from pmdev.org_organization_mod rr
+               start with rr.id = #orgNo#
+              connect by prior rr.id = rr.parent_id)
+      
+	       <isNotNull property="orgId">
+			   <isNotEmpty property="orgId">
+	             and v.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+	           </isNotEmpty>
+		   </isNotNull>
+           <isNotNull property="channelNoDesc">
+		       <isNotEmpty property="channelNoDesc">
+		         and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+		       </isNotEmpty>
+		   </isNotNull>
+		   <isNotNull property="jxChannelTypeList">
+			    <isNotEmpty property="jxChannelTypeList">
+			      and  t.jx_channel_type in ('$jxChannelTypeList$')
+			    </isNotEmpty>
+		   </isNotNull>
+           <isNotNull property="xfType">
+                <isNotEmpty   property="xfType" >
+                  and  t.xf_type = #xfType#
+                </isNotEmpty>
+           </isNotNull>
+           and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+         <!--   <isNotNull property="startSales">
+                <isNotEmpty   property="startSales" >
+                  	<isNotNull property="endSales">
+		                <isNotEmpty   property="endSales" >
+		                    <isNotNull property="startSalesTime">
+				                <isNotEmpty   property="startSalesTime" >
+				                    <isNotNull property="endSalesTime">
+						                <isNotEmpty   property="endSalesTime" >
+		       and t.channel_no in ( 
+				    select mm.channelNo from    
+					(select t.channel_no channelNo,sum(develop_t) developSum
+					   from pm.pm_app_channel_sales_m t
+				      where t.acct_month <![CDATA[>=]]>#startSalesTime#
+					    and t.acct_month <![CDATA[<=]]> #endSalesTime#
+					    and t.product_type = '00' and t.level_type = '01'
+				   group by t.channel_no )mm
+                    where mm.developSum<![CDATA[>=]]>#startSales#
+                     and mm.developSum<![CDATA[<=]]>#endSales#)
+						                </isNotEmpty>
+          			 				</isNotNull>
+				                </isNotEmpty>
+          			 		</isNotNull>
+		                </isNotEmpty>
+          			 </isNotNull>
+                </isNotEmpty>
+           </isNotNull>  -->
+    
+     union all
+     
+     select nvl(t.jx_channel_type, 'CH000') "jxchanneltype",
+             NVL(t.jx_channel_type_desc, ' ') "jxchanneltypedesc",
+             case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+             t.channel_no "channelid",
+             NVL(m.ACCT_MONTH,to_char(sysdate,'yyyymm')) "acctMonth",
+             nvl(t.longitude, 0) "longitude",
+             nvl(t.latitude, 0) "latitude",
+             nvl( m.develop_t||'','-') "developt"  , 
+             nvl( round((decode( instr(nvl(m.hb_per,0),'.'),1,'0'||nvl(m.hb_per,0),replace(nvl(m.hb_per,0),'-.','-0.'))*100),2)||'%','-') "hbper",
+             case when  nvl( m.develop_ly ,0)=0 then  '-'
+               else  nvl( round((decode( instr(nvl(m.tb_per,0),'.'),1,'0'||nvl(m.tb_per,0),replace(nvl(m.tb_per,0),'-.','-0.'))*100),2)||'%','-') end  "tbper",
+              '截止'|| nvl(substr(m.update_time ,-2),'昨')||'日24:00'  "updatetime",
+              o.areacode "areaNo",
+               t.xf_type "xfType"
+        from pmdev.dmcode_channel t,
+            PMDEV.ORG_ORGANIZATION_MOD O,
+             (select *
+                from pm.pm_app_channel_sales_m m
+               where m.acct_month = ( select max(m.acct_month) from  pm.pm_app_channel_sales_m m )
+                 and m.product_type = '00' and m.level_type = '01')  m
+       where 1=1
+         and t.channel_no=m.channel_no(+)
+         and  T.EXE_ID = O.ID
+         and t.EXE_ID in
+             (select rr.id
+                from pmdev.org_organization_mod rr
+               start with rr.id = #orgNo#
+              connect by prior rr.id = rr.parent_id)
+           <isNotNull property="orgId">
+		  	 <isNotEmpty property="orgId">
+        		 and t.EXE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+        	 </isNotEmpty>
+		   </isNotNull>
+           <isNotNull property="channelNoDesc">
+		     <isNotEmpty property="channelNoDesc">
+		         and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+		     </isNotEmpty>
+		   </isNotNull>
+		   <isNotNull property="jxChannelTypeList">
+		  	 <isNotEmpty property="jxChannelTypeList">
+		 		 and  t.jx_channel_type in ('$jxChannelTypeList$')
+		  	 </isNotEmpty>
+		   </isNotNull>
+           <isNotNull property="xfType">
+             <isNotEmpty   property="xfType" >
+                 and  t.xf_type = #xfType#
+             </isNotEmpty>
+           </isNotNull>
+           and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+           
+           <!--  <isNotNull property="startSales">
+                <isNotEmpty   property="startSales" >
+                  	<isNotNull property="endSales">
+		                <isNotEmpty   property="endSales" >
+		                    <isNotNull property="startSalesTime">
+				                <isNotEmpty   property="startSalesTime" >
+				                    <isNotNull property="endSalesTime">
+						                <isNotEmpty   property="endSalesTime" >
+		       and t.channel_no in ( 
+				    select mm.channelNo from    
+					(select t.channel_no channelNo,sum(develop_t) developSum
+					   from pm.pm_app_channel_sales_m t
+				      where t.acct_month <![CDATA[>=]]>#startSalesTime#
+					    and t.acct_month <![CDATA[<=]]> #endSalesTime#
+					    and t.product_type = '00' and t.level_type = '01'
+				   group by t.channel_no )mm
+                    where mm.developSum<![CDATA[>=]]>#startSales#
+                     and mm.developSum<![CDATA[<=]]>#endSales#)
+						                </isNotEmpty>
+          			 				</isNotNull>
+				                </isNotEmpty>
+          			 		</isNotNull>
+		                </isNotEmpty>
+          			 </isNotNull>
+                </isNotEmpty>
+           </isNotNull>  -->
+   	order by "jxchanneltype", "channelid"
+	</select>
+<!--地图巡店   orgId   channelNoDesc  jxChannelType	-->
+	<select id="visitShopMapList"  resultClass="java.util.HashMap" >
+	  select distinct nvl(t.jx_channel_type, 'CH000') "jxchanneltype",
+             NVL(t.jx_channel_type_desc, ' ') "jxchanneltypedesc",
+             case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+             t.channel_no "channelid",
+             NVL(m.ACCT_MONTH,to_char(sysdate,'yyyymm')) "acctMonth",
+             nvl(t.longitude, 0) "longitude",
+             nvl(t.latitude, 0) "latitude",
+             nvl( m.develop_t||'','-') "developt"  , 
+             nvl( round((decode( instr(nvl(m.hb_per,0),'.'),1,'0'||nvl(m.hb_per,0),replace(nvl(m.hb_per,0),'-.','-0.'))*100),2)||'%','-') "hbper",
+             case when  nvl( m.develop_ly ,0)=0 then  '-'
+               else  nvl( round((decode( instr(nvl(m.tb_per,0),'.'),1,'0'||nvl(m.tb_per,0),replace(nvl(m.tb_per,0),'-.','-0.'))*100),2)||'%','-') end  "tbper",
+              '截止'|| nvl(substr(m.update_time ,-2),'昨')||'日24:00'  "updatetime",
+              v.area_no "areaNo",
+               t.xf_type "xfType"
+        from pmdev.dmcode_channel t,
+             pm.PM_APP_CHANNEL_INFO_M v,
+             (select *
+                from pm.pm_app_channel_sales_m m
+               where m.acct_month = <!-- ( select max(m.acct_month) from  pm.pm_app_channel_sales_m m ) -->
+               	(SELECT MAX(T.ACCT_MONTH)
+				  FROM DW.DW_EXECUTE_LOG_BCA T
+				 WHERE T.PROCNAME = UPPER('P_PM_APP_CHANNEL_SALES_M')
+				   AND T.ACCT_MONTH IS NOT NULL)
+                 and m.product_type = '00' and m.level_type = '01')  m
+                 
+        <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+                 ,
+		     (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                from pm.pm_app_channel_sales_m t
+                  where 1=1
+                 
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month = #startSalesTime#
+                     </isNotEmpty>
+                   </isNotNull>
+                  
+                  <!-- 
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                   -->
+                   
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+               </isEqual>
+		</isNotEmpty>
+	</isNotNull>
+	
+		where t.channel_no = v.chnl_code
+		and t.channel_no=m.channel_no(+)
+		
+		<isNotNull property="isChoosedSale">
+			<isNotEmpty property="isChoosedSale">
+				<isEqual property="isChoosedSale" compareValue="1">
+					and t.channel_no = mm.channelNo(+)
+	  		    </isEqual>
+			</isNotEmpty>
+		</isNotNull>
+		
+         and v.org_type   in ('3','4')
+         and v.acct_month = <!-- (select max(mm.acct_month)from pm.PM_APP_CHANNEL_INFO_M mm) -->
+         (select max(t.acct_month) from ODS.DW_EXECUTE_LOG_BCA t where t.procname = 'P_PM_APP_CHANNEL_INFO_M')
+         and v.execute_id in
+             (select rr.id
+                from pmdev.org_organization_mod rr
+               start with rr.id = #orgNo#
+              connect by prior rr.id = rr.parent_id)
+      
+	       <isNotNull property="orgId">
+			   <isNotEmpty property="orgId">
+	             and v.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+	           </isNotEmpty>
+		   </isNotNull>
+           <isNotNull property="channelNoDesc">
+		       <isNotEmpty property="channelNoDesc">
+		         and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+		       </isNotEmpty>
+		   </isNotNull>
+		   <isNotNull property="jxChannelTypeList">
+			    <isNotEmpty property="jxChannelTypeList">
+			      and  t.jx_channel_type in ('$jxChannelTypeList$')
+			    </isNotEmpty>
+		   </isNotNull>
+		   
+		   <isNotNull property="channelState">
+		         <isNotEmpty   property="channelState" >
+		             and T.STATE  in
+		           <iterate property="channelStatetArr" conjunction="," open="(" close=")">
+				        #channelStateArr[]#
+				   </iterate>
+		         </isNotEmpty>
+		      </isNotNull>
+      
+           <isNotNull property="xfType">
+                <isNotEmpty   property="xfType" >
+                  and  t.xf_type = #xfType#
+                </isNotEmpty>
+           </isNotNull>
+           
+		   <isNotNull property="startSales">
+				<isNotEmpty property="startSales">
+					and mm.developSum<![CDATA[>=]]>#startSales#
+				</isNotEmpty>
+		   </isNotNull>
+		   
+		   <isNotNull property="endSales">
+				<isNotEmpty property="endSales">
+					and mm.developSum<![CDATA[<=]]>#endSales#
+				</isNotEmpty>
+		   </isNotNull>
+		   
+		  <isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		  </isNotNull>
+		  
+		  <!-- 
+		 <isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		 </isNotNull>
+         -->
+         
+     union all
+     
+     select distinct nvl(t.jx_channel_type, 'CH000') "jxchanneltype",
+             NVL(t.jx_channel_type_desc, ' ') "jxchanneltypedesc",
+             case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+             t.channel_no "channelid",
+             NVL(m.ACCT_MONTH,to_char(sysdate,'yyyymm')) "acctMonth",
+             nvl(t.longitude, 0) "longitude",
+             nvl(t.latitude, 0) "latitude",
+             nvl( m.develop_t||'','-') "developt"  , 
+             nvl( round((decode( instr(nvl(m.hb_per,0),'.'),1,'0'||nvl(m.hb_per,0),replace(nvl(m.hb_per,0),'-.','-0.'))*100),2)||'%','-') "hbper",
+             case when  nvl( m.develop_ly ,0)=0 then  '-'
+               else  nvl( round((decode( instr(nvl(m.tb_per,0),'.'),1,'0'||nvl(m.tb_per,0),replace(nvl(m.tb_per,0),'-.','-0.'))*100),2)||'%','-') end  "tbper",
+              '截止'|| nvl(substr(m.update_time ,-2),'昨')||'日24:00'  "updatetime",
+              o.areacode "areaNo",
+               t.xf_type "xfType"
+        from pmdev.dmcode_channel t,
+            PMDEV.ORG_ORGANIZATION_MOD O,
+             (select *
+                from pm.pm_app_channel_sales_m m
+               where m.acct_month = <!-- ( select max(m.acct_month) from  pm.pm_app_channel_sales_m m ) -->
+               (SELECT MAX(T.ACCT_MONTH)
+		          FROM DW.DW_EXECUTE_LOG_BCA T
+		         WHERE T.PROCNAME = UPPER('P_PM_APP_CHANNEL_SALES_M')
+		           AND T.ACCT_MONTH IS NOT NULL)
+                 and m.product_type = '00' and m.level_type = '01')  m
+                 <isNotNull property="isChoosedSale">
+				  <isNotEmpty property="isChoosedSale">
+				  	 <isEqual property="isChoosedSale" compareValue="1">
+                 ,
+				  (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month = #startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  
+                  <!-- 
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                   -->
+                   
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             </isEqual>
+		  </isNotEmpty>
+		</isNotNull>
+		
+       where 1=1
+         and t.channel_no=m.channel_no(+)
+         
+         <isNotNull property="isChoosedSale">
+		  <isNotEmpty property="isChoosedSale">
+			<isEqual property="isChoosedSale" compareValue="1">
+			 and t.channel_no = mm.channelNo(+)
+		    </isEqual>
+		  </isNotEmpty>
+		</isNotNull>
+		
+         and  T.EXE_ID = O.ID
+         and t.EXE_ID in
+             (select rr.id
+                from pmdev.org_organization_mod rr
+               start with rr.id = #orgNo#
+              connect by prior rr.id = rr.parent_id)
+           <isNotNull property="orgId">
+		  	 <isNotEmpty property="orgId">
+        		 and t.EXE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+        	 </isNotEmpty>
+		   </isNotNull>
+           <isNotNull property="channelNoDesc">
+		     <isNotEmpty property="channelNoDesc">
+		         and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+		     </isNotEmpty>
+		   </isNotNull>
+		   <isNotNull property="jxChannelTypeList">
+		  	 <isNotEmpty property="jxChannelTypeList">
+		 		 and  t.jx_channel_type in ('$jxChannelTypeList$')
+		  	 </isNotEmpty>
+		   </isNotNull>
+		   
+		   <isNotNull property="channelState">
+		         <isNotEmpty   property="channelState" >
+		             and T.STATE  in
+		           <iterate property="channelStatetArr" conjunction="," open="(" close=")">
+				        #channelStateArr[]#
+				   </iterate>
+		         </isNotEmpty>
+		      </isNotNull>
+		      
+           <isNotNull property="xfType">
+             <isNotEmpty   property="xfType" >
+                 and  t.xf_type = #xfType#
+             </isNotEmpty>
+           </isNotNull>
+			<isNotNull property="startSales">
+				<isNotEmpty property="startSales">
+					and mm.developSum<![CDATA[>=]]>#startSales#
+				</isNotEmpty>
+			</isNotNull>
+			<isNotNull property="endSales">
+				<isNotEmpty property="endSales">
+					and mm.developSum<![CDATA[<=]]>#endSales#
+				</isNotEmpty>
+			</isNotNull>
+			<isNotNull property="startSalesTime">
+				<isNotEmpty property="startSalesTime">
+					and mm.channelNo is not null
+		        </isNotEmpty>
+			</isNotNull>
+			<!-- 
+			<isNotNull property="endSalesTime">
+				<isNotEmpty property="endSalesTime">
+					and mm.channelNo is not null
+                </isNotEmpty>
+			</isNotNull>   
+			 --> 
+   	   order by "jxchanneltype", "channelid"
+	</select>
+	
+</sqlMap>

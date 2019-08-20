@@ -1,0 +1,3293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.bonc.ssp.dao.ssp.MobileVisitShopMapper">
+
+    <select id="getMaxMonthForSh" resultClass="java.lang.String">
+		 select max(t.acct_month) from ODS.DW_EXECUTE_LOG_BCA  t where t.procname ='P_DM_M_CHANNEL_SH'
+	</select>
+	
+    <select id="getMaxMonthForZy" resultClass="java.lang.String">
+		 select max(t.acct_month) from ODS.DW_EXECUTE_LOG_BCA  t where t.procname ='P_DM_M_CHANNEL_ZY'
+	</select>
+
+    <!-- 社会渠道 -->
+	<select id="getShChannelMain" resultClass="java.util.HashMap">
+		 select t.acct_month "acctMonth",
+		       '社会渠道' "channelType",
+		       t.create_month "createMonth"
+		  from NDM.DM_M_CHANNEL_SH t
+		 where t.acct_month =  #monthId#
+		   and t.channel_no = #channelId#
+	</select>
+	
+	 <!-- 自有渠道 -->
+	<select id="getZyChannelMain" resultClass="java.util.HashMap">
+		select t.acct_month "acctMonth",
+	           '自有渠道' "channelType",
+	           t.create_month "createMonth"
+	      from NDM.DM_M_CHANNEL_ZY t
+	     where t.acct_month =  #monthId#
+	       and t.channel_no = #channelId#
+	</select>
+	
+	<!-- 社会渠道列表 -->
+	<select id="getShChannelList" resultClass="java.util.HashMap">
+	select t."tType",
+          decode(t."value",'0.00','0','-0.00','0',t."value")"value",
+          decode(t."allValue",'0.00','0','-0.00','0',t."allValue")"allValue",
+          decode(t."yearValue",'0.00','0','-0.00','0',t."yearValue")"yearValue",
+          t."zdesc",
+          t."explanation" from (
+		select '出账收入' "tType",
+	            decode(t.acct_charge,null,'-',0,'0',trim(to_char(t.acct_charge/10000,'999999999999990.99'))) "value",
+	            decode(t.all_charge,null,'-',0,'0',trim(to_char(t.all_charge/10000,'999999999999990.99'))) "allValue",
+	            decode(t.year_all_charge,null,'-',0,'0',trim(to_char(t.year_all_charge/10000,'999999999999990.99'))) "yearValue",
+	             '(单位:万元)' "zdesc",
+	            '取数口径：实名制口径统计的各渠道发展用户出账收入汇总' "explanation"
+ 		  from NDM.DM_M_CHANNEL_SH t
+		 where 1=1 
+		   and t.acct_month = #monthId#
+		   and t.channel_no = #channelId#	
+
+		union all	
+
+     	select '成本',
+              decode(t.fee,null,'-',0,'0',trim(to_char(t.fee/10000,'999999999999990.99'))),
+              decode(t.all_fee,null,'-',0,'0',trim(to_char(t.all_fee/10000,'999999999999990.99'))),
+              decode(t.year_all_fee,null,'-',0,'0',trim(to_char(t.year_all_fee/10000,'999999999999990.99'))),
+              '(单位:万元)',
+              '-' 
+	     from NDM.DM_M_CHANNEL_SH t
+	    where 1=1 
+	      and t.acct_month = #monthId#
+	      and t.channel_no = #channelId#
+
+	union all
+    
+        select '渠道费用占收比',
+               decode(t.fee_zsb,null,'-',0,'0',trim(to_char(t.fee_zsb*100,'999999999999990.99'))||'%') ,
+               decode(t.all_fee_zsb,null,'-',0,'0',trim(to_char(t.all_fee_zsb*100,'999999999999990.99'))||'%'),
+               decode(t.year_all_charge,null,'-',0,'0',decode(t.year_all_fee,null,'-',0,'0',trim(to_char(t.year_all_fee/t.year_all_charge*100,'999999999999990.99'))||'%')),
+               '(单位:%)',
+               '取数口径：成本合计/出账收入'
+         from NDM.DM_M_CHANNEL_SH t
+        where 1=1 
+          and t.acct_month = #monthId#
+          and t.channel_no = #channelId#             
+    
+	union all
+     
+        select '新增用户收入渠道费用占收比',
+                decode (charge_2ye,null,'-',0,'0',trim(to_char(nvl(fee,0)/charge_2ye*100,'999999999999990.99')||'%' )) ,
+                decode(all_charge_2ye,null,'-',0,'0',trim(to_char(nvl(all_fee,0)/all_charge_2ye*100,'999999999999990.99')||'%')) ,
+                decode(year_all_charge_2ye,null,'-',0,'0',trim(to_char(nvl(year_all_fee,0)/year_all_charge_2ye*100,'999999999999990.99')||'%')) ,
+               '(单位:%)',
+               '取数口径：成本合计/新增用户出账收入'
+         from NDM.DM_M_CHANNEL_SH t
+        where 1=1 
+          and t.acct_month = #monthId#
+          and t.channel_no = #channelId#
+    
+	union all
+        
+    select '低效/无效渠道',
+           '-',
+           '-',
+           decode(t.year_all_wx,null,'-',0,'0',trim(to_char(t.year_all_wx,'999999999999990.99'))),
+           '-',
+           '取数口径：低效/无效渠道判定标准(按12个月累计值评价);无效渠道标准(建店一年以上有成本费用但是没有对应收入);低效渠道标准(建店一年以上渠道费用占比超过100%)。 ' 
+      from NDM.DM_M_CHANNEL_SH t
+     where 1=1 
+       and t.acct_month = #monthId#
+       and t.channel_no = #channelId#
+            
+	union all
+        
+        select '市场毛利率',
+               decode(t.mao_depart,null,'-',0,'0',trim(to_char(t.mao_depart*100,'999999999999990.99'))||'%'),
+               decode(t.all_charge,null,'-',0,'0',trim(to_char((t.all_charge-t.all_fee)*100/t.all_charge, '999999999999990.99'))||'%'), 
+               decode(t.year_all_charge,null,'-',0,'0',trim(to_char((t.year_all_charge-nvl(t.year_all_fee,0))/t.year_all_charge*100,'999999999999990.99'))||'%'),  
+               '(单位:%)',
+               '取数口径：(出账收入-成本合计）/出账收入' 
+         from  NDM.DM_M_CHANNEL_SH t
+        where 1=1 
+          and t.acct_month = #monthId#
+          and t.channel_no = #channelId#
+        
+	union all
+	
+        select '渠道毛利率',
+               decode (t.mao_chl,null,'-', 0,'0',trim(to_char(t.mao_chl*100,'999999999999990.99')) || '%'),                  
+               decode (t.all_charge_2ye,null,'-',0,'0',trim(to_char((t.all_charge_2ye - t.all_fee) * 100 / t.all_charge_2ye, '999999999999990.99')) ||'%'),
+               decode (t.year_all_charge_2ye,null,'-',0,'0',trim(to_char((t.year_all_charge_2ye-nvl(t.year_all_fee,0))/year_all_charge_2ye*100,'999999999999990.99'))||'%'),
+               '(单位:%)',
+               '取数口径：(新增用户出账收入-成本合计）/新增用户出账收入'
+          from NDM.DM_M_CHANNEL_SH t
+         where 1=1 
+           and t.acct_month = #monthId#
+           and t.channel_no = #channelId#)t
+	</select>
+	
+	<!-- 自有渠道列表 -->
+	<select id="getZyChannelList" resultClass="java.util.HashMap">
+	select t."tType",
+          decode(t."value",'0.00','0','-0.00','0',t."value")"value",
+          decode(t."allValue",'0.00','0','-0.00','0',t."allValue")"allValue",
+          decode(t."yearValue",'0.00','0','-0.00','0',t."yearValue")"yearValue",
+          t."zdesc",
+          t."explanation" from (
+		  select 
+		          '出账收入' "tType",
+		          decode(t.acct_charge,null,'-',0,'0',trim(to_char(t.acct_charge/10000,'999999999999990.99'))) "value",
+		          decode(t.all_charge,null,'-',0,'0',trim(to_char(all_charge/10000,'999999999999990.99'))) "allValue",
+		          decode(t.year_all_charge,null,'-',0,'0',trim(to_char(year_all_charge/10000,'999999999999990.99'))) "yearValue",
+		          '(单位:万元)' "zdesc",
+		          '取数口径：实名制口径统计的各渠道发展用户出账收入汇总' "explanation"
+		   from NDM.DM_M_CHANNEL_ZY t   
+		  where 1 =1
+		    and t.acct_month =  #monthId#
+		    and t.channel_no = #channelId#
+    
+ 		 union all  
+    
+      	  select 
+                  '成本',
+                  decode(t.fee,null,'-',0,'0',trim(to_char(t.fee/10000,'999999999999990.99'))),
+                  decode(t.all_fee,null,'-',0,'0',trim(to_char(t.all_fee/10000,'999999999999990.99'))),
+                  decode(t.year_all_fee,null,'-',0,'0',trim(to_char(t.year_all_fee/10000,'999999999999990.99'))),
+                  '(单位:万元)',
+                  '-' 
+	        from NDM.DM_M_CHANNEL_ZY t
+	       where 1 =1
+	         and t.acct_month =  #monthId#
+	         and t.channel_no = #channelId#
+    
+        union all
+        
+      select 
+              '渠道费用占收比',
+              decode(t.fee_zsb,null,'-',0,'0',trim(to_char(t.fee_zsb*100,'999999999999990.99'))||'%'),
+              decode(t.all_fee_zsb,null,'-',0,'0',trim(to_char(t.all_fee_zsb*100,'999999999999990.99')) ||'%'),
+              decode(t.year_all_charge,null,'-',0,'0',trim(to_char(nvl(year_all_fee,0)/year_all_charge*100,'999999999999990.99'))||'%'),
+              '(单位:%)',
+              '取数口径：成本合计/出账收入' 
+        from  NDM.DM_M_CHANNEL_ZY t
+       where 1 =1
+	     and t.acct_month =  #monthId#
+	     and t.channel_no = #channelId#
+        
+         union all
+        
+        select 
+                '新增用户收入渠道费用占收比' ,
+                decode(t.charge_2ye,null,'-',0,'0',trim(to_char(nvl(fee,0)/charge_2ye*100,'999999999999990.99'))||'%'),
+                decode(t.all_charge_2ye,null,'-',0,'0',trim(to_char(nvl(all_fee,0)/all_charge_2ye*100,'999999999999990.99'))||'%'),
+                decode(t.year_all_charge_2ye,null,'-',0,'0',trim(to_char(nvl(year_all_fee,0)/year_all_charge_2ye*100,'999999999999990.99'))||'%'),
+                '(单位:%)' ,
+                '取数口径：成本合计/新增用户出账收入' 
+           from NDM.DM_M_CHANNEL_ZY t
+          where 1 =1
+            and t.acct_month =  #monthId#
+            and t.channel_no = #channelId#
+
+		union all        
+  
+   		select 
+                '市场毛利率' "tType",
+                decode(t.mao_depart,null,'-',0,'0',trim(to_char(t.mao_depart*100,'999999999999990.99'))||'%'),
+                decode(t.all_charge,null,'-',0,'0',trim(to_char((all_charge-nvl(all_fee,0))*100/all_charge, '999999999999990.99'))|| '%'),  
+                decode(t.year_all_charge,null,'-',0,'0',trim(to_char((year_all_charge-nvl(year_all_fee,0))/year_all_charge*100,'999999999999990.99'))||'%'),          
+                 '(单位:%)',
+                '取数口径：(出账收入-成本合计）/出账收入' 
+           from NDM.DM_M_CHANNEL_ZY T
+      	  where 1 =1
+            and t.acct_month =  #monthId#
+            and t.channel_no = #channelId#
+         
+          union all
+        
+       select 
+              '渠道毛利率' ,
+              decode(t.mao_chl,null,'-',0,'0',trim(to_char(t.mao_chl*100,'999999999999990.99')) || '%'),
+              decode(t.all_charge_2ye,null,'-',0,'0',trim(to_char((t.all_charge_2ye - t.all_fee) * 100 / t.all_charge_2ye,'999999999999990.99'))|| '%'),
+              decode(t.year_all_charge_2ye,null,'-',0,'0',trim(to_char((year_all_charge_2ye-nvl(year_all_fee,0))/year_all_charge_2ye*100,'999999999999990.99'))||'%'),
+              '(单位:%)',
+              '取数口径：(新增用户出账收入-成本合计）/新增用户出账收入' 
+         from NDM.DM_M_CHANNEL_ZY t
+        where 1 =1
+          and t.acct_month =  #monthId#
+          and t.channel_no = #channelId#
+         
+        union all
+
+          select 
+                  '低效/无效渠道',
+                  '-' ,
+                  '-' ,
+                  decode(t.year_all_wx,null,'-',0,'0',trim(to_char(t.year_all_wx,'999999999999990.99'))),
+                  '-',
+                  ' 取数口径：低效/无效渠道判定标准(按12个月累计值评价);无效渠道标准(建店一年以上有成本费用但是没有对应收入);低效渠道标准(建店一年以上渠道费用占比超过100%)。' 
+        	 from NDM.DM_M_CHANNEL_ZY t
+            where 1 =1
+              and t.acct_month =  #monthId#
+              and t.channel_no = #channelId#
+         
+        union all
+        
+           select 
+                  '渠道评价分值',
+                  decode(channel_sum_score,null,'-',0,'0',trim(to_char(channel_sum_score, '999999999999990.99'))) ,
+                  '-' ,
+                  '-' ,
+                  '-',
+                  ' 取数口径：市场部效能报表结果取数' 
+             from NDM.DM_M_CHANNEL_ZY t
+            where 1 =1
+              and t.acct_month =  #monthId#
+              and t.channel_no = #channelId#
+         
+      union all
+   
+           select 
+                  '终端毛利',
+                  decode(t.maori,null,'-',0,'0',trim(to_char(t.maori/10000, '999999999999990.99'))),
+                  decode(t.all_maori,null,'-',0,'0',trim(to_char(t.all_maori/10000, '999999999999990.99'))),
+                  decode(t.year_maori,null,'-',0,'0',trim(to_char(t.year_maori/10000, '999999999999990.99'))),
+                  '(单位:万元)',
+                  ' 取数口径：零售价-结算价-终端电子券-折价销售（数据取自BI报表）' 
+             from NDM.DM_M_CHANNEL_ZY t
+            where 1 =1
+              and t.acct_month =  #monthId#
+              and t.channel_no = #channelId#)t
+	</select>
+	
+	<!-- 社会渠道 出账收入列表 -->
+	<select id="getOutOfAccountIncomList" resultClass="java.util.HashMap">
+		 with ta as(
+			 select  '其中：新增用户出账收入' "tType",
+			            nvl(trim(to_char(sum(case when t.acct_month =  #monthId# then t.charge_2ye / 10000 end),'999999999999990.99')),'-') "value",
+			            nvl(trim(to_char(sum(case when t.acct_month &lt;= #monthId# and t.acct_month >
+			            =concat(substr( #monthId#, 0, 4),'01') then t.charge_2ye / 10000 end),'999999999999990.99')) ,'-')"allValue",
+			            nvl(trim(to_char(sum(t.charge_2ye) / 10000,'999999999999990.99')),'-') "yearValue",
+			            '(单位:万元)' "zdesc",
+			            '取数口径：T-1年以后入网用户按实名制口径统计的各渠道发展用户出账收入汇总' "explanation"
+			  from  NDM.DM_M_CHANNEL_SH t
+			 where  1=1
+			   and  t.acct_month &lt;=  #monthId#
+               and  t.acct_month >= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+			   and  t.channel_no = #channelId#)
+	   select ta."tType",
+	            decode(ta."value" ,'0.00','0','-0.00','0',ta."value") "value",
+	            decode(ta."allValue",'0.00','0','-0.00','0',ta."allValue") "allValue",
+	            decode(ta."yearValue",'0.00','0','-0.00','0',ta."yearValue") "yearValue",
+	            ta."zdesc",ta."explanation" 
+	    from  ta
+	</select>
+	
+	<!--自有渠道  出账收入列表 -->
+	<select id="getOutOfAccountIncomList1" resultClass="java.util.HashMap">
+	select t."tType",
+          decode(t."value",'0.00','0','-0.00','0',t."value")"value",
+          decode(t."allValue",'0.00','0','-0.00','0',t."allValue")"allValue",
+          decode(t."yearValue",'0.00','0','-0.00','0',t."yearValue")"yearValue",
+          t."zdesc",
+          t."explanation" from (
+		  select 
+	            '其中：新增用户出账收入' "tType",
+	            decode(sum(case when t.acct_month = #monthId# then t.charge_2ye / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.charge_2ye / 10000 end),'999999999999990.99')))"value",
+	            decode(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.charge_2ye / 10000 end),null,'-',0,'0',
+	            trim(to_char(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.charge_2ye / 10000 end),'999999999999990.99')))"allValue",
+	            decode(sum(t.charge_2ye),null,'-',0,'0',trim(to_char(sum(t.charge_2ye) / 10000,'999999999999990.99')))"yearValue", 
+	            '(单位:万元)' "zdesc",
+	            '取数口径：t-1年以后入网用户按实名制口径统计的各渠道发展用户出账收入汇总' "explanation"
+	       from NDM.DM_M_CHANNEL_ZY t
+	      where 1 =1
+	        and t.acct_month &lt;= #monthId#
+			and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM') 
+	        and t.channel_no = #channelId#)t
+	</select>
+	
+	<!-- 社会渠道 成本列表 -->
+	<select id="getCostList" resultClass="java.util.HashMap">
+	select t."tType",
+          decode(t."value",'0.00','0','-0.00','0',t."value")"value",
+          decode(t."allValue",'0.00','0','-0.00','0',t."allValue")"allValue",
+          decode(t."yearValue",'0.00','0','-0.00','0',t."yearValue")"yearValue",
+          t."zdesc",
+          t."explanation" from(
+		 select '其中：销售佣金成本' "tType",
+                decode(sum(case when t.acct_month = #monthId# then t.xs_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.xs_fee / 10000 end), '99999999999999990.99'))) "value",  
+                decode(round(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xs_fee / 10000 end),2),null,'-',
+						trim(to_char(round(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xs_fee / 10000 end),2),'99999999999999990.99'))) "allValue",
+                decode(sum(t.xs_fee),null,'-',0,'0',trim(to_char(sum(t.xs_fee) / 10000,'99999999999999990.99'))) "yearValue",
+                '(单位:万元)' "zdesc",
+                '取数口径：bss系统“佣金汇总一点查询”中佣金类型为“销售佣金”的佣金按渠道汇总' "explanation"
+	        from NDM.DM_M_CHANNEL_SH t
+	       where 1=1 
+	         and t.acct_month &lt;= #monthId#
+             and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+		     and t.channel_no = #channelId#
+	         group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+                  
+        union all
+          
+         select 
+               '奖罚佣金成本' ,
+               decode(sum(case when t.acct_month = #monthId# then t.jf_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.jf_fee / 10000 end),'99999999999999990.99'))),
+               decode(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.JF_FEE / 10000 END),2) ,null,'-',0,'0',
+               		  trim(to_char(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.JF_FEE / 10000 END),2),'99999999999999990.99'))), 
+               decode(sum(t.jf_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.jf_fee) / 10000,'99999999999999990.99'))),
+               '(单位:万元)' ,
+               '取数口径：bss系统“佣金汇总一点查询”中佣金类型为“奖罚佣金”的佣金按渠道汇总' 
+           from NDM.DM_M_CHANNEL_SH t
+          where 1=1 
+            and t.acct_month &lt;= #monthId#
+            and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+            and t.channel_no = #channelId#
+              group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+       select 
+             '其它佣金成本',
+             decode(sum(case when t.acct_month = #monthId# then t.qt_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.qt_fee / 10000 end),'99999999999999990.99'))),
+             decode(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.QT_FEE / 10000 END),2),null,'-',0,'0',
+             		trim(to_char(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.QT_FEE / 10000 END),2),'99999999999999990.99'))),
+             decode(sum(t.qt_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.qt_fee) / 10000,'99999999999999990.99'))),
+             '(单位:万元)' ,
+             '取数口径：bss系统“佣金汇总一点查询”中除 “销售佣金”、“奖罚佣金”和“现返佣金”三类佣金外的其它佣金按渠道汇总' 
+        from NDM.DM_M_CHANNEL_SH t
+       where 1=1 
+         and t.acct_month &lt;= #monthId#
+         and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+         and t.channel_no = #channelId#
+        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+         select 
+                '现返佣金',
+                decode(sum(case when t.acct_month = #monthId# then t.xf_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.xf_fee / 10000 end),'99999999999999990.99'))),
+                decode(round(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xf_fee / 10000 end),2),null,'-',0,'0',
+                	trim(to_char(round(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xf_fee / 10000 end),2),'99999999999999990.99'))),
+                decode(sum(t.xf_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.xf_fee) / 10000,'99999999999999990.99'))),
+                '(单位:万元)',
+                '取数口径：bss系统“佣金汇总一点查询”中佣金类型为“现返佣金”的佣金按渠道汇总' 
+            from NDM.DM_M_CHANNEL_SH T
+           where 1=1 
+	         and t.acct_month &lt;= #monthId#
+             and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	         and t.channel_no = #channelId#
+	        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+         select 
+                '奖励费用',
+                decode(sum(case when t.acct_month = #monthId# then t.jl_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.jl_fee / 10000 end),'99999999999999990.99'))),
+                decode( round(SUM(CASE WHEN T.ACCT_MONTH &lt;= #monthId# and t.acct_month >=concat(substr( #monthId#, 0, 4),'01') THEN T.JL_FEE / 10000 END),2),null,'-',0,'0',
+                trim(to_char(round(SUM(CASE WHEN T.ACCT_MONTH &lt;= #monthId# and t.acct_month >=concat(substr( #monthId#, 0, 4),'01') THEN T.JL_FEE / 10000 END),2),'99999999999999990.99'))),
+                decode(sum(t.jl_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.jl_fee) / 10000,'99999999999999990.99'))),
+                '(单位:万元)' ,
+                '取数口径：主流渠道销售人员奖励按渠道汇总' 
+        	from NDM.DM_M_CHANNEL_SH t
+      	   where 1=1 
+		     and t.acct_month &lt;= #monthId#
+             and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+		     and t.channel_no = #channelId#
+        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+         select
+                '房租',
+                decode(sum(case when t.acct_month = #monthId# then t.rent_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.rent_fee / 10000 end),'99999999999999990.99'))),
+                decode(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.RENT_FEE / 10000 END),2),null,'-',0,'0',
+                	 trim(to_char( round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.RENT_FEE / 10000 END),2),'99999999999999990.99'))),
+                decode(sum(t.rent_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.rent_fee) / 10000,'99999999999999990.99'))),
+                '(单位:万元)',
+                '取数口径：财务部提供渠道（财务编码：xx）成本数据按渠道汇总' 
+           from NDM.DM_M_CHANNEL_SH t
+          where 1=1 
+	        and t.acct_month &lt;= #monthId#
+            and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	        and t.channel_no = #channelId#
+         group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+        select
+                '装修补贴',
+                decode(sum(case when t.acct_month = #monthId# then t.zx_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.zx_fee / 10000 end),'99999999999999990.99'))),
+                decode(round(SUM(CASE WHEN T.ACCT_MONTH  &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.ZX_FEE / 10000 END),2),null,'-',0,'0',
+                	 trim(to_char(round(SUM(CASE WHEN T.ACCT_MONTH  &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.ZX_FEE / 10000 END),2),'99999999999999990.99'))),
+                decode(sum(t.zx_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.zx_fee) / 10000,'99999999999999990.99'))),
+                '(单位:万元)' ,
+                '取数口径：非佣金方式支付的装修补贴' 
+            from NDM.DM_M_CHANNEL_SH t
+           where 1=1 
+	         and t.acct_month &lt;= #monthId#
+             and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	         and t.channel_no = #channelId#
+         group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+         select
+                '红包减收成本',
+                decode(sum(case when t.acct_month = #monthId# then t.hb_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.hb_fee / 10000 end),'99999999999999990.99'))),
+                 decode(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.HB_FEE / 10000 END),2),null,'-',0,'0',
+                trim(to_char(round(SUM(CASE WHEN T.ACCT_MONTH &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.HB_FEE / 10000 END),2),'99999999999999990.99'))),
+                decode(sum(t.hb_fee) / 10000,null,'-',0,'0',trim(to_char(sum(t.hb_fee) / 10000,'99999999999999990.99'))),
+                '(单位:万元)' ,
+                '取数口径：沃易购红包按渠道汇总' 
+            from NDM.DM_M_CHANNEL_SH t
+           where 1=1 
+	         and t.acct_month &lt;= #monthId#
+             and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	         and t.channel_no = #channelId#
+           group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name)t
+           
+	</select>
+	
+	<!-- 自有渠道 成本列表 -->
+	<select id="getCostList1" resultClass="java.util.HashMap">
+	select t."tType",
+          decode(t."value",'0.00','0','-0.00','0',t."value")"value",
+          decode(t."allValue",'0.00','0','-0.00','0',t."allValue")"allValue",
+          decode(t."yearValue",'0.00','0','-0.00','0',t."yearValue")"yearValue",
+          t."zdesc",
+          t."explanation" from (
+		     select 
+	                '其中：终端补贴成本' "tType",
+	                decode(sum(case when t.acct_month = #monthId# then t.bt_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.bt_fee / 10000 end),'999999999999990.99')))"value",
+	                decode(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.bt_fee / 10000 end),null,'-',0,'0',
+	                trim(to_char(sum(case when t.acct_month &lt;='201804' and t.acct_month >=concat(substr('201804', 0, 4),'01') then t.bt_fee / 10000 end),'999999999999990.99'))) "allValue",
+	                decode(sum(t.bt_fee),null,'-',0,'0',trim(to_char(sum(t.bt_fee)/10000,'999999999999990.99'))) "yearValue",
+	                '(单位:万元)' "zdesc",
+	                '取数口径：数据通报：财务部提供各渠道的终端补贴成本' "explanation"
+	          from NDM.DM_M_CHANNEL_ZY t
+	         where 1 =1
+	           and t.acct_month &lt;= #monthId#
+               and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	           and t.channel_no = #channelId#
+	          group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name  
+        
+         union all
+         
+             select 
+                    '人工成本',
+                    decode(sum(case when t.acct_month = #monthId# then t.rg_fee / 10000 end),null,'-',0,'0',
+                    trim(to_char(sum(case when t.acct_month = #monthId# then t.rg_fee / 10000 end),'999999999999990.99'))),
+                    decode(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.rg_fee / 10000 end),null,'-',0,'0',
+                    trim(to_char(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.rg_fee / 10000 end),'999999999999990.99'))),
+                    decode(sum(t.rg_fee),null,'-',0,'0',trim(to_char(sum(t.rg_fee)/ 10000,'999999999999990.99'))),
+                    '(单位:万元)' ,
+                    '取数口径：财务部提供渠道（财务编码：xx）人工成本数据按渠道汇总'
+		        from NDM.DM_M_CHANNEL_ZY t
+		       where 1 =1
+		         and t.acct_month &lt;= #monthId#
+                 and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+		         and t.channel_no = #channelId#
+		        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+            select 
+                  '房租',
+                  decode(sum(case when t.acct_month = #monthId# then t.rent_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.rent_fee / 10000 end),'999999999999990.99'))),
+                  decode(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.rent_fee / 10000 end),null,'-',0,'0',
+                  trim(to_char(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.rent_fee / 10000 end),'999999999999990.99'))),
+                  decode(sum(t.rent_fee),null,'-',0,'0',trim(to_char(sum(t.rent_fee) / 10000,'999999999999990.99'))),
+                  '(单位:万元)' ,
+                  '取数口径：财务部提供渠道（财务编码：xx）房租成本数据按渠道汇总' 
+	         from NDM.DM_M_CHANNEL_ZY t
+	        where 1 =1
+	          and t.acct_month &lt;= #monthId#
+              and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	          and t.channel_no = #channelId#
+	        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+	        
+        union all
+        
+           select 
+                  '消防警卫',
+                  decode(sum(case when t.acct_month = #monthId# then t.xf_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.xf_fee / 10000 end),'999999999999990.99'))),
+                  decode(sum(case when t.acct_month &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xf_fee / 10000 end),null,'-',0,'0',
+                  trim(to_char( sum(case when t.acct_month &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xf_fee / 10000 end),'999999999999990.99'))),
+                  decode(sum(t.xf_fee),null,'-',0,'0',trim(to_char(sum(t.xf_fee) /10000,'999999999999990.99'))),
+                  '(单位:万元)' ,
+                  '取数口径：财务部提供渠道（财务编码：xx）消防警卫成本数据按渠道汇总' 
+	         from NDM.DM_M_CHANNEL_ZY t
+	        where 1 =1
+	          and t.acct_month &lt;= #monthId#
+              and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	          and t.channel_no = #channelId#
+	        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        
+        union all
+        
+           select 
+                  '折旧成本',
+                  decode(sum(case when t.acct_month = #monthId# then t.zj_fee / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.zj_fee / 10000 end),'999999999999990.99'))),
+                  decode(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.zj_fee / 10000 end),null,'-',0,'0',
+                  trim(to_char(sum(case when t.acct_month &lt;=#monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.zj_fee / 10000 end),'999999999999990.99'))),
+                  decode(sum(t.zj_fee),null,'-',0,'0',trim(to_char(sum(t.zj_fee)/10000,'999999999999990.99'))),
+                  '(单位:万元)' ,
+                  '取数口径：财务部提供渠道（财务编码：xx）折旧成本数据按渠道汇总' 
+             from NDM.DM_M_CHANNEL_ZY t
+            where 1 =1
+	          and t.acct_month &lt;= #monthId#
+              and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	          and t.channel_no = #channelId#
+             group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+           select 
+                  '修理',
+                  decode(sum(case when t.acct_month = #monthId# then t.xl_fei / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.xl_fei / 10000 end),'999999999999990.99'))),
+                  decode(sum(case when t.acct_month &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xl_fei / 10000 end),null,'-',0,'0',
+                  trim(to_char(sum(case when t.acct_month &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.xl_fei / 10000 end),'999999999999990.99'))),
+                  decode(sum(t.xl_fei),null,'-',0,'0',trim(to_char(sum(t.xl_fei)/ 10000,'999999999999990.99'))),
+                  '(单位:万元)',
+                  '取数口径：财务部提供营业厅(财务编码：xx）修理成本数据按渠道汇总' 
+	         from  NDM.DM_M_CHANNEL_ZY t
+	        where 1 =1
+	          and t.acct_month &lt;= #monthId#
+              and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	          and t.channel_no = #channelId#
+	        group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+        union all
+        
+           select
+                  '水电',
+                  decode(sum(case when t.acct_month = #monthId# then t.shui_dian / 10000 end),null,'-',0,'0',trim(to_char(sum(case when t.acct_month = #monthId# then t.shui_dian / 10000 end),'999999999999990.99'))),
+                  decode(sum(case when t.acct_month &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.shui_dian / 10000 end),null,'-',0,'0',
+                  trim(to_char(sum(case when t.acct_month &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') then t.shui_dian / 10000 end),'999999999999990.99'))),
+                  decode(sum(t.shui_dian),null,'-',0,'0',trim(to_char(sum(t.shui_dian)/ 10000,'999999999999990.99'))),
+                  '(单位:万元)' ,
+                  '取数口径：财务部提供营业厅(财务编码：xx）水电成本数据按渠道汇总' 
+       		 FROM NDM.DM_M_CHANNEL_ZY t
+        	where 1=1
+              and t.acct_month &lt;= #monthId#
+              and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+              and t.channel_no = #channelId#
+            group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name
+        
+         union all
+         
+         select 
+                '物业',
+                decode(SUM(CASE WHEN T.ACCT_MONTH = #monthId# THEN T.WU_YE / 10000 END),null,'-',0,'0',trim(to_char(SUM(CASE WHEN T.ACCT_MONTH = #monthId# THEN T.WU_YE / 10000 END),'999999999999990.99'))),
+                decode(SUM(CASE WHEN T.ACCT_MONTH &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.WU_YE / 10000 END),null,'-',0,'0',
+                trim(to_char(SUM(CASE WHEN T.ACCT_MONTH &lt;= #monthId# and t.acct_month >=concat(substr(#monthId#, 0, 4),'01') THEN T.WU_YE / 10000 END),'999999999999990.99'))),
+                decode(SUM(T.WU_YE),null,'-',0,'0',trim(to_char(SUM(T.WU_YE)/ 10000,'999999999999990.99'))),
+                '(单位:万元)' ,
+                '取数口径：财务部提供营业厅(财务编码：XX）物业成本数据按渠道汇总' 
+	        from NDM.DM_M_CHANNEL_ZY t
+	       where 1=1
+	         and t.acct_month &lt;= #monthId#
+             and t.acct_month &gt;= TO_CHAR(ADD_MONTHS(TO_DATE(#monthId#, 'YYYYMM'), -12),'YYYYMM')
+	         and t.channel_no = #channelId#
+	         group by t.area_no, t.area_no_desc, t.channel_no, t.channel_name) t
+	</select>
+	
+    <!--巡店二级页面获取所选渠道（店铺 获得渠道电话和联系人-->
+	<select id="getStoreTeleList" resultClass="java.util.HashMap">
+	 select nvl(a.CHNL_LINKMAN_NAME, '-') "contactname",
+	           a.img_url "imgurl",
+	           a.img_url1 "imgurl1",
+	           a.img_url2 "imgurl2",
+	           a.img_url3 "imgurl3",
+	           a.STATE "state", 
+	           nvl(a.STATE_DESC, '0') "stateDesc",
+	           nvl(a.longitude, '0') "longitudedesc",
+	           nvl(a.latitude, '0') "latitudedesc",
+	           nvl(a.longitude, '0') || ',' || nvl(a.latitude, '0') "locationdesc",
+	           nvl(a.chnl_addr, '-') "address",
+	           decode(a.jx_channel_type_desc ,'',NVL(a.channel_no_desc, ' '),a.jx_channel_type_desc||':'|| NVL(a.channel_no_desc, ' ') ) "channelname",
+	           decode(CHANNEL_TYPE_DESC,'直供代理点',nvl(IS_TERMINAL_SALE,'-1'),'-2')"isterminalsale",
+	           nvl(WX_CODE,' ') "wxcode",
+	           nvl(case
+	                 when a.CONTRACT_PHONE = 'null' then
+	                  '-'
+	                 else
+	                  a.CONTRACT_PHONE
+	               end,
+	               '-') "tele",
+	           nvl(x.login_name, '-') "lt_loginName",
+	             case  when  nvl(f.role_level ,'0') in ('3','4') then '1'
+	                      else  '0'   end      "is_self" ,
+	            case when f.role_level in ('3','4') then f.login_id 
+	              else    nvl(o.login_id, '-') end  "contactloginid",
+	           nvl(x.mobile_phone, ' ') "lt_mobile",
+	          '0' "starlevl",
+	          nvl(a.wo_wallet_acctno,'-') "woWalletAcctno",
+	          nvl(a.wo_wallet_acctname,'-') "woWalletAcctname",
+	          a.chnl_type "channelType"        
+	      from pmdev.dmcode_channel a,
+	           (select m.chnl_code, m.execute_id
+	              from pm.PM_APP_CHANNEL_INFO_M m
+	             where m.acct_month =
+	                   <!--(select max(m.acct_month) from pm.PM_APP_CHANNEL_INFO_M m where m.chnl_code= #channelId#  )-->
+                     (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+	               and org_type IN( '3', '4') 
+	             group by m.chnl_code, m.execute_id) c,
+	            pmdev.org_organization_mod o,
+	            pmdss.sc_login_user x,
+	             (select * from   pmdss.sc_login_user t  where t.login_id=#loginId#  and state=1 and rownum =1 ) f  
+	     where a.channel_no = c.chnl_code
+	       and c.execute_id = o.id
+	       and c.execute_id=x.org_id(+)
+	       and a.channel_no =#channelId#  
+	</select>
+	
+	<!--巡小区二级页面获取所选小区（小区 获得小区电话和联系人-->
+	<select id="getCommunityTeleList20180606" resultClass="java.util.HashMap">
+ 	select nvl(a.chnl_linkman_name, '-') "contactname",
+           a.img_url "imgurl",
+           a.img_url1 "imgurl1",
+           a.img_url2 "imgurl2",
+           a.img_url3 "imgurl3",
+           nvl(a.longitude, '0') "longitudedesc",
+           nvl(a.latitude, '0') "latitudedesc",
+           nvl(a.longitude, '0') || ',' || nvl(a.latitude, '0') "locationdesc",
+           nvl(a.chnl_addr, '-') "address",
+           '小区'||':'|| NVL(a.channel_no_desc, ' ') "channelname",
+           decode(a.channel_type_desc,'直供代理点',nvl(a.is_terminal_sale,'-1'),'-2')"isterminalsale",
+           nvl(a.wx_code,' ') "wxcode",
+           nvl(case
+                 when a.contract_phone = 'null' then
+                  '-'
+                 else
+                  a.contract_phone
+               end,
+               '-') "tele",
+          <!-- nvl(o.name, '-') "lt_loginName", -->
+            nvl(x.login_name, '-') "lt_loginName",
+             case  when  nvl(f.role_level ,'0') in ('3','4') then '1'
+                      else  '0'   end      "is_self" ,
+            case when f.role_level in ('3','4') then f.login_id 
+              else    nvl(o.login_id, '-') end  "contactloginid",
+          <!--nvl(x.mobile, ' ') "lt_mobile", -->
+           nvl(x.mobile_phone, ' ') "lt_mobile",
+          '0' "starlevl"
+      from pmdev.dmcode_channel a,
+               pmdev.org_organization_mod o,
+               <!--pure.pure_user x , -->
+               pmdss.sc_login_user  x,
+              (select * from   pmdss.sc_login_user t  where t.login_id=#loginId#  and state=1 and rownum =1 ) f  
+     where a.exe_id =  o.id
+      <!-- and o.login_id=x.login_id(+)-->
+      and a.exe_id=x.org_id(+)
+       and a.channel_no =#channelId# 
+	</select>
+	
+	<!--巡小区二级页面获取所选小区（小区 获得小区电话和联系人-->
+	<select id="getCommunityTeleList" resultClass="java.util.HashMap">
+		select  a.img_url "imgurl",
+	            a.img_url1 "imgurl1",
+	            a.img_url2 "imgurl2",
+	            a.img_url3 "imgurl3",
+	            a.STATE "state", 
+	            nvl(a.STATE_DESC, '-') "stateDesc",
+	            nvl2(a.xq_property,decode(a.xq_property,'0','自建小区','1','合作小区','合作小区')||':'|| a.channel_no_desc,'-') "channelname",
+	            nvl2(o.net_grid_name,o.name,o.name || '-' ||o.net_grid_name) "netGridName",
+	            nvl(a.longitude, '0') "longitudedesc",
+	            nvl(a.latitude, '0') "latitudedesc",
+	            nvl(a.chnl_addr, '-') "address",
+	            nvl(a.xq_cbf,'-') "xqCbf",
+	            nvl2(a.xq_service_myd,to_char(round(a.xq_service_myd*100 ,2),'fm999999990.00') || '%','')   "xqServiceMyd",
+	            nvl(a.wx_code,'-') "wxcode",
+	            nvl(a.chnl_linkman_name, '-') "contactname",
+	            nvl(case   when a.contract_phone = 'null' then '-'  else  a.contract_phone   end,'-') "tele",
+	            case  when  nvl(f.role_level ,'0') in ('3','4') then '1' else  '0'   end      "is_self" ,
+	            case when f.role_level in ('3','4') then f.login_id  else    nvl(o.login_id, '-') end  "contactloginid",
+	            nvl(a.wo_wallet_acctno,'-') "woWalletAcctno",
+                nvl(a.wo_wallet_acctname,'-') "woWalletAcctname"             
+	      from pmdev.dmcode_channel a,
+	               pmdev.org_organization_mod o,
+	              (select * from   pmdss.sc_login_user t  where t.login_id=#loginId#  and state=1 and rownum =1 ) f  
+	     where a.exe_id =  o.id
+	       and a.channel_no =#channelId# 
+	</select>
+	<!-- 小区运维数据 -->
+	<select id="getCommunityYunWeiDataList" resultClass="java.util.HashMap">
+		select '接入方式' "name", nvl(t.xq_access_type,'-') "value" from pmdev.dmcode_channel t where t.channel_no = #channelId# 
+		union all
+		select  '各类端口占用率' "name",  nvl2(t.xq_port,to_char(round(t.xq_port*100 ,2),'fm999999990.00') || '%','-')  "value" from pmdev.dmcode_channel t where t.channel_no = #channelId# 
+		union all 
+		select  '申告率' "name",  nvl2(t.xq_complaint,to_char(round(t.xq_complaint*100 ,2),'fm999999990.00') || '%','-')  "value" from pmdev.dmcode_channel t where t.channel_no = #channelId# 
+	</select>
+	
+	<!-- 小区基础信息修改页面 -->
+	<select id="getVillageEditDetail" resultClass="java.util.HashMap">
+		    select nvl2(t.xq_complaint,to_char(round(t.xq_complaint ,4),'fm999999990.0000'),'')   "xqComplaint",
+                   nvl2(t.xq_port,to_char(round(t.xq_port ,4),'fm999999990.0000'),'')   "xqPort",
+                   nvl2(t.xq_service_myd,to_char(round(t.xq_service_myd ,4),'fm999999990.0000'),'')   "xqServiceMyd",
+               	   t.chnl_linkman_name "contactname",
+                   t.contract_phone "tele",
+                   t.wx_code "wxCode",
+                   nvl(t.longitude, '0') "longitude",
+                   nvl(t.latitude, '0') "latitude",
+		           t.wo_wallet_acctno "woWalletAcctno",
+		           t.wo_wallet_acctname "woWalletAcctname"
+        	  from PMDEV.DMCODE_CHANNEL t
+			 where t.channel_no = #channelId# 
+	</select>
+	
+	 <update id="updateVillage">
+	        update PMDEV.DMCODE_CHANNEL t
+		       set t.xq_complaint      = to_number(#xqComplaint#),
+		           t.xq_port           = to_number(#xqPort#),
+		           t.xq_service_myd    = to_number(#xqServiceMyd#),
+		           t.chnl_linkman_name = #contactname#,
+		           t.contract_phone    = #tele#,
+		           t.wx_code = #wxCode#,
+		           t.longitude =#longitude#,
+		           t.latitude = #latitude#,
+		           t.wo_wallet_acctno=#woWalletAcctno#,
+		           t.wo_wallet_acctname=#woWalletAcctname#
+		 	 where t.channel_no = #channelId# 
+      </update>
+      
+      <!-- 发展数据+重点指标+运营数据 -->
+	<select id="getvillageFzZdYy" resultClass="java.util.HashMap">
+	  select to_char(t.D_DEV) "dDev",
+             nvl2(t.D_DEV_HB,to_char(round(t.D_DEV_HB*100 ,2),'fm999999990.00') || '%','-')   "dDevHb",
+             to_char(t.M_DEV) "mDev",
+             nvl2(t.M_DEV_HB,to_char(round(t.M_DEV_HB*100 ,2),'fm999999990.00') || '%','-')   "mDevHb",
+             to_char(t.Y_DEV) "yDev",
+             nvl2(t.Y_DEV_HB,to_char(round(t.Y_DEV_HB*100 ,2),'fm999999990.00') || '%','-')   "yDevHb",
+             nvl2(t.M_DEV_TB,to_char(round(t.M_DEV_TB*100 ,2),'fm999999990.00') || '%','-')   "mDevTb",
+             to_char(t.D_CANCEL) "dCancel",
+             nvl2(t.D_CANCEL_HB,to_char(round(t.D_CANCEL_HB*100 ,2),'fm999999990.00') || '%','-')   "dCancelHb",
+             to_char(t.M_CANCEL) "mCancel",
+             nvl2(t.M_CANCEL_HB,to_char(round(t.M_CANCEL_HB*100 ,2),'fm999999990.00') || '%','-')   "mCancelHb",
+             to_char(t.Y_CANCEL) "yCancel",
+             nvl2(t.Y_CANCEL_HB,to_char(round(t.Y_CANCEL_HB*100 ,2),'fm999999990.00') || '%','-')   "yCancelHb",
+             nvl2(t.M_CANCEL_TB,to_char(round(t.M_CANCEL_TB*100 ,2),'fm999999990.00') || '%','-')   "mCancelTb",
+             to_char(t.D_JZ) "dJz",
+             nvl2(t.D_JZ_HB,to_char(round(t.D_JZ_HB*100 ,2),'fm999999990.00') || '%','-')   "dJzHb",
+             to_char(t.M_JZ) "mJz",
+             nvl2(t.M_JZ_HB,to_char(round(t.M_JZ_HB*100 ,2),'fm999999990.00') || '%','-')   "mJzHb",
+             to_char(t.Y_JZ) "yJz",
+             nvl2(t.Y_JZ_HB,to_char(round(t.Y_JZ_HB*100 ,2),'fm999999990.00') || '%','-')   "yJzHb",
+             nvl2(t.M_JZ_TB,to_char(round(t.M_JZ_TB*100 ,2),'fm999999990.00') || '%','-')   "mJzTb",
+             nvl2(t.RH_STL,to_char(round(t.RH_STL*100 ,2),'fm999999990.00') || '%','-')   "rhStl",
+             nvl2(t.IPTV_STL,to_char(round(t.IPTV_STL*100 ,2),'fm999999990.00') || '%','-')   "iptvStl",
+             nvl2(t.ZW_COUNT,to_char(t.ZW_COUNT) ,'-')   "zwCount",
+             nvl2(t.USER_TOTAL_NUM,to_char(t.USER_TOTAL_NUM),'-')   "userTotalNum",
+             nvl2(t.XQ_KFL,to_char(round(t.XQ_KFL*100 ,2),'fm999999990.00') || '%','-')   "xqKfl",
+             to_char(t.COMPLETE_COUNT)"completeCount",
+             to_char(t.ORDER_COUNT) "orderCount",
+             nvl2(t.ZHL,to_char(round(t.ZHL*100 ,2),'fm999999990.00') || '%','-')   "zhl",
+             to_char(round(t.charge_num ,2),'fm999999990.00')  "chargeNum",
+             nvl2(t.tv_stl,to_char(round(t.tv_stl*100 ,2),'fm999999990.00') || '%','-')   "tvStl"
+	    from PM.PM_XIAOQU_DEV_D t,
+			 NDIM.DIM_GW_LOCATION t1
+	   where t.channel_no = t1.row_id
+		 and t1.state = 'U'
+		 and t.acct_date=#acctDate#
+		 and t1.station_code=#channelId#
+	</select>
+	
+      <!-- 发展数据+重点指标+运营数据 获取最大账期 -->
+	<select id="getMaxMonth" resultClass="java.lang.String">
+		    SELECT MAX(T.ACCT_MONTH) 
+			  FROM DW.DW_EXECUTE_LOG_BCA T
+			 WHERE T.PROCNAME = 'P_PM_XIAOQU_DEV_D'
+	</select>
+	
+    <!-- 新增的星级展示-->
+	<select id="getChannelStarLevel" resultClass="java.util.HashMap">
+		SELECT YEAR_ID     "yearid",
+		       JIDU_ID     "jiduid",
+		       JIDU_DESC   "jidudesc",
+		       ZB_CHL_ID   "zbchlid",
+		       ZB_CHL_NAME "zbchlname",
+		       nvl(STAR_LEVEL,'0')||''  "starlevel"
+		  FROM PMDEV.DMCODE_CHANNE_STAR
+		 where ZB_CHL_ID = #channelId# 
+		   and YEAR_ID || JIDU_ID = #dateStr#
+	</select>
+	
+    <!-- 查星级最大账期-->
+	<select id="getMaxStarDate" resultClass="java.util.HashMap">
+		select nvl(max(YEAR_ID||JIDU_ID),' ') "maxDateStr" 
+		   FROM PMDEV.DMCODE_CHANNE_STAR
+		 where 1=1
+		  <isNotNull property="channelId">
+	     <isNotEmpty property="channelId">
+	     
+	     and   ZB_CHL_ID = #channelId# 
+	     </isNotEmpty>
+	    </isNotNull>
+		 
+		  
+	</select>
+	
+	<!--  and substr(t.acct_date, 1, 6) = #dateStr#   12-22 新的任务全部出来 不按时间来出来
+	 and to_date(t.end_date,'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')	2-3 -->
+	<select id="getNewTaskesList" resultClass="java.util.HashMap">
+		select t.visit_id "taskeid",
+		       t.visit_name "taskname",
+		       ceil((to_date(t.end_date,'yyyy-mm-dd')-sysdate)) "validatedays" 
+		  from pm.dm_visit_info_d t
+		 where 1=1		  
+		   and t.chnl_id=#channelId#
+		   and t.gm_id=#loginId#
+		   and t.visit_stutas='0'
+		   and nvl(t.is_self,'0') != '1'
+		   and to_date(t.end_date,'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')
+		 order by ceil((to_date(t.end_date, 'yyyy-mm-dd') - sysdate)), t.visit_name	   
+   </select>
+   <!-- and substr(t.acct_date, 1, 6) =#dateStr# 39hang-->
+						<!--    and t.chnl_id=#channelId# 50 hang-->	
+   	<select id="getOldTaskesList" resultClass="java.util.HashMap">
+		select tt.*
+		  from (
+				  select t.visit_id "taskeid",
+						       t.visit_name "taskname",
+						       nvl(ceil(sysdate-t.visit_date),0)  "completeddays" ,
+						       'true' "isfinished"
+						  from pm.dm_visit_info_d  t
+						 where 1=1
+						  
+						   and t.chnl_id=#channelId#
+						   and t.visit_stutas='1'
+						   and t.gm_id=#loginId#
+						   union all
+						   select t.visit_id "taskeid",
+						       t.visit_name "taskname",
+						       nvl(ceil(sysdate-t.visit_date),0)  "completeddays" ,
+						       'false' "isfinished"
+						  from pm.dm_visit_info_d  t
+						 where 1=1
+						 
+						   and t.chnl_id=#channelId#
+						   and t.visit_stutas='0'
+						   and t.gm_id=#loginId#
+						   and to_date(t.end_date,'yyyy-mm-dd') &lt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')
+				  ) tt
+		 order by 3, 2
+				   
+   </select>
+   
+   <select id="getChannelXfType" resultClass="String" >
+    select nvl(t.xf_type,'01') xf_type from   pmdev.dmcode_channel t  where t.channel_no=#channelId#    and rownum=1
+   </select>
+   <!-- 3.	三级页面获得试题信息   -->
+   <select id="getBaseList" resultClass="java.util.HashMap">
+    select t.channel_no_desc "channelname",
+         t.agent_desc  "agentname",
+         t.CONTRACT_PHONE "phone",
+         to_char((
+         
+           	<isNotEmpty property="taskeId">
+			select v.visit_date
+          from PM.DM_VISIT_INFO_D v
+         where v.chnl_id = t.channel_no and v.visit_id=#taskeId#
+  	 		</isNotEmpty>
+  	 		<isEmpty property="taskeId">
+   	 		select max(v.visit_date)
+           from PM.DM_VISIT_INFO_D v
+          where v.chnl_id = t.channel_no
+  	 		</isEmpty>
+		  
+         <!-- select max(v.visit_date)
+            from PM.DM_VISIT_INFO_D v
+           where v.chnl_id = t.channel_no and v.visit_id=#taskeId# -->),'yyyyMMdd') "visitdate",
+          (select distinct a.gm_name from PM.DM_VISIT_INFO_D a where a.chnl_id=t.channel_no 
+           and rownum=1
+           <isNotNull property="taskeId">
+             	<isNotEqual property="taskeId" compareValue="">
+					and a.visit_id=#taskeId#
+    	 		</isNotEqual>
+		  </isNotNull>	
+         
+          ) "gm_name",
+         
+          
+          
+         o.name  "chnl_linkman_name",
+         t.chnl_addr "addr",
+         t.longitude "longitudedesc",
+           t.latitude  "latitudedesc"
+<!--           ,-->
+<!--         0 "monthcard",-->
+<!--         0 "monthtimes",-->
+<!--         0 "monthmoney"-->
+    
+    from pmdev.dmcode_channel t,
+     <isNotNull property="xfType">
+	     <isNotEmpty property="xfType">
+		    <isEqual  property="xfType" compareValue="01">
+		        (select m.chnl_code, m.execute_id
+              from pm.PM_APP_CHANNEL_INFO_M m
+             where m.acct_month = <!--(select max(m.acct_month) from pm.PM_APP_CHANNEL_INFO_M m  where m.chnl_code= #channelId# )-->
+                (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+               and org_type IN( '3', '4') 
+             group by m.chnl_code, m.execute_id) c,
+		     </isEqual>
+	     </isNotEmpty>
+	  </isNotNull>
+                 
+           pmdev.org_organization_mod o,
+           pure.pure_user x
+    where 1=1
+      <isNotNull property="xfType">
+	     <isNotEmpty property="xfType">
+		     <isNotEqual  property="xfType" compareValue="01">
+		        and  t.exe_id=o.id
+		     </isNotEqual>
+		     <isEqual  property="xfType" compareValue="01">
+		        and t.channel_no = c.chnl_code
+		        and c.execute_id = o.id
+		     </isEqual>
+	     </isNotEmpty>
+	  </isNotNull>
+      and o.login_id=x.login_id(+)
+      and t.channel_no=#channelId#  
+    </select>
+<!--   查找渠道的定位信息，自主，任务，旧的回忆返回此功能 -->
+    <select id="getXDLocation" resultClass="java.util.HashMap">
+    select v.location_desc "location_desc" ,v.end_date "endDate"
+          from PM.DM_VISIT_INFO_D v
+         where v.chnl_id = #channelId#  
+              and v.visit_id=#taskeId#
+    
+    </select>
+   <!-- <select id="getBaseList" resultClass="java.util.HashMap">
+    select t.channel_no_desc "channelname",
+	       t.agent_desc  "agentname",
+	       t.CONTRACT_PHONE "phone",
+	       to_char((select max(v.visit_date)
+	          from PM.DM_VISIT_INFO_D v
+	         where v.chnl_id = t.channel_no),'yyyyMMdd') "visitdate",
+	       t.chnl_addr "addr",
+	       t.longitude "longitudedesc",
+           t.latitude  "latitudedesc",
+	       0 "monthcard",
+	       0 "monthtimes",
+	       0 "monthmoney"
+	  from pmdev.dmcode_channel t
+	  where t.channel_no=#channelId# 
+   </select> -->
+   <select id="getTypeNameList" resultClass="java.util.HashMap">
+	      select distinct t.content_type  "type",
+                  decode(t.content_type,
+                         1,'单选类信息',
+                         2,'多选类信息',
+                         3,'文字类信息',
+                         4,'拍照类信息',
+                         5,'有话说说',
+                          6,'是否类',
+                          '其他信息')  "typename"
+		  from pm.dm_visit_model m, 
+		       pm.dm_visit_model_score sc ,
+		       pm.dm_visit_info_d i,
+		       pm.dm_visit_content_model t,
+		       pm.dm_visit_self_detail_d  vs
+		  where m.model_id=sc.model_id
+		  and i.template_id=m.model_id
+		  and sc.content_id=t.content_id		
+		  and i.visit_id  =vs.visit_id(+)
+		  and i.visit_id=#taskeId#
+		   order by t.content_type
+   
+	</select>
+	
+	 <select id="isTaskorisself" resultClass="java.lang.String">
+	      select nvl(i.is_self,0) "isSelf"
+			      from   pm.dm_visit_info_d i
+			      where 1=1
+					  and i.visit_id=#taskeId#
+	</select>
+	
+	 <select id="getSelfTypeNameList" resultClass="java.util.HashMap">
+	      select distinct t.content_type  "type",
+                  decode(t.content_type,
+                         1,'单选类信息',
+                         2,'多选类信息',
+                         3,'文字类信息',
+                         4,'拍照类信息',
+                         5,'(自主)有话说说',
+                          6,'是否类',
+                          '其他信息')  "typename"
+<!--		  from pm.dm_visit_content_model t-->
+<!--		  where t.IS_SELF='1' -->
+		  
+		   from pm.dm_visit_content_model t , pm.dm_visit_model_score sc 
+		  where 1=1 
+		      and t.content_id=sc.content_id
+		      and sc.model_id=#modelId#  
+	</select>
+	 <select id="getTypeNameListByContentType" resultClass="java.util.HashMap">
+	  select distinct t.content_id "qid",rel.grading_standard "qstandard",
+	       nvl(t.content_desc, '') "qcontant",
+	       nvl(t.realanswer, '') "qvalue",
+	       <!-- nvl ( -->(select max(vs.anser_code)
+              from pm.dm_visit_self_detail_d vs
+             where vs.visit_id = i.visit_id
+               and vs.content_id = t.content_id)<!-- , 0) -->  "answervalue",
+            nvl((select max(vs.field3)  from pm.dm_visit_self_detail_d vs where vs.visit_id = i.visit_id and vs.content_id = t.content_id
+       and vs.answer_score=(select max(ts.answer_score)
+             from pm.dm_visit_self_detail_d ts
+            where ts.visit_id = i.visit_id
+              and ts.content_id = t.content_id)), '') "qfield",
+	       nvl(sc.score, 0) "score",
+	      nvl((select max(vs.answer_score)
+	              from pm.dm_visit_self_detail_d vs
+	             where vs.visit_id = i.visit_id
+	               and vs.content_id = t.content_id),0) "answerscore"
+	  from pm.dm_visit_model         m,
+	       pm.dm_visit_model_score   sc,
+	       pm.dm_visit_info_d        i,
+	       pm.dm_visit_content_model t，
+	       PM.DM_VISIT_CONTENT_REL  rel
+	 where m.model_id = sc.model_id
+	   and i.template_id = m.model_id
+	   and sc.content_id = t.content_id 
+	   and rel.content_id(+)=t.content_id
+		  and t.content_type =#contentType#
+		  and i.visit_id=#taskeId#
+		     order by t.content_id 
+	</select>
+   <select id="getListByContentId" resultClass="java.util.HashMap">
+	   select t.anser_code "ansercode",
+		       replace(t.anser_content,chr(10),'') "ansercontent"
+		  from  pm.dm_visit_content_rel t
+		 where 1=1
+		   and t.content_id=#contentId#  
+		   order by t.answer_id
+	</select>
+	
+	 <select id="getTypeNameListByContentTypeImg" resultClass="java.util.HashMap">
+	   select t.content_id "qid",
+	       nvl(t.content_desc,'')  "qcontant",
+	       nvl(t.realanswer,'')   "qvalue",
+	       ''  "answervalue", 
+	       nvl(sc.score,0)  "score",
+	       nvl(vs.answer_score,0)  "answerscore"
+	  from pm.dm_visit_model m, pm.dm_visit_model_score sc ,pm.dm_visit_info_d i,pm.dm_visit_content_model t,pm.dm_visit_self_detail_d  vs
+	  where m.model_id=sc.model_id
+	  and i.template_id=m.model_id
+	  and sc.content_id=t.content_id
+	  and i.visit_id  =vs.visit_id(+)
+	  and t.content_type =#contentType#
+	  and i.visit_id=#taskeId#
+	</select>
+	
+	 <select id="getTypeNameListByContentTypeImgURL" resultClass="java.util.HashMap">
+	   select d.anser_code "anserCode"
+	     from pm.dm_visit_self_detail_d d
+	    where d.content_id=#contentId#
+	     and d.TASKE_ID =#taskeId#
+	</select>
+<!--	重新提交答案and  instr(d.anser_code ,'imageupload')>0-->
+     <delete id="recommitImg">
+     delete from pm.dm_visit_self_detail_d d
+	    where  1=1  
+	     and d.visit_id =#taskeId#
+	     and instr(d.anser_code,'/image')>0
+	      <isNotNull property="delContentIds">
+	     <isNotEmpty property="delContentIds">
+	     <isNotEqual  property="delContentIds" compareValue="">
+	       and d.content_id  not in ('$delContentIds$')
+	     </isNotEqual>
+	     </isNotEmpty>
+	    </isNotNull>
+	    
+	      <isNotNull property="delContentIds2">
+	     <isNotEmpty property="delContentIds2">
+	     <isNotEqual  property="delContentIds2" compareValue="">
+	       and d.content_id   in ('$delContentIds2$')
+	     </isNotEqual>
+	     </isNotEmpty>
+	    </isNotNull>
+     </delete>
+     
+     <select id="queryOldPathList" resultClass="java.util.HashMap">
+	select  d.anser_code
+	     from pm.dm_visit_self_detail_d d
+	    where  d.visit_id =#taskeId#
+	     and instr(d.anser_code,'/image')>0
+	    <isNotNull property="delContentIds">
+	     <isNotEmpty property="delContentIds">
+	     <isNotEqual  property="delContentIds" compareValue="">
+	       and d.content_id  not in ('$delContentIds$')
+	     </isNotEqual>
+	     </isNotEmpty>
+	    </isNotNull>
+	    
+	     <isNotNull property="delContentIds2">
+	     <isNotEmpty property="delContentIds2">
+	     <isNotEqual  property="delContentIds2" compareValue="">
+	       and d.content_id   in ('$delContentIds2$')
+	     </isNotEqual>
+	     </isNotEmpty>
+	    </isNotNull>
+	    
+     </select>
+	
+	<select id="getScoreList" resultClass="java.util.HashMap">
+		select 'score' "qid", 
+		       '5' "qcontant", 
+		       t.score "qvalue"
+	   from pm.DM_VISIT_INFO_D t
+	  where t.visit_id =#taskeId#
+   </select>
+  <select id="chanListAll2" resultClass="java.util.HashMap">
+		  select t.channel_no_desc "channelname",
+		       t.channel_no "channelid",
+		       (select FLOOR(avg(v.score)) + CASE
+		                 WHEN avg(v.score) - FLOOR(avg(v.score)) >= 0.5 THEN
+		                  0.5
+		                 ELSE
+		                  0.0
+		               end
+		          from pm.dm_visit_info_d v
+		         where v.gm_id = #loginId#) "starlevl",
+		       t.img_url "imgurl",		       
+		       (select  round(nvl(nvl(count(v.visit_id), 0) /
+                   max((select nvl(count(d.visit_id), 0)
+                         from pm.dm_visit_info_d d
+                        where d.gm_id = #loginId#
+                          and d.chnl_id = t.channel_no)) * 100,
+	                   0),2) || '%'
+	          from pm.dm_visit_info_d v
+	         where v.visit_stutas = '0'
+	           and v.chnl_id = t.channel_no
+	           and v.gm_id =  #loginId#
+	           and to_date(v.end_date,'yyyy-mm-dd') &gt;= to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')	) "completionrate",
+		       
+		       
+		       '好久不见' "geetings",
+		       nvl(t.longitude, 0) "longitude",
+		       nvl(t.latitude, 0) "latitude",
+		       nvl(t.chnl_addr, '-') "address"
+		        
+		       
+		  from pmdev.dmcode_channel t, pm.PM_APP_CHANNEL_INFO_M v
+		 where t.channel_no = v.chnl_code  
+		   and SUBSTR(v.acct_month, 0, 6) =  <!--(select  SUBSTR(max(mm.acct_month), 0, 6) from  pm.PM_APP_CHANNEL_INFO_M mm )-->
+                      (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+		 Group by t.channel_no,
+		          t.channel_no_desc,
+		          t.img_url,
+		          t.longitude,
+		          t.latitude,
+		          t.chnl_addr
+		     order by 5 desc,2 desc
+  
+  </select>
+  
+  <select id="chanListAll" resultClass="java.util.HashMap">
+	   select  case when  nvl( t.xf_type ,'01')='01' 
+                then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+                t.channel_no "channelid",
+                nvl(st.star_level,'0')||'' "starlevl",
+                t.img_url "imgurl",           
+                '好久不见' "geetings",
+                nvl(t.longitude, 0) "longitude",
+                nvl(t.latitude, 0) "latitude",
+                 pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+                nvl(t.chnl_addr, '-') "address",
+                t.xf_type "xfType",
+                (case when  kk.allshu=0  then 0  else round(nvl(   kk.unshu /kk.allshu , 0)*100,2) end  )|| '%'  "completionrate" 
+   		 from  PMDEV.DMCODE_CHANNEL t,
+                 (select star_level, zb_chl_id
+                    from PMDEV.DMCODE_CHANNE_STAR
+                   where year_id || jidu_id in (select max(year_id||jidu_id) from PMDEV.DMCODE_CHANNE_STAR)
+                  ) st,
+                 (select v.* from pm.PM_APP_CHANNEL_INFO_M v  where v.acct_month =             
+                    <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm)-->
+                    (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                  ) v,
+                  (select  v.chnl_id,          
+                              nvl(sum(case when  v.visit_stutas = '0' and v.gm_id =  'taoxiaoying' and to_date(v.end_date,'yyyy-mm-dd')>= to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')  then 1 else   0  end  ) ,0) unshu,
+                              nvl(sum(case when v.gm_id =  'taoxiaoying' then 1 else 0 end ) ,0) allshu 
+                    from  pm.dm_visit_info_d v 
+                  where 1=1
+                  group by v.chnl_id )   kk
+                  <isNotNull property="isChoosedSale">
+					 <isNotEmpty property="isChoosedSale">
+					   <isEqual property="isChoosedSale" compareValue="1">
+                  ,
+                (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                        from pm.pm_app_channel_sales_m t
+                         where 1=1
+                         and t.product_type = '00' 
+                         and t.level_type = '01'
+                         
+                           <isNotNull property="startSalesTime">
+                                <isNotEmpty   property="startSalesTime" >
+                                     and t.acct_month = #startSalesTime#
+                                 </isNotEmpty>
+                            </isNotNull>
+                            
+                            <!-- 
+                            <isNotNull property="endSalesTime">
+                                <isNotEmpty   property="endSalesTime" >
+                                      and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                                 </isNotEmpty>
+                            </isNotNull>
+                             -->
+                      group by t.channel_no )  mm
+                      </isEqual>
+                    </isNotEmpty>
+				</isNotNull>
+	    where t.channel_no = v.chnl_code  
+	         and t.channel_no = st.zb_chl_id(+)
+	         and t.channel_no = kk.chnl_id(+)
+	         
+	         <isNotNull property="isChoosedSale">
+		 		 <isNotEmpty property="isChoosedSale">
+		 		    <isEqual property="isChoosedSale" compareValue="1">
+	                 and t.channel_no = mm.channelNo(+)
+	                </isEqual>
+	        	 </isNotEmpty>
+			 </isNotNull>
+			 
+	         <isNotNull property="channelNoDesc">
+                 <isNotEmpty property="channelNoDesc">
+                     and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+                 </isNotEmpty>
+             </isNotNull>
+     
+             <isNotNull property="jxChannelTypeList">
+                  <isNotEmpty   property="jxChannelTypeList" >
+                      and t.jx_channel_type  in
+                    <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+                       #jxChannelTypeListArr[]#
+                    </iterate>
+                  </isNotEmpty>
+             </isNotNull> 
+             
+             <isNotNull property="channelState">
+                  <isNotEmpty   property="channelState" >
+                      and T.STATE  in
+                    <iterate property="channelStateArr" conjunction="," open="(" close=")">
+                       #channelStateArr[]#
+                    </iterate>
+                  </isNotEmpty>
+             </isNotNull>                 
+  
+             <isNotNull property="xfType">
+                 <isNotEmpty   property="xfType" >
+                    and  t.xf_type = #xfType# 
+                  </isNotEmpty>
+              </isNotNull>
+              <isNotEmpty property="orgId">
+                 and v.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+              </isNotEmpty>
+	
+	  		  <isNotNull property="startSales">
+                <isNotEmpty   property="startSales" >
+                   and mm.developSum<![CDATA[>=]]>#startSales#
+                </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                 <isNotEmpty   property="endSales" >
+                    and mm.developSum<![CDATA[<=]]>#endSales#
+                 </isNotEmpty>
+              </isNotNull>
+			  <isNotNull property="startSalesTime">
+                  <isNotEmpty   property="startSalesTime" >
+                    <isEqual property="isChoosedSale" compareValue="1">
+                     and mm.channelNo is not null
+                    </isEqual>
+                  </isNotEmpty>
+              </isNotNull>
+              <!-- 
+              		  <isNotNull property="endSalesTime">
+                  <isNotEmpty   property="endSalesTime" >
+                     and mm.channelNo is not null
+                  </isNotEmpty>
+           	  </isNotNull>
+           	   -->
+	   group by t.channel_no,t.channel_no_desc,t.jx_channel_type_desc,t.img_url,t.longitude, t.latitude,st.star_level,t.chnl_addr, t.xf_type,kk.allshu,kk.unshu
+	   
+	union all
+	         
+	select  case when  nvl( t.xf_type ,'01')='01' 
+            then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+            else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+            t.channel_no "channelid",
+            nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+            t.img_url "imgurl",   
+            '好久不见' "geetings",
+            nvl(t.longitude, 0) "longitude",
+            nvl(t.latitude, 0) "latitude",
+            pm.GetDistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+            nvl(t.chnl_addr, '-') "address",
+            t.xf_type "xfType",
+            '0' "completionrate"
+     from   pmdev.dmcode_channel t,
+         	 (select star_level, zb_chl_id
+            	from PMDEV.DMCODE_CHANNE_STAR
+               where year_id || jidu_id in
+               (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)
+              ) st,
+             PMDEV.ORG_ORGANIZATION_MOD ss
+             <isNotNull property="isChoosedSale">
+		 		<isNotEmpty property="isChoosedSale">
+		 		 <isEqual property="isChoosedSale" compareValue="1">
+	             ,
+	             (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+	                from pm.pm_app_channel_sales_m t
+	               where 1=1
+	                 and t.product_type = '00' 
+	                 and t.level_type = '01'
+	                 
+	                 <isNotNull property="startSalesTime">
+	                    <isNotEmpty   property="startSalesTime" >
+	                       and t.acct_month = #startSalesTime#
+	                    </isNotEmpty>
+	                 </isNotNull>
+	                 
+	                 <!-- 
+	                 <isNotNull property="endSalesTime">
+	                    <isNotEmpty   property="endSalesTime" >
+	                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+	                    </isNotEmpty>
+	                 </isNotNull>
+	                  -->
+	                  
+	              group by t.channel_no )mm
+	              </isEqual>
+              	</isNotEmpty>
+			</isNotNull>
+    where ss.id=t.exe_id
+      and t.channel_no = st.ZB_CHL_ID(+)
+      
+       <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		    <isEqual property="isChoosedSale" compareValue="1">
+      		 and t.channel_no = mm.channelNo(+)
+      		</isEqual>
+      	 </isNotEmpty>
+	   </isNotNull>
+	   
+       <isNotNull property="channelNoDesc">
+          <isNotEmpty property="channelNoDesc">
+              and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+          </isNotEmpty>
+       </isNotNull>
+  		     
+       <isNotNull property="xfType">
+          <isNotEmpty   property="xfType" >
+                 and  t.xf_type = #xfType# 
+          </isNotEmpty>
+       </isNotNull>
+        
+         <isNotNull property="jxChannelTypeList">
+           <isNotEmpty   property="jxChannelTypeList" >
+              		and t.jx_channel_type  in
+            <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+              #jxChannelTypeListArr[]#
+	        </iterate>
+	      </isNotEmpty>
+	    </isNotNull>
+	    <isNotNull property="channelState">
+                  <isNotEmpty   property="channelState" >
+                      and T.STATE  in
+                    <iterate property="channelStateArr" conjunction="," open="(" close=")">
+                       #channelStateArr[]#
+                    </iterate>
+                  </isNotEmpty>
+             </isNotNull>    
+	     
+	    <isNotEmpty property="orgId">
+	         and T.EXE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+	    </isNotEmpty>
+	     
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		</isNotNull>
+		<!--  
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		</isNotNull>
+        -->
+	  group by t.channel_no,t.channel_no_desc,t.jx_channel_type_desc,t.img_url,t.longitude, t.latitude,st.star_level,t.chnl_addr, t.xf_type
+	  
+	 order by "distance" 
+  </select>
+   
+  <select id="chanListQuxian20170614" resultClass="java.util.HashMap">
+	select case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+		       t.channel_no "channelid",
+		       nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+		       t.img_url "imgurl",
+               '0' "completionrate",
+		       '好久不见' "geetings",
+		       nvl(t.longitude, 0) "longitude",
+		       nvl(t.latitude, 0) "latitude",
+		       pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+		       nvl(t.chnl_addr, '-') "address",
+		       t.xf_type "xfType"
+		  from pmdev.dmcode_channel t,
+		  (SELECT star_level, ZB_CHL_ID
+		     FROM PMDEV.DMCODE_CHANNE_STAR
+		    where YEAR_ID || JIDU_ID in
+           (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+		  (select v.*   from pm.PM_APP_CHANNEL_INFO_M v
+                         WHERE v.acct_month = <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm  )-->
+                                (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                         ) v 
+		 where t.channel_no = v.chnl_code 
+		<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+        </isNotNull>
+        and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+		   and v.area_no=#orgNo#
+		   and t.channel_no = st.ZB_CHL_ID(+)
+	    <isNotEmpty property="orgId">
+		   and v.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+		</isNotEmpty>
+		<!--  Group by t.channel_no,
+		          t.channel_no_desc,
+		          t.jx_channel_type_desc,
+		          t.img_url,
+		          t.longitude,
+		          t.latitude,
+		          st.STAR_LEVEL,
+		          t.chnl_addr,
+		          t.xf_type -->
+	 union all
+	       
+  select case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+         t.channel_no "channelid",
+         nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+         t.img_url "imgurl",
+         '0' "completionrate",    
+         '好久不见' "geetings",
+         nvl(t.longitude, 0) "longitude",
+         nvl(t.latitude, 0) "latitude",
+         pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+         nvl(t.chnl_addr, '-') "address",
+         t.xf_type "xfType"
+    from pmdev.dmcode_channel t,
+   (SELECT star_level, ZB_CHL_ID
+	  FROM PMDEV.DMCODE_CHANNE_STAR
+	 where YEAR_ID || JIDU_ID in
+       (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+    PMDEV.ORG_ORGANIZATION_MOD ss
+   where ss.id=t.exe_id
+   AND ss.DELFLAG = '0'
+   and SS.AREACODE=#orgNo#
+   and t.channel_no = st.ZB_CHL_ID(+)
+   	    <isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      	</isNotNull>
+      
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+         and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+        <isNotEmpty property="orgId">
+		   	and T.EXE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+		</isNotEmpty>
+   <!--   Group by t.channel_no,
+            t.channel_no_desc,
+            t.jx_channel_type_desc,
+            t.img_url,
+            t.longitude,
+            t.latitude,
+            st.STAR_LEVEL,
+            t.chnl_addr,
+            t.xf_type 
+	        order by 5 desc,2 desc -->
+	        order by "distance"
+  </select>
+  
+  
+  <select id="chanListQuxian" resultClass="java.util.HashMap">
+	    select distinct case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+		       t.channel_no "channelid",
+		       nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+		       t.img_url "imgurl",
+               '0' "completionrate",
+		       '好久不见' "geetings",
+		       nvl(t.longitude, 0) "longitude",
+		       nvl(t.latitude, 0) "latitude",
+		       pm.GetDistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+		       nvl(t.chnl_addr, '-') "address",
+		       t.xf_type "xfType"
+		  from pmdev.dmcode_channel t,
+		  (SELECT star_level, ZB_CHL_ID
+		     FROM PMDEV.DMCODE_CHANNE_STAR
+		    where YEAR_ID || JIDU_ID in
+           (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+		  (select v.*   from pm.PM_APP_CHANNEL_INFO_M v
+                         WHERE v.acct_month = <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm  )-->
+                         (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                         ) v
+           <isNotNull property="isChoosedSale">
+			 <isNotEmpty property="isChoosedSale">
+			   <isEqual property="isChoosedSale" compareValue="1">
+                         ,
+		  (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  
+                  <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month  = #startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  
+                  <!-- 
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                   -->
+                   
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+               		</isEqual>
+				</isNotEmpty>
+			</isNotNull>
+		 where t.channel_no = v.chnl_code
+		   and v.area_no=#orgNo#
+		   and t.channel_no = st.ZB_CHL_ID(+)
+			<isNotNull property="isChoosedSale">
+			   <isNotEmpty property="isChoosedSale">
+			     <isEqual property="isChoosedSale" compareValue="1">
+				   and t.channel_no = mm.channelNo(+)
+		  		 </isEqual>
+				</isNotEmpty>
+			</isNotNull>
+		   
+		<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+        </isNotNull>
+      <isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+		<isNotNull property="xfType">
+            <isNotEmpty   property="xfType" >
+                 and  t.xf_type = #xfType# 
+            </isNotEmpty>
+        </isNotNull>
+		  
+	    <isNotEmpty property="orgId">
+		   and v.EXECUTE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+		</isNotEmpty>
+		
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+		
+		<!-- 
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+ 		-->
+ 		
+	 union all
+	       
+  	 select distinct case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+	         t.channel_no "channelid",
+	         nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+	         t.img_url "imgurl",
+	         '0' "completionrate",    
+	         '好久不见' "geetings",
+	         nvl(t.longitude, 0) "longitude",
+	         nvl(t.latitude, 0) "latitude",
+	         pm.GetDistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+	         nvl(t.chnl_addr, '-') "address",
+	         t.xf_type "xfType"
+	    from pmdev.dmcode_channel t,
+	   (SELECT star_level, ZB_CHL_ID
+		  FROM PMDEV.DMCODE_CHANNE_STAR
+		 where YEAR_ID || JIDU_ID in
+	       (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+	    PMDEV.ORG_ORGANIZATION_MOD ss
+	    <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+	    ,
+		(select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month = #startSalesTime#
+                     </isNotEmpty>
+                   </isNotNull>
+                   
+                  <!-- 
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                   -->
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+               	  </isEqual>
+				</isNotEmpty>
+			</isNotNull>
+	   where ss.id=t.exe_id
+	   AND ss.DELFLAG = '0'
+	   and SS.AREACODE=#orgNo#
+	   and t.channel_no = st.ZB_CHL_ID(+)
+	   
+	   <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+	        and t.channel_no = mm.channelNo(+)
+	   	   </isEqual>
+		 </isNotEmpty>
+	   </isNotNull>
+   
+   	    <isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      	</isNotNull>
+      <isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+       
+        <isNotEmpty property="orgId">
+		   	and T.EXE_ID in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+		</isNotEmpty>
+		
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		</isNotNull>
+		<!-- 
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+		 -->
+		 
+		 order by "distance"
+  </select>
+ 
+ 
+ <select id="chanListGM20170614" resultClass="java.util.HashMap">
+		 select case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+		       t.channel_no "channelid",
+		       nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+		       t.img_url "imgurl",
+               '0' "completionrate",
+		       '好久不见' "geetings",
+		       nvl(t.longitude, 0) "longitude",
+		       nvl(t.latitude, 0) "latitude",
+		       nvl(t.chnl_addr, '-') "address",
+		       t.xf_type "xfType"
+		  from pmdev.dmcode_channel t,
+		  (SELECT star_level, ZB_CHL_ID
+		     FROM PMDEV.DMCODE_CHANNE_STAR
+		    where YEAR_ID || JIDU_ID in
+          (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+		   (select v.*   from pm.PM_APP_CHANNEL_INFO_M v
+                         WHERE v.acct_month = <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm  )-->
+                         (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                         ) v ,
+		  PMDEV.ORG_ORGANIZATION_MOD ss
+		 where t.channel_no = v.chnl_code and ss.id=v.execute_id
+		<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      	</isNotNull>
+      	
+      	<isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+      
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+        and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+      
+		  and ss.grid_no=#orgNo#
+		  and t.channel_no = st.ZB_CHL_ID(+)
+		 <isNotEmpty property="orgId">
+		   	and ss.id in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+		 </isNotEmpty>
+		<!--  Group by t.channel_no,
+		          t.channel_no_desc,
+		          t.jx_channel_type_desc,
+		          t.img_url,
+		          t.longitude,
+		          t.latitude,
+		          st.STAR_LEVEL,
+		          t.chnl_addr,
+		          t.xf_type -->
+		union all
+	       
+  select case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+         t.channel_no "channelid",
+         nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+         t.img_url "imgurl",
+          '0' "completionrate",    
+         '好久不见' "geetings",
+         nvl(t.longitude, 0) "longitude",
+         nvl(t.latitude, 0) "latitude",
+         nvl(t.chnl_addr, '-') "address",
+         t.xf_type "xfType"
+    from pmdev.dmcode_channel t,
+	   (SELECT star_level, ZB_CHL_ID
+		  FROM PMDEV.DMCODE_CHANNE_STAR
+		 where YEAR_ID || JIDU_ID in
+       (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+    	PMDEV.ORG_ORGANIZATION_MOD ss
+   	where ss.id=t.exe_id
+   AND ss.DELFLAG = '0'
+   and ss.grid_no=#orgNo#
+    and t.channel_no = st.ZB_CHL_ID(+)
+     	<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      	</isNotNull>
+      	<isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+		
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+        and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+        <isNotEmpty property="orgId">
+		   	and ss.id in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+	    </isNotEmpty>
+   		<!-- Group by t.channel_no,
+            t.channel_no_desc,
+            t.jx_channel_type_desc,
+            t.img_url,
+            t.longitude,
+            t.latitude,
+            st.STAR_LEVEL,
+            t.chnl_addr,
+            t.xf_type -->
+	        order by 5 desc,2 desc
+  </select>
+  
+   
+ <select id="chanListGM" resultClass="java.util.HashMap">
+		 select distinct case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+		       t.channel_no "channelid",
+		       nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+		       t.img_url "imgurl",
+               '0' "completionrate",
+		       '好久不见' "geetings",
+		       nvl(t.longitude, 0) "longitude",
+		       nvl(t.latitude, 0) "latitude",
+		       pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+		       nvl(t.chnl_addr, '-') "address",
+		       t.xf_type "xfType"
+		  from pmdev.dmcode_channel t,
+		  (SELECT star_level, ZB_CHL_ID
+		     FROM PMDEV.DMCODE_CHANNE_STAR
+		    where YEAR_ID || JIDU_ID in
+          (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+		   (select v.*   from pm.PM_APP_CHANNEL_INFO_M v
+                         WHERE v.acct_month = <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm  )-->
+                          (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                         ) v ,
+		  PMDEV.ORG_ORGANIZATION_MOD ss
+		  <isNotNull property="isChoosedSale">
+			 <isNotEmpty property="isChoosedSale">
+			   <isEqual property="isChoosedSale" compareValue="1">
+		  ,
+		 (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+            from pm.pm_app_channel_sales_m t
+           where 1=1
+           
+             <isNotNull property="startSalesTime">
+                 <isNotEmpty   property="startSalesTime" >
+                    and t.acct_month = #startSalesTime#
+                 </isNotEmpty>
+             </isNotNull>
+             
+             <!-- 
+             <isNotNull property="endSalesTime">
+                 <isNotEmpty   property="endSalesTime" >
+                     and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                 </isNotEmpty>
+             </isNotNull>
+              -->
+             
+               and t.product_type = '00' 
+               and t.level_type = '01'
+           group by t.channel_no )mm
+           		</isEqual>
+			</isNotEmpty>
+		</isNotNull>
+	  where t.channel_no = v.chnl_code 
+	    and ss.id=v.execute_id
+		and ss.grid_no=#orgNo#
+		and t.channel_no = st.ZB_CHL_ID(+)
+		
+		<isNotNull property="isChoosedSale">
+		  <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+		     and t.channel_no = mm.channelNo(+)
+		   </isEqual>
+		  </isNotEmpty>
+        </isNotNull>
+		   
+		<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      	</isNotNull>
+      	
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+       
+		 <isNotEmpty property="orgId">
+		   	and ss.id in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+		 </isNotEmpty>
+
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		 
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+		 <!--
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>-->
+		 
+		union all
+	       
+  select  distinct case when  nvl( t.xf_type ,'01')='01' 
+                     then    decode(t.jx_channel_type_desc,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                      else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+         t.channel_no "channelid",
+         nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+         t.img_url "imgurl",
+          '0' "completionrate",    
+         '好久不见' "geetings",
+         nvl(t.longitude, 0) "longitude",
+         nvl(t.latitude, 0) "latitude",
+         pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+         nvl(t.chnl_addr, '-') "address",
+         t.xf_type "xfType"
+    from pmdev.dmcode_channel t,
+	   (SELECT star_level, ZB_CHL_ID
+		  FROM PMDEV.DMCODE_CHANNE_STAR
+		 where YEAR_ID || JIDU_ID in
+       (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+    	PMDEV.ORG_ORGANIZATION_MOD ss
+    	<isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+    	,
+		 (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month = #startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <!-- 
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull> -->
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+                </isEqual>
+		     </isNotEmpty>
+         </isNotNull>
+     where ss.id=t.exe_id
+	   AND ss.DELFLAG = '0'
+	   and ss.grid_no=#orgNo#
+	   and t.channel_no = st.ZB_CHL_ID(+)
+	   
+	   <isNotNull property="isChoosedSale">
+		 <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+	        and t.channel_no = mm.channelNo(+)
+   	       </isEqual>
+		 </isNotEmpty>
+       </isNotNull>
+       
+     	<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+      	</isNotNull>
+		
+		<isNotNull property="xfType">
+               <isNotEmpty   property="xfType" >
+                      and  t.xf_type = #xfType# 
+                </isNotEmpty>
+        </isNotNull>
+      
+        <isNotEmpty property="orgId">
+		   	and ss.id in (select rr.id  from pmdev.org_organization_mod rr  start with rr.id=#orgId# connect by prior rr.id=rr.parent_id)
+	    </isNotEmpty>
+		
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+       		</isNotEmpty>
+		</isNotNull>
+		<!-- 
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+		 -->
+		order by "distance"
+  </select>
+  
+  
+   <select id="chanListExe20170614" resultClass="java.util.HashMap">
+	select case when  nvl( t.xf_type ,'01')='01' 
+                  then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                 else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+	       t.channel_no "channelid",
+	       nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+	       t.img_url "imgurl",
+	        '0' "completionrate",    
+	       '好久不见' "geetings",
+	       nvl(t.longitude, 0) "longitude",
+	       nvl(t.latitude, 0) "latitude",
+	       nvl(t.chnl_addr, '-') "address",
+	       t.xf_type "xfType"
+	  from pmdev.dmcode_channel t,
+		 (SELECT star_level, ZB_CHL_ID
+		    FROM PMDEV.DMCODE_CHANNE_STAR
+		   where YEAR_ID || JIDU_ID in
+       (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+	   (select v.* from pm.PM_APP_CHANNEL_INFO_M v 
+                         WHERE v.acct_month = <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm  )-->
+                          (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                         )v,
+	 PMDEV.ORG_ORGANIZATION_MOD ss
+	 where t.channel_no = v.chnl_code 
+	   and ss.id=v.execute_id
+		<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		     #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+        </isNotNull>
+        <isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+      
+          and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+             	     <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+             	     <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+		
+		<isNotNull property="xfType">
+            <isNotEmpty   property="xfType" >
+                and  t.xf_type = #xfType# 
+            </isNotEmpty>
+        </isNotNull>
+	  and ss.login_id=#loginId#
+	  and t.channel_no = st.ZB_CHL_ID(+)
+	<!--  Group by t.channel_no,
+	          t.channel_no_desc,
+	          t.jx_channel_type_desc,
+	          t.img_url,
+	          t.longitude,
+	          t.latitude,
+	          st.STAR_LEVEL,
+	          t.chnl_addr,
+	          t.xf_type -->
+  union all
+  select case when  nvl( t.xf_type ,'01')='01' 
+                then    decode(t.jx_channel_type_desc,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+         t.channel_no "channelid",
+         nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+         t.img_url "imgurl",
+          '0' "completionrate",    
+         '好久不见' "geetings",
+         nvl(t.longitude, 0) "longitude",
+         nvl(t.latitude, 0) "latitude",
+         nvl(t.chnl_addr, '-') "address",
+         t.xf_type "xfType"
+    from pmdev.dmcode_channel t,
+   (SELECT star_level, ZB_CHL_ID
+	  FROM PMDEV.DMCODE_CHANNE_STAR
+	 where YEAR_ID || JIDU_ID in
+   (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+	    	   PMDEV.ORG_ORGANIZATION_MOD ss
+	     where ss.id=t.exe_id
+	       AND ss.DELFLAG = '0'
+	       and ss.login_id=#loginId#
+	       and t.channel_no = st.ZB_CHL_ID(+)
+    	<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+        </isNotNull>
+        
+        <isNotNull property="channelState">
+         <isNotEmpty   property="channelState" >
+             and T.STATE  in
+           <iterate property="channelStateArr" conjunction="," open="(" close=")">
+		        #channelStateArr[]#
+		   </iterate>
+         </isNotEmpty>
+      </isNotNull>
+        and t.channel_no in ( 
+            select mm.channelNo from    
+              (select t.channel_no channelNo,sum(develop_t) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month <![CDATA[>=]]>#startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+             where 1=1 
+             <isNotNull property="startSales">
+                    <isNotEmpty   property="startSales" >
+                     and mm.developSum<![CDATA[>=]]>#startSales#
+                   </isNotEmpty>
+              </isNotNull>
+              <isNotNull property="endSales">
+                    <isNotEmpty   property="endSales" >
+                     and mm.developSum<![CDATA[<=]]>#endSales#
+                   </isNotEmpty>
+              </isNotNull>
+               )
+       
+		<isNotNull property="xfType">
+           <isNotEmpty   property="xfType" >
+              and  t.xf_type = #xfType# 
+           </isNotEmpty>
+        </isNotNull>
+  <!--  Group by t.channel_no,
+            t.channel_no_desc,
+            t.jx_channel_type_desc,
+            t.img_url,
+            t.longitude,
+            t.latitude,
+            st.STAR_LEVEL,
+            t.chnl_addr,
+            t.xf_type-->
+	        order by 5 desc,2 desc 
+  </select>
+  
+  <select id="chanListExe" resultClass="java.util.HashMap">
+	select distinct case when  nvl( t.xf_type ,'01')='01' 
+                  then    decode(t.jx_channel_type_desc ,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+                 else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+	       t.channel_no "channelid",
+	       nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+	       t.img_url "imgurl",
+	        '0' "completionrate",    
+	       '好久不见' "geetings",
+	       nvl(t.longitude, 0) "longitude",
+	       nvl(t.latitude, 0) "latitude",
+	       pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+	       nvl(t.chnl_addr, '-') "address",
+	       t.xf_type "xfType"
+	  from pmdev.dmcode_channel t,
+		 (SELECT star_level, ZB_CHL_ID
+		    FROM PMDEV.DMCODE_CHANNE_STAR
+		   where YEAR_ID || JIDU_ID in
+        (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+	    (select v.* from pm.PM_APP_CHANNEL_INFO_M v 
+                         WHERE v.acct_month = <!--(select  max(mm.acct_month)  acct_month from  pm.PM_APP_CHANNEL_INFO_M mm  )-->
+                         (SELECT MAX(T.ACCT_MONTH) FROM DW.DW_EXECUTE_LOG_BCA T WHERE T.PROCNAME = 'P_PM_APP_CHANNEL_INFO_M' AND T.PKG_NAME = 'PM')
+                         )v,
+		 PMDEV.ORG_ORGANIZATION_MOD ss
+		 <isNotNull property="isChoosedSale">
+		   <isNotEmpty property="isChoosedSale">
+		     <isEqual property="isChoosedSale" compareValue="1">
+		 ,
+		 (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+                 from pm.pm_app_channel_sales_m t
+                  where 1=1
+                  
+                   <isNotNull property="startSalesTime">
+                    <isNotEmpty   property="startSalesTime" >
+                       and t.acct_month = #startSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                  
+                  <!-- 
+                  <isNotNull property="endSalesTime">
+                    <isNotEmpty   property="endSalesTime" >
+                       and t.acct_month <![CDATA[<=]]> #endSalesTime#
+                     </isNotEmpty>
+                  </isNotNull>
+                   -->
+                  and t.product_type = '00' 
+                  and t.level_type = '01'
+               group by t.channel_no )mm
+               </isEqual>
+		    </isNotEmpty>
+        </isNotNull>
+		 where t.channel_no = v.chnl_code 
+		   and ss.id=v.execute_id
+		   and ss.login_id=#loginId#
+		   and t.channel_no = st.ZB_CHL_ID(+)
+		   
+		   <isNotNull property="isChoosedSale">
+			 <isNotEmpty property="isChoosedSale">
+			   <isEqual property="isChoosedSale" compareValue="1">
+		  		 and t.channel_no = mm.channelNo(+)
+	  	   	   </isEqual>
+		     </isNotEmpty>
+    	   </isNotNull>
+    	   
+		<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		     #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+        </isNotNull>
+        
+		<isNotNull property="channelState">
+            <isNotEmpty   property="channelState" >
+                and T.STATE  in
+              <iterate property="channelStateArr" conjunction="," open="(" close=")">
+                 #channelStateArr[]#
+              </iterate>
+            </isNotEmpty>
+       </isNotNull>    
+		<isNotNull property="xfType">
+            <isNotEmpty   property="xfType" >
+                and  t.xf_type = #xfType# 
+            </isNotEmpty>
+        </isNotNull>
+	    
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		</isNotNull>
+		<!-- 
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+	        </isNotEmpty>
+		</isNotNull>
+		 -->
+  union all
+  
+  select distinct case when  nvl( t.xf_type ,'01')='01' 
+          then    decode(t.jx_channel_type_desc,'',NVL(t.channel_no_desc, ' '),t.jx_channel_type_desc||':'|| NVL(t.channel_no_desc, ' ') )
+          else    '小区'||':'|| NVL(t.channel_no_desc, ' ') end  "channelname",
+         t.channel_no "channelid",
+         nvl(st.STAR_LEVEL,'0')||'' "starlevl",
+         t.img_url "imgurl",
+          '0' "completionrate",    
+         '好久不见' "geetings",
+         nvl(t.longitude, 0) "longitude",
+         nvl(t.latitude, 0) "latitude",
+         pm.getdistance(nvl(t.latitude, 0), nvl(t.longitude, 0), #latitude#, #longitude#) "distance",
+         nvl(t.chnl_addr, '-') "address",
+         t.xf_type "xfType"
+    from pmdev.dmcode_channel t,
+	    (SELECT star_level, ZB_CHL_ID
+		   FROM PMDEV.DMCODE_CHANNE_STAR
+		  where YEAR_ID || JIDU_ID in
+	    (select max(YEAR_ID||JIDU_ID) FROM PMDEV.DMCODE_CHANNE_STAR)) st,
+	     PMDEV.ORG_ORGANIZATION_MOD ss
+	     
+	     <isNotNull property="isChoosedSale">
+		  <isNotEmpty property="isChoosedSale">
+		   <isEqual property="isChoosedSale" compareValue="1">
+	     ,
+        (select t.channel_no channelNo,nvl(sum(develop_t),0) developSum
+           from pm.pm_app_channel_sales_m t
+          where 1=1
+          
+          <isNotNull property="startSalesTime">
+            <isNotEmpty   property="startSalesTime" >
+                and t.acct_month = #startSalesTime#
+            </isNotEmpty>
+          </isNotNull>
+          
+          <!-- 
+          <isNotNull property="endSalesTime">
+             <isNotEmpty   property="endSalesTime" >
+                and t.acct_month <![CDATA[<=]]> #endSalesTime#
+             </isNotEmpty>
+           </isNotNull>
+            -->
+            
+              and t.product_type = '00' 
+              and t.level_type = '01'
+           group by t.channel_no )mm
+           </isEqual>
+		</isNotEmpty>
+    </isNotNull>
+	   where ss.id=t.exe_id
+	    <!--  AND ss.DELFLAG = '0' -->
+	     and ss.login_id=#loginId#
+	     and t.channel_no = st.ZB_CHL_ID(+)
+	     
+		    <isNotNull property="isChoosedSale">
+			  <isNotEmpty property="isChoosedSale">
+			   <isEqual property="isChoosedSale" compareValue="1">
+				  and t.channel_no = mm.channelNo(+)
+			   </isEqual>
+			  </isNotEmpty>
+	        </isNotNull>
+	        
+    	<isNotNull property="channelNoDesc">
+			<isNotEmpty property="channelNoDesc">
+				and t.channel_no_desc like '%'||#channelNoDesc#||'%'
+			</isNotEmpty>
+		</isNotNull>
+		
+		<isNotNull property="jxChannelTypeList">
+         <isNotEmpty   property="jxChannelTypeList" >
+             and t.jx_channel_type  in
+           <iterate property="jxChannelTypeListArr" conjunction="," open="(" close=")">
+		        #jxChannelTypeListArr[]#
+		   </iterate>
+         </isNotEmpty>
+        </isNotNull>
+        <isNotNull property="channelState">
+             <isNotEmpty   property="channelState" >
+                 and T.STATE  in
+               <iterate property="channelStateArr" conjunction="," open="(" close=")">
+                  #channelStateArr[]#
+               </iterate>
+             </isNotEmpty>
+        </isNotNull>    
+       
+		<isNotNull property="xfType">
+           <isNotEmpty   property="xfType" >
+              and  t.xf_type = #xfType# 
+           </isNotEmpty>
+        </isNotNull>
+		
+		<isNotNull property="startSales">
+			<isNotEmpty property="startSales">
+				and mm.developSum<![CDATA[>=]]>#startSales#
+			</isNotEmpty>
+		</isNotNull>
+		<isNotNull property="endSales">
+			<isNotEmpty property="endSales">
+				and mm.developSum<![CDATA[<=]]>#endSales#
+			</isNotEmpty>
+		</isNotNull>
+		<isNotNull property="startSalesTime">
+			<isNotEmpty property="startSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+		
+		<!-- 
+		<isNotNull property="endSalesTime">
+			<isNotEmpty property="endSalesTime">
+				and mm.channelNo is not null
+            </isNotEmpty>
+		</isNotNull>
+		 -->
+		order by "distance"
+  </select>
+  
+  
+   <select id="getTotalCompletionRateList" resultClass="java.util.HashMap">
+	  select count(*) "total",
+	       (select  round((nvl(count(v.visit_id),0) /
+                 max((select nvl(count(d.visit_id),0)
+                       from pm.dm_visit_info_d d
+                      where d.gm_id = v.gm_id))) * 100,0) || '%'
+	          from pm.dm_visit_info_d d
+	         where d.visit_stutas = '0'
+	           and d.gm_id = v.gm_id) "completionrate",
+	       v.gm_id "gmId"
+	  from pm.dm_visit_info_d v
+	 where 1 = 1
+	  and nvl(v.is_self,'0') !='1'
+	  and v.gm_id = #loginId#
+	 Group by v.gm_id
+  </select>
+  <select id="getTotalNew" resultClass="java.util.HashMap">
+	 <!-- select count(t.visit_id ) "total"
+		  from pm.dm_visit_info_d t
+		 where 1=1		  
+		   and t.gm_id=#loginId#
+		   and t.visit_stutas='0'
+		   and nvl(t.is_self,'0')!='1'	
+		   and to_date(t.end_date,'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')	 -->
+		   
+		 select count(t.visit_id ) "total"
+      from pm.dm_visit_info_d t,pm.dm_visit_log y
+     where t.visit_task_id=y.task_id       
+<!--       and t.gm_id in (select a.login_id
+					  from pmdev.org_organization_mod  a
+					  where a.login_id is not null
+					        and  instr(a.name, '失效')=0   
+					   start with a.id  in (select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#)
+					  connect by prior a.id = a.parent_id)   -->
+     and t.execute_id in
+       (
+        select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                     union
+				         
+       select m.id  from pmdev.org_organization_mod m
+         where  1=1 
+<!--         and  a.login_id is not null-->
+	     and  instr(m.name, '失效')=0  
+         start with m.id in (select b.org_id  from pmdss.sc_login_user b   where b.login_id = #loginId#)
+        connect by prior m.id = m.parent_id)
+       and t.visit_stutas='0'
+       and nvl(t.is_self,'0')!='1'  
+       and to_date(t.end_date,'yyyy-mm-dd') >=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')     	   
+  </select>
+  
+  <select id="getTotalNewZero" resultClass="java.util.HashMap">
+  select 0 "total" from dual
+  </select>
+  
+   <select id="getSelfListByContentType0127" resultClass="java.util.HashMap">
+	    select t.content_id "qid",
+<!--		       t.content_desc "qcontant",-->
+<!--		       t.realanswer "qvalue",-->
+<!--		       '' "answervalue",-->
+<!--		       '0' "score",-->
+<!--		       '' "answerscore"-->
+		   nvl(t.content_desc,'')  "qcontant",
+	       nvl(t.realanswer,'')   "qvalue",
+	       ''  "answervalue", 
+	       nvl(sc.score,0)  "score",
+	        ''   "answerscore"
+<!--		  from pm.dm_visit_content_model t-->
+<!--		 where 1 = 1-->
+<!--		   and t.type = '1'-->
+<!--		   and t.IS_SELF='1'-->
+<!--		   and t.content_status = '1'-->
+<!--	   and t.content_type = #contentType# -->
+	   from pm.dm_visit_content_model t , pm.dm_visit_model_score sc 
+		  where 1=1 
+      and t.content_id=sc.content_id
+      and sc.model_id='20160201012358pOYcoHMcBCklfQgCJv' 
+		  and t.content_type = #contentType# 
+	   
+	   
+	</select>
+	 <select id="getSelfListByContentTypeImg0127" resultClass="java.util.HashMap">
+	   select t.content_id "qid", 
+<!--	          t.content_desc "qcontant", -->
+<!--	          ''  "qvalue",-->
+<!--	          ''   "answervalue",-->
+<!--	          '0' "score",-->
+<!--	          '' "answerscore"-->
+	       nvl(t.content_desc,'')  "qcontant",
+	       nvl(t.realanswer,'')   "qvalue",
+	       ''  "answervalue", 
+	       nvl(sc.score,0)  "score",
+	        ''  "answerscore"
+	          
+<!--	   from pm.dm_visit_content_model t-->
+<!--	   where 1=1-->
+<!--	       and t.type = '1'-->
+<!--		   and t.IS_SELF='1'-->
+<!--		   and t.content_status = '1'-->
+<!--	       and t.content_type = #contentType#-->
+
+	        from pm.dm_visit_content_model t , pm.dm_visit_model_score sc
+		  where 1=1 
+      and t.content_id=sc.content_id
+      and sc.model_id='20160201012358pOYcoHMcBCklfQgCJv' 
+		  and t.content_type = #contentType#  
+	   
+	</select>
+	
+	<select  id="getSelfListByContentType" resultClass="java.util.HashMap">
+	 select distinct  t.content_id "qid",
+             rel.grading_standard "qstandard",
+             nvl(t.content_desc, '') "qcontant",
+             nvl(t.realanswer, '') "qvalue",
+             '' "answervalue",
+             '' "qfield",
+             nvl(sc.score, 0) "score",
+             '' "answerscore"
+      
+        from pm.dm_visit_content_model t,
+         pm.dm_visit_model_score sc ,
+         PM.DM_VISIT_CONTENT_REL rel
+       where 1 = 1
+         and rel.content_id(+) = t.content_id
+         and t.content_id = sc.content_id
+         and sc.model_id = #modelId#
+          and t.content_type = #contentType#  
+	</select>
+	<select id="getSelfListByContentTypeImg" resultClass="java.util.HashMap">
+	 select t.content_id "qid",
+             rel.grading_standard "qstandard",
+             nvl(t.content_desc, '') "qcontant",
+             nvl(t.realanswer, '') "qvalue",
+             '' "answervalue",
+             '' "qfield",
+             nvl(sc.score, 0) "score",
+             '' "answerscore"
+      
+        from pm.dm_visit_content_model t,
+         pm.dm_visit_model_score sc ,
+         PM.DM_VISIT_CONTENT_REL rel
+       where 1 = 1
+         and rel.content_id(+) = t.content_id
+         and t.content_id = sc.content_id
+         and sc.model_id = #modelId#
+          and t.content_type = #contentType#  
+	</select>
+	<select id="getSelfScoreList" resultClass="java.util.HashMap">
+		select 'score' "qid", 
+		       '5' "qcontant", 
+		       '-' "qvalue" 
+		from dual
+   </select>
+   
+   <select id="getAnswerList" resultClass="java.util.HashMap">
+	  select d.visit_id, 
+             d.content_id, 
+             d.anser_code, 
+             d.answer_score
+        from pm.dm_visit_self_detail_d d
+      where d.visit_id= #taskeId# 
+        and d.content_id= #contentId#
+	</select>
+	
+	
+	<select id="getMainTasksList" resultClass="java.util.HashMap">	
+		select q.*,
+		       nvl(q."countNum"-q."unfinish", 0) "finish",
+		       round(nvl(round(nvl(q."countNum"-q."unfinish", 0))/round(q."countNum", 0)* 100,0),2)||'%' "finishperent"
+		  from (select l.task_id "taskid",
+		               '' "imgurl",
+		                nvl(l.visit_name,'-') "taskname",
+		               round(nvl((select count(t.gm_id)
+		                  from pm.dm_visit_info_d t
+		                 where t.visit_task_id = l.task_id
+		                   and t.gm_id=#loginId#
+		                   and t.visit_stutas = '0'), 0)) "unfinish",
+		               nvl(count(tt.gm_id),0) "countNum",
+		               nvl(l.task_description,'-') "desc",		               
+		               l.start_date "starttime",
+		               l.end_date   "endtime"
+		          from pm.dm_visit_log l, pm.dm_visit_info_d tt
+		         where l.task_id = tt.visit_task_id
+		           and tt.gm_id = #loginId#
+		           and to_date(tt.end_date,'yyyy-mm-dd') &gt;=  to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')
+		         group by l.task_id,
+		                  l.visit_name,
+		                  l.task_description,
+		                  l.start_date,
+		                  l.end_date) q
+                  </select>	
+
+     <select id="getMainTask22sList" resultClass="java.util.HashMap">	
+		select l.task_id "taskid",      
+		       l.visit_name "taskname",
+		       l.task_description "desc",       
+		       l.start_date "starttime",
+		       l.end_date   "endtime"
+		  from pm.dm_visit_log l
+		 where l.task_id = #taskId#
+     </select>
+     <!-- 附件 -->
+     <select id="getFujianList" resultClass="java.util.HashMap">	
+		   select t.fujian_id "fujianId",
+		          t.fujian_name "fujianName",
+		          t.lujing "lujing",
+		          substr(t.fujian_name,instr(t.fujian_name,'.')+1)  "fujianType"
+		     from PM.PM_XUFANG_FUJIAN t,
+		          PM.DM_VISIT_LOG l
+		    where t.task_id = l.task_id
+		      and t.task_id = #taskId#
+		      and to_char(t.insert_date,'YYYYMMDD') <![CDATA[>=]]>  l.start_date
+	          and to_char(t.insert_date,'YYYYMMDD') <![CDATA[<=]]>  l.end_date
+     </select>
+     
+     <select  id="getUnfinishedTaskesList" resultClass="java.util.HashMap">
+     
+			 select nvl(t.chnl_id, '-') "channelid",
+			       nvl(t.chnl_name, '-') "channelname",
+			       nvl(a.longitude, 0) "longitude",
+			       nvl(a.latitude, 0) "latitude",
+			       a.img_url "imgurl",
+			       '-' "completeddays",
+			       t.visit_id "visitid",
+			       t.visit_task_id "taskid",
+			       t.gm_name "gmname",
+			       case
+			         when t.gm_id = #loginId# then
+			          1
+			         else
+			          2
+			       end "listorder",
+<!--			       t.gm_id "gm_id"-->
+                    case  when  nvl(f.role_level ,'0') in ('3','4') then '1'
+                          when  t.gm_id=f.login_id  then '1'
+                      else  '0'   end      "is_self" ,
+			        case  when  nvl(f.role_level ,'0') in ('3','4') then f.login_id
+                      else  t.gm_id end      "gm_id"
+			  from (select * from  pm.dm_visit_info_d t
+			        where 1=1
+			       and t.visit_task_id = #taskId#
+			      <!--  and t.execute_id in
+			       (
+			       select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                    union
+			       
+			       select a.id
+			          from pmdev.ORG_ORGANIZATION_MOD a
+			         where 1 = 1
+			           and a.delflag='0'
+			           <isNotNull property="positList"><isNotEmpty property="positList" prepend="and">
+							  a.posit_no in ('$positList$')</isNotEmpty> </isNotNull>
+			         start with a.id in ( 
+					          <isNotNull property="orgId"> <isNotEmpty property="orgId" > #orgId# </isNotEmpty> </isNotNull>
+							  <isNull property="orgId">   #orgNo#  </isNull>  
+							  <isNotNull property="orgId"><isEmpty property="orgId" > #orgNo#  </isEmpty>  </isNotNull>
+			          )
+			        connect by prior a.id = a.parent_id)-->
+					<isNotEqual property="orgNo" compareValue="root">	   
+			              and t.execute_id in
+			           (
+			           select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                      union
+			            select a.id
+			              from pmdev.ORG_ORGANIZATION_MOD a
+			             where 1 = 1
+			               and a.delflag='0'
+			             start with a.id = #orgNo# 
+			             connect by prior a.id = a.parent_id)
+					  </isNotEqual>	
+					  <isNotNull property="orgId"> 
+					  <isNotEmpty property="orgId" >
+					  <isNotEqual property="orgId" compareValue="root">	   
+			              and t.execute_id in
+			           (
+			           select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                       union
+			           select a.id
+			              from pmdev.ORG_ORGANIZATION_MOD a
+			             where 1 = 1
+			               and a.delflag='0'
+			             start with  a.id=#orgId# 
+						 connect by prior a.id = a.parent_id)
+					  </isNotEqual>	
+					  </isNotEmpty> 
+					  </isNotNull>
+					 <isNotNull property="positList">
+					 <isNotEmpty property="positList">
+					  <isNotEqual property="positList" compareValue="">	   
+			              and t.execute_id in
+			           (  select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                       union
+						select a.id
+			              from pmdev.ORG_ORGANIZATION_MOD a
+			             where 1 = 1
+			               and a.delflag='0'
+			               and a.posit_no in ('$positList$')
+			              start with a.id = #orgNo#  
+			            connect by prior a.id = a.parent_id)
+					  </isNotEqual>	
+					  </isNotEmpty> </isNotNull>
+					
+			   )t
+			  
+			  , pmdev.dmcode_channel a  , (select * from pmdss.sc_login_user t where t.login_id=#loginId# and t.state='1'  and rownum=1  ) f
+			 where t.chnl_id = a.channel_no
+			    and nvl(t.visit_stutas,0) = '0'
+		    <isNotNull property="channelNoDesc">
+		    <isNotEmpty property="channelNoDesc">
+		   		and t.chnl_name like '%'||#channelNoDesc#||'%'
+		    </isNotEmpty>
+		   </isNotNull>
+			   
+			 order by "listorder", t.VISIT_DATE asc 
+     </select>
+     
+     <select id="getFinishedTaskesList"  resultClass="java.util.HashMap">
+     
+			  select nvl(t.chnl_id, '-') "channelid",
+			       nvl(t.chnl_name, '-') "channelname",
+			       nvl(a.longitude, 0) "longitude",
+			       nvl(a.latitude, 0) "latitude",
+			       a.img_url "imgurl",
+			       nvl(to_char(t.VISIT_DATE, 'YYYYMMDD'), '--') "completeddays",
+			       t.visit_id "visitid",
+			       t.visit_stutas "visitstutas",
+			       t.visit_task_id "taskid",
+			       t.gm_name "gmname",
+			       case
+			         when t.gm_id = #loginId# then
+			          1
+			         else
+			          2
+			       end "listorder",
+<!--			       t.gm_id "gm_id"-->
+                   case  when  nvl(f.role_level ,'0') in ('3','4') then '1'
+                          when  t.gm_id=f.login_id  then '1'
+                      else  '0'   end      "is_self",
+			        case  when  nvl(f.role_level ,'0') in ('3','4') then f.login_id
+                      else  t.gm_id end      "gm_id"
+			  from   (  select * from  pm.dm_visit_info_d t
+			              where 1=1 
+			               and t.visit_task_id = #taskId#
+					<isNotEqual property="orgNo" compareValue="root">	   
+			              and t.execute_id in
+			           (
+			           select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                      union
+			            select a.id
+			              from pmdev.ORG_ORGANIZATION_MOD a
+			             where 1 = 1
+			               and a.delflag='0'
+			             start with a.id = #orgNo# 
+			             connect by prior a.id = a.parent_id)
+					  </isNotEqual>	
+					  <isNotNull property="orgId"> 
+					  <isNotEmpty property="orgId" >
+					  <isNotEqual property="orgId" compareValue="root">	   
+			              and t.execute_id in
+			           (
+			           select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                       union
+			           select a.id
+			              from pmdev.ORG_ORGANIZATION_MOD a
+			             where 1 = 1
+			               and a.delflag='0'
+			             start with  a.id=#orgId# 
+						 connect by prior a.id = a.parent_id)
+					  </isNotEqual>	
+					  </isNotEmpty> 
+					  </isNotNull>
+					 <isNotNull property="positList">
+					 <isNotEmpty property="positList">
+					  <isNotEqual property="positList" compareValue="">	   
+			              and t.execute_id in
+			           (  select a.id  from  pmdev.org_organization_mod a  where a.login_id = #loginId#
+                       union
+						select a.id
+			              from pmdev.ORG_ORGANIZATION_MOD a
+			             where 1 = 1
+			               and a.delflag='0'
+			               and a.posit_no in ('$positList$')
+			              start with a.id = #orgNo#  
+			            connect by prior a.id = a.parent_id)
+					  </isNotEqual>	
+					  </isNotEmpty> </isNotNull>
+					  
+					  
+			      
+			          ) t
+			  
+			  
+			  , pmdev.dmcode_channel a  , (select * from pmdss.sc_login_user t where t.login_id=#loginId# and t.state='1'  and rownum=1  ) f
+			 where t.chnl_id = a.channel_no
+			   and (t.visit_stutas = '1' or
+			       (t.visit_stutas = '0' and t.end_date &lt;to_char(sysdate, 'yyyymmdd')))
+			       <isNotNull property="channelNoDesc">
+					    <isNotEmpty property="channelNoDesc">
+					   		and t.chnl_name like '%'||#channelNoDesc#||'%'
+					    </isNotEmpty>
+					</isNotNull>
+			       
+			 order by "listorder", t.visit_stutas desc, t.VISIT_DATE desc   nulls last  
+     </select>
+     <select id="getUnfinishedTaskesListbak0324" resultClass="java.util.HashMap">
+		select nvl(t.chnl_id,'-') "channelid",
+		       nvl(t.chnl_name,'-') "channelname",
+		       nvl(a.longitude, 0) "longitude",
+		       nvl(a.latitude, 0) "latitude",
+		       a.img_url  "imgurl",
+		       '-' "completeddays",
+		       t.visit_id "visitid",
+		       t.visit_task_id  "taskid",
+		       t.gm_name "gmname",
+		       case when t.gm_id=#loginId# then 1 
+                 else 2 end  "listorder",
+		       t.gm_id "gm_id"
+		  from pm.dm_visit_info_d t,pmdev.dmcode_channel a
+		 where t.chnl_id=a.channel_no
+		<isNotNull property="channelNoDesc">
+		    <isNotEmpty property="channelNoDesc">
+		   		and t.chnl_name like '%'||#channelNoDesc#||'%'
+		    </isNotEmpty>
+		</isNotNull>
+		   and t.visit_task_id = #taskId#
+<!--		   and t.gm_id in  (select a.login_id 
+							  from pmdev.org_organization_mod  a
+							  where a.login_id is not null
+							        and  instr(a.name, '失效')=0   
+							         	
+							         	<isNotNull property="positList">
+											   	<isNotEmpty property="positList" prepend="and">
+											  a.posit_no in(#positList#)
+									   	</isNotEmpty>
+									    </isNotNull>
+							        
+							       
+							 start with a.id  in (  <isNotNull property="orgId">
+											   	          <isNotEmpty property="orgId" >
+											                  #orgId#
+									   	                  </isNotEmpty>
+									                </isNotNull>
+									           <isNull property="orgId">
+											   	       select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+									          </isNull>  
+									            <isNotNull property="orgId">
+											   	          <isEmpty property="orgId" >
+											                  select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+									   	                  </isEmpty>
+									                </isNotNull>
+								
+							 )
+							 connect by prior a.id = a.parent_id)   -->
+							 
+		  and t.execute_id  in  (select a.id  
+									  from pmdev.org_organization_mod  a
+									  where  1=1 
+		<!--							      a.login_id is not null-->
+									        and  instr(a.name, '失效')=0   
+									         	
+									         	<isNotNull property="positList">
+													   	<isNotEmpty property="positList" prepend="and">
+													  a.posit_no in ('$positList$')
+											   	</isNotEmpty>
+											    </isNotNull>
+									        
+									       
+									 start with a.id  in (  <isNotNull property="orgId">
+													   	          <isNotEmpty property="orgId" >
+													                  #orgId#
+											   	                  </isNotEmpty>
+											                </isNotNull>
+											           <isNull property="orgId">
+													   	       select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+											          </isNull>  
+											            <isNotNull property="orgId">
+													   	          <isEmpty property="orgId" >
+													                  select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+											   	                  </isEmpty>
+											                </isNotNull>
+										
+									 )
+									 connect by prior a.id = a.parent_id)
+ 
+		   <!-- and t.gm_id = #loginId# -->
+		   and t.visit_stutas = '0'
+		   and to_date(t.end_date, 'yyyy-mm-dd') &gt;= to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+		 order by  "listorder",  t.VISIT_DATE  asc  
+   </select>
+    <select id="getFinishedTaskesListbak0324" resultClass="java.util.HashMap">
+		select nvl(t.chnl_id,'-') "channelid",
+		       nvl(t.chnl_name,'-') "channelname",
+		       nvl(a.longitude, 0) "longitude",
+		       nvl(a.latitude, 0) "latitude",
+		       a.img_url  "imgurl",
+		       <!-- nvl(ceil((t.VISIT_DATE - sysdate)),'0') --> nvl(to_char(t.VISIT_DATE,'YYYYMMDD'),'--') "completeddays",
+		       t.visit_id "visitid",
+		       t.visit_stutas "visitstutas",
+		       t.visit_task_id  "taskid",
+		        t.gm_name "gmname",
+		          case when t.gm_id=#loginId# then 1 <!-- litg  or  $loginId$ ??-->
+
+             else 2 end  "listorder",
+		        t.gm_id "gm_id"
+		  from pm.dm_visit_info_d t,pmdev.dmcode_channel a
+		 where t.chnl_id=a.channel_no
+		 <isNotNull property="channelNoDesc">
+		    <isNotEmpty property="channelNoDesc">
+		   		and t.chnl_name like '%'||#channelNoDesc#||'%'
+		    </isNotEmpty>
+		</isNotNull>
+		   and t.visit_task_id = #taskId#
+<!--		   and t.gm_id in  (select a.login_id
+								  from pmdev.org_organization_mod  a
+								  where a.login_id is not null
+								         and  instr(a.name, '失效')=0   
+								  <isNotNull property="positList">
+												   	<isNotEmpty property="positList" prepend="and">
+												  a.posit_no in(#positList#)
+										   	</isNotEmpty>
+										    </isNotNull>
+								 start with a.id  in (<isNotNull property="orgId">
+												   	          <isNotEmpty property="orgId" >
+												                  #orgId#
+										   	                  </isNotEmpty>
+										                </isNotNull>
+										           <isNull property="orgId">
+												   	       select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+										          </isNull>  
+										            <isNotNull property="orgId">
+												   	          <isEmpty property="orgId" >
+												                  select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+										   	                  </isEmpty>
+										                </isNotNull>
+										                )
+								 connect by prior a.id = a.parent_id)  -->
+								 
+			 and  substr(t.visit_id ,31) in  (select a.id 
+													  from pmdev.org_organization_mod  a
+													  where 1=1 
+<!--													         and a.login_id is not null-->
+													         and  instr(a.name, '失效')=0   
+													  <isNotNull property="positList">
+																	   	<isNotEmpty property="positList" prepend="and">
+																	  a.posit_no in ('$positList$')
+															   	</isNotEmpty>
+															    </isNotNull>
+													 start with a.id  in (<isNotNull property="orgId">
+																	   	          <isNotEmpty property="orgId" >
+																	                  #orgId#
+															   	                  </isNotEmpty>
+															                </isNotNull>
+															           <isNull property="orgId">
+																	   	       select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+															          </isNull>  
+															            <isNotNull property="orgId">
+																	   	          <isEmpty property="orgId" >
+																	                  select b.ORG_ID from pmdss.sc_login_user b where b.login_id=#loginId#
+															   	                  </isEmpty>
+															                </isNotNull>
+															                )
+													 connect by prior a.id = a.parent_id) 
+																 
+								 
+								 
+		   <!-- and t.gm_id = #loginId# -->
+		   and (t.visit_stutas = '1' or  (t.visit_stutas='0'and end_date &lt;to_char(sysdate,'yyyymmdd')))
+		 order by  "listorder",t.visit_stutas desc ,  t.VISIT_DATE  desc  
+   </select>
+   
+  <select id="modelMap" resultClass="java.util.HashMap"> 
+  	  select t.model_url "modelUrl" ,t.file_content  "fileContent"  from PM.dm_visit_model T where t.model_id=#contentId#
+  </select>
+	
+	<select id="queryVisitShopisFirst" resultClass="java.lang.String">
+	
+   select  count(*)  isFirst    FROM PM.DM_VISIT_INFO_D T  where 1=1 
+    and   t.visit_id=#taskeId# 
+    and  t.location_desc= #longitude#||','||#latitude#
+	
+	</select>
+	
+	<select id="queryForDept" resultClass="java.lang.String">
+		select t.department "deptNo" from pmdss.sc_login_user t 
+		 where t.login_id=#loginId#
+		   and rownum=1
+	</select>
+</sqlMap>
