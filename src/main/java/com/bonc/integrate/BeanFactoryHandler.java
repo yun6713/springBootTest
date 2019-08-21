@@ -22,6 +22,7 @@ import org.springframework.core.env.PropertySources;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.ResourceUtils;
 /**
  * 操作bean Configuration metadata<br/>
  * 获取bean操作会跳过BeanPostProcessor<br/>
@@ -50,7 +51,7 @@ public class BeanFactoryHandler implements BeanFactoryPostProcessor {
 	BeanDefinitionBuilder p;
 	ResourceLoader q;
 	MessageSource r;
-	
+	ResourceUtils s;     
 	
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
