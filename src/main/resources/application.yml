@@ -18,6 +18,8 @@ spring:
   mvc:
     favicon:
       enabled: false
+    date-format: dd-MM-yyyy
+    
   security:
     oauth: false #启用oauth
     enabled: true #是否拦截请求

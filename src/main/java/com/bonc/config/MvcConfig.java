@@ -1,7 +1,7 @@
 package com.bonc.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -15,5 +15,9 @@ public class MvcConfig extends WebMvcConfigurationSupport {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		 registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 	     super.addResourceHandlers(registry);
+	}
+	@Override
+	protected void addFormatters(FormatterRegistry registry) {
+//		registry.addFormatter(new Formatter());
 	}
 }
