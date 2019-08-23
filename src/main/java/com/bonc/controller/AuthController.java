@@ -28,7 +28,7 @@ import com.bonc.utils.JwtUtils;
  * @Description TODO
  */
 @RestController
-public class AuthorController {
+public class AuthController {
 	//基于角色
 	@Secured(value = { "ROLE_admin" })
 	@RequestMapping("/author1")

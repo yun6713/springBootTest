@@ -2,13 +2,16 @@ package com.bonc.controller;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +45,11 @@ public class TestController {
 	public String projectPath() throws IOException, URISyntaxException {
 		//不可获取classpath的File
 		return FileUtils.getProjectPath();
+	}
+	@RequestMapping("/dateFormat")
+	public Date testDateFormat(@RequestParam Date date) throws IOException {
+		Date d=new Date();
+		return d;
 	}
 	@ExceptionHandler
 	@ResponseStatus(code=HttpStatus.INTERNAL_SERVER_ERROR)

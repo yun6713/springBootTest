@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,7 @@ import com.bonc.service.H2Service;
 
 @RestController
 @RequestMapping("/h2")
-public class H2Controller {
+public class H2Controller implements DisposableBean{
 	@Autowired
 	H2Service h2Service;
 	@Autowired
@@ -46,6 +48,7 @@ public class H2Controller {
 	}
 	@RequestMapping("/insertUser/{name}")
 	public Object insertUser(@PathVariable String name) {
+		if(name!=null) return name;
 		User u = new User();
 		u.setUsername(name);
 		u.setPassword("b");
@@ -77,5 +80,13 @@ public class H2Controller {
 	public String deleteUser(@PathVariable("id") Integer id) {
 		h2Service.deleteUserById(id);
 		return "Success";
+	}
+	@Override
+	public void destroy() throws Exception {
+		System.out.println("Happy everyday.");
+	}
+	@PreDestroy
+	public void destroy2() throws Exception {
+		System.out.println("Happy everyday2.");
 	}
 }

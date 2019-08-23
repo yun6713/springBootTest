@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,7 +24,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.RowId;
 import org.hibernate.annotations.Target;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Id;

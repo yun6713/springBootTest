@@ -1,15 +1,18 @@
 package com.bonc.integrate;
 
-import java.util.Properties;
-
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyOverrideConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.PropertySourceLoader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -19,8 +22,10 @@ import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.SystemPropertyUtils;
 
 /**
@@ -46,8 +51,15 @@ public class BeanFactoryHandler implements BeanFactoryPostProcessor {
 	PropertySourceLoader k;
 	PropertySourcesPropertyResolver l;
 	ImportBeanDefinitionRegistrar m;
-	SystemPropertyUtils s;
+	SystemPropertyUtils s1;
+	ApplicationContext l1;
+	InitializingBean m1;
+	DisposableBean n;
 	ObjectUtils o;
+	BeanDefinitionBuilder p;
+	ResourceLoader q1;
+	MessageSource r1;
+	ResourceUtils s;     
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		ConfigurableEnvironment env = beanFactory.getBean(ConfigurableEnvironment.class);
