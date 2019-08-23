@@ -5,8 +5,12 @@ h2:
   relation-path: classpath:data/relation #关联表
   serverConfig: -tcp,-tcpPort,9095,-tcpAllowOthers,-ifNotExists,-baseDir,D:/h2/db
 #debug: true
+test: ${server.port}
 server:
   port: 8080
+jasypt: #jasypt加密
+  encryptor:
+    password: helloworld #密码盐
 mybatis:
   #mapper-locations: classpath:mapper/user/UserOperation.xml
   mapper-locations: classpath:mapper/**/*.xml
@@ -28,10 +32,11 @@ management:
 logging:
   level:
     com.bonc: info
+    org.springframework.util.PropertyPlaceholderHelper: trace
 spring:
   mail:
     host: mail.bonc.com.cn
-    username: litianlin
+    username: ENC(4EeDDgC+TkUFFOvzvrcQQlTW7l63nXbj)
     password: P@ssw0rd1
     from: litianlin@bonc.com.cn
   boot:
