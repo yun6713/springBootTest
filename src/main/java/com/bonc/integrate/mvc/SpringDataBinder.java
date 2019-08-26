@@ -1,7 +1,8 @@
-package com.bonc.integrate;
+package com.bonc.integrate.mvc;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
@@ -18,7 +19,10 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.data.redis.connection.convert.StringToPropertiesConverter;
+import org.springframework.format.AnnotationFormatterFactory;
 import org.springframework.format.Formatter;
+import org.springframework.format.FormatterRegistrar;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
@@ -28,7 +32,13 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.bonc.entity.jpa.User;
 import com.bonc.utils.MapUtils;
-public class SpringArgsHandle {
+/**
+ * spring databinder相关类，Validation、Type Conversion、Formatter
+ * @author litianlin
+ * @date   2019年8月26日上午10:28:38
+ * @Description TODO
+ */
+public class SpringDataBinder {
 	Validator a;
 	ValidationUtils a2;
 	Errors a3;	
@@ -41,11 +51,16 @@ public class SpringArgsHandle {
 	PropertyEditor c;
 	PropertyEditorManager c1;
 	ConversionService c2;
-	Converter c3;
+	Converter c3;//Converters管理,ConverterRegistry注册
 	ConverterFactory c4;
 	GenericConverter c5;
 	ConversionServiceFactoryBean c6;//注册ConversionService bean
-	Formatter d;
+	Formatter d;//ConversionService使用.
+	Annotation d1;
+	NumberFormat d2;
+	AnnotationFormatterFactory d3;//绑定Annotation、Formatter
+	FormatterRegistrar d4;
+	
 	@Test
 	public void testValidator() {
 		User user=new User();

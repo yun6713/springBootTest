@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 /**
@@ -24,6 +25,8 @@ import org.springframework.util.ResourceUtils;
 @Component
 public class H2InitCommandRunner implements CommandLineRunner{
 
+	@Autowired
+	ConversionService cs;
 	private final static Logger LOG = LoggerFactory.getLogger(H2InitCommandRunner.class);
 	private static String sqlTemplate = "insert into %1$s select %2$s from csvread('%3$s')";
 	//获取表格列名

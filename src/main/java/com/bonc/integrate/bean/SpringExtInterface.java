@@ -1,4 +1,4 @@
-package com.bonc.integrate;
+package com.bonc.integrate.bean;
 
 import java.io.InputStreamReader;
 
