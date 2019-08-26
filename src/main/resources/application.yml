@@ -15,6 +15,12 @@ spring:
     - dev #db、redis、es、rabbitmq连接信息
     include:
     - integrate #集成框架配置信息，自定义配置信息
+  quartz:
+    auto-startup: true
+    properties: 
+      org.quartz.threadPool: 
+        threadCount: 10
+        threadPriority: 5
   mvc:
     favicon:
       enabled: false
