@@ -3,8 +3,6 @@ package com.bonc.integrate;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.junit.Test;
-import org.springframework.context.annotation.Scope;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -15,7 +13,7 @@ import com.bonc.entity.jpa.Role;
 import com.bonc.utils.MapUtils;
 public class SpEL {
 
-	@Test
+	
 	public void spelTest() {
 		//普通表达式
 		ExpressionParser parser = new SpelExpressionParser();

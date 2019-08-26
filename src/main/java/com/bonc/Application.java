@@ -1,15 +1,19 @@
 package com.bonc;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.LoggerFactory;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 /**
  * 日志：slf4j+logback<p>
@@ -26,6 +30,7 @@ import org.springframework.security.concurrent.DelegatingSecurityContextExecutor
  */
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 @EnableCaching//开启缓存
 public class Application{
 	public static void main(String[] args) {
@@ -56,4 +61,16 @@ public class Application{
 		};
 	}
 	
+	@Bean//异步调用未捕获异常处理
+	public AsyncUncaughtExceptionHandler AsyncUncaughtExceptionHandler() {
+		return new AsyncUncaughtExceptionHandler() {
+			@Override
+			public void handleUncaughtException(Throwable ex, Method method, Object... params) {
+				ex.printStackTrace();
+				LoggerFactory.getLogger(Application.class)
+				.error("method:{},params:{}", method,params);
+			}
+			
+		};
+	}
 }

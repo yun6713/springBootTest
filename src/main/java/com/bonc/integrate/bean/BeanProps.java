@@ -1,4 +1,4 @@
-package com.bonc.integrate;
+package com.bonc.integrate.bean;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
