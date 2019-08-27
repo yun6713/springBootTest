@@ -103,6 +103,10 @@ public class Role extends JpaAuditing implements Serializable{
 	public void afterDomainEventPublication() {
 		System.out.println("这玩意有什么用？");
 	}
+	@Override
+	public Role clone() throws CloneNotSupportedException {
+		return (Role) super.clone();
+	}
 	public static class RoleSaveEvent{
 		private Integer rId;
 		public RoleSaveEvent(Integer rId) {

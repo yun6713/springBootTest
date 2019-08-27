@@ -1,5 +1,6 @@
 package com.bonc.integrate.mvc;
 
+import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.annotation.Annotation;
@@ -12,6 +13,9 @@ import javax.validation.ConstraintValidator;
 import org.junit.Test;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyAccessor;
+import org.springframework.beans.PropertyValue;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.propertyeditors.ClassEditor;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
@@ -48,6 +52,10 @@ public class SpringDataBinder {
 	DataBinder b;
 	WebDataBinder b2;
 	BeanWrapper bw;
+	PropertyAccessor bw1;
+	PropertyDescriptor bw2;
+	PropertyValue bw3;
+	PropertyValues bw4;
 	PropertyEditor c;
 	PropertyEditorManager c1;
 	ConversionService c2;

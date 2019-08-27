@@ -1,5 +1,0 @@
-1，建立索引jftest。
-put http://127.0.0.1:9200/jftest
-2，建立类型user；需安装analysis-ik中文分词器。
-put http://127.0.0.1:9200/jftest/user/_mapping
-{"properties":{"uId":{"type":"integer"},"username":{"type":"keyword"},"roles":{"analyzer":"ik_max_word","type":"text"},"extend_1":{"analyzer":"ik_max_word","type":"text"}}}

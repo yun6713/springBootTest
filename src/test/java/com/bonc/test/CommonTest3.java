@@ -15,6 +15,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
+import com.alibaba.fastjson.JSON;
+import com.bonc.entity.jpa.Permission;
 import com.bonc.utils.FileUtils;
 import com.bonc.utils.StringUtils;
 
@@ -108,5 +110,16 @@ public class CommonTest3 {
 				"		return vs.%1$s(jsonParam);\r\n" + 
 				"	}";
 		System.out.println(String.format(tmp, name));
+	}
+	@Test
+	public void cloneTest() throws CloneNotSupportedException {
+		Permission p=new Permission();
+		p.setpId("1");
+		p.setpName("add");
+		Permission p1=p.clone();
+		System.out.println(p==p1);
+		String str=JSON.toJSONString(p);
+		Permission p2=JSON.parseObject(str, Permission.class);
+		System.out.println(p2.getpName()==p.getpName());
 	}
 }

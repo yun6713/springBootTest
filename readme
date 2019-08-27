@@ -1,4 +1,4 @@
-2019年7月31日09:03:35
+总体结构
 日志：slf4j+logback
 安全：spring security+oauth2；jwt
 数据库：H2+druid
@@ -6,3 +6,23 @@
 缓存：ehcache、redis
 测试：junit、MockMvc
 加密：单向(PasswordEncoder、MD5)、双向(rsa、base64)
+
+ES初始化
+1，建立索引jftest。
+put http://127.0.0.1:9200/jftest
+2，建立类型user；需安装analysis-ik中文分词器。
+put http://127.0.0.1:9200/jftest/user/_mapping
+{"properties":{"uId":{"type":"integer"},"username":{"type":"keyword"},"roles":{"analyzer":"ik_max_word","type":"text"},"extend_1":{"analyzer":"ik_max_word","type":"text"}}}
+
+
+
+
+
+
+
+
+
+
+
+
+

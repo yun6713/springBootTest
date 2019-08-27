@@ -13,7 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="permission")
-public class Permission implements Serializable{
+public class Permission implements Serializable,Cloneable{
 	/**
 	 * 
 	 */
@@ -59,6 +59,9 @@ public class Permission implements Serializable{
 			return false;
 		return true;
 	}
-	
+	@Override
+	public Permission clone() throws CloneNotSupportedException {
+		return (Permission) super.clone();
+	}
 	
 }

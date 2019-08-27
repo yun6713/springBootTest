@@ -18,7 +18,7 @@ public class SpringExtInterface implements InitializingBean{
 	public void afterPropertiesSet() throws Exception {
 		try(
 				//classpath资源
-				InputStreamReader c=new InputStreamReader(rl.getResource("classpath:es").getInputStream());
+				InputStreamReader c=new InputStreamReader(rl.getResource("classpath:rsaPri").getInputStream());
 				//url资源，有前缀且非classpath，均以url resource解析
 				InputStreamReader f=new InputStreamReader(rl.getResource("file:/D:\\eclipse-workspace\\springbootTest\\src\\main\\java\\com\\bonc\\config\\DruidViewConfig.java").getInputStream());
 				){

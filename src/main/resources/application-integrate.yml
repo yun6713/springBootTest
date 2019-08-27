@@ -1,5 +1,5 @@
 #不再增删配置项的配置
-h2:
+h2: #h2自定义配置
   enabled: true
   enableAppServer: true #使用应用h2数据库
   data-path: classpath:data/data #entity
@@ -8,7 +8,7 @@ h2:
 jasypt: #jasypt加密
   encryptor:
     password: helloworld #密码盐
-management:
+management: #监控
   cloudfoundry:
     enabled: true
   endpoints:
@@ -22,12 +22,24 @@ management:
     loggers:
       enabled: true
 spring:
-  mail:
+  quartz: #定时任务quartz
+    auto-startup: true
+    job-store-type: jdbc #jdbc持久化
+    jdbc:
+      schema: classpath:sql/quartz.sql
+      initialize-schema: embedded
+    properties: 
+      org.quartz:
+        threadPool: 
+          threadCount: 10
+          threadPriority: 5
+        jobStore.isClustered: false #集群
+  mail: #邮件
     host: mail.bonc.com.cn
     username: ENC(4EeDDgC+TkUFFOvzvrcQQlTW7l63nXbj)
     password: ENC(GgGXGupv5WHdbmyYrO07DMl+myfDV3ew)
     from: ENC(Obl+8eDsle8eeU3Lps/76xKxBKash/1VD1Apez2YRQs=)
-  boot:
+  boot: #可视化监控
     admin:
       #server jar包启动命令，通过Runtime启动
       server.start-command: "java -jar D:\\eclipse-workspace\\springbootTest\\src\\main\\resources\\jar\\SpringBootAdminServer.jar"
