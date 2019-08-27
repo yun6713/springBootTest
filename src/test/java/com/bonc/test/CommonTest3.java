@@ -14,13 +14,12 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import com.alibaba.fastjson.JSON;
 import com.bonc.entity.jpa.Permission;
 import com.bonc.utils.FileUtils;
 import com.bonc.utils.StringUtils;
-
-import cn.hutool.core.io.resource.ClassPathResource;
 
 
 public class CommonTest3 {
@@ -89,7 +88,7 @@ public class CommonTest3 {
 		
 	}
 	@Test
-	public void testxml() throws DocumentException {
+	public void testxml() throws DocumentException, IOException {
 		Document d=new SAXReader().read(new ClassPathResource("MobileVisitShopMapper.xml").getFile());
 		List<Element> list=d.getRootElement().elements();
 		list.stream().map(e->{

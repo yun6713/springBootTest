@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
@@ -48,6 +49,8 @@ public class QuartzConfig {
 				.setJobData(map)
 				.storeDurably()//持久化
 				.requestRecovery(false)//recovery、fail-over时是否重新执行
+//				.setJobData(newJobDataMap)
+				.storeDurably()
 				.build();
 	}
 	@Bean
