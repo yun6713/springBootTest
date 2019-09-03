@@ -1,4 +1,4 @@
-package com.bonc.designPattern;
+package com.bonc.designPattern.create;
 /**
  * 静态工厂、工厂方法、抽象工厂
  * @author Administrator

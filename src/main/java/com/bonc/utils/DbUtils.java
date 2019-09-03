@@ -20,7 +20,7 @@ import com.bonc.utils.MapUtils.MapBuilder;
 public class DbUtils {
 	public static final Map<String,String> DRIVERS = new MapBuilder<String,String>()
 			.put("jdbc:oracle","oracle.jdbc.driver.OracleDriver")
-			.put("jdbc:mysql","com.mysql.jdbc.Driver")
+			.put("jdbc:mysql","com.mysql.cj.jdbc.Driver")
 			.put("jdbc:h2", "org.h2.Driver")
 			.build();
 	public static Connection getConnection(String driverName,String url,String uname,String pwd) throws Exception {
