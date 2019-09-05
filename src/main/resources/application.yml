@@ -9,6 +9,7 @@ mybatis:
 logging:
   level:
     com.bonc: info
+config.profile: dev
 spring:
   application:
     name: test

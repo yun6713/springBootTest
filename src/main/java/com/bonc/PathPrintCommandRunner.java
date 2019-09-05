@@ -26,8 +26,8 @@ import com.bonc.integrate.QuartzConfig.TestJob2;
  * @date   2019年7月5日上午11:12:40
  * @Description TODO
  */
-@Component
-@Lazy//懒加载
+//@Component
+//@Lazy//懒加载
 public class PathPrintCommandRunner implements CommandLineRunner{
 	private final static Logger LOG = LoggerFactory.getLogger(PathPrintCommandRunner.class);
 	@Value("${server.address:localhost}:${server.port:8080}/${server.servlet.context-path:}")
