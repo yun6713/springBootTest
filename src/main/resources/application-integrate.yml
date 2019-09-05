@@ -15,6 +15,7 @@ management: #监控
     web:
       exposure:
         include: "*"
+    jmx.exposure.exclude: shutdown
     enabled-by-default: true        
   endpoint:    
     shutdown:

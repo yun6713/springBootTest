@@ -10,8 +10,12 @@ logging:
   level:
     com.bonc: info
 spring:
+  application:
+    name: test
+    admin:
+      enabled: false
   profiles:
-    active:
+    active: #可被命令行参数重写。
     - dev #db、redis、es、rabbitmq连接信息
     include:
     - integrate #集成框架配置信息，自定义配置信息
