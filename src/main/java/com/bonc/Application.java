@@ -11,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -29,9 +31,12 @@ import org.springframework.security.concurrent.DelegatingSecurityContextExecutor
  * @Description TODO
  */
 @SpringBootApplication
-@EnableAsync
-@EnableScheduling
+@EnableAsync//异步
+@EnableScheduling//定时
 @EnableCaching//开启缓存
+@PropertySources(value = { 
+		@PropertySource(ignoreResourceNotFound=true,value = { "classpath:config/${config.profile}/config.properties" })
+		})
 public class Application{
 	public static void main(String[] args) {
 		// 设置环境变量，解决Es的netty与Netty服务本身不兼容问题

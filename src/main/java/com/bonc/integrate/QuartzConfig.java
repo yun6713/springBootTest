@@ -33,7 +33,7 @@ import com.bonc.service.TestService;
  * @date   2019年8月26日下午5:12:18
  * @Description TODO
  */
-@Configuration
+//@Configuration
 public class QuartzConfig {
 	private static final Logger LOG=LoggerFactory.getLogger(QuartzConfig.class);
 	@Scheduled(fixedRate=5*1000)

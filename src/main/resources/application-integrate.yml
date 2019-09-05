@@ -15,6 +15,7 @@ management: #监控
     web:
       exposure:
         include: "*"
+    jmx.exposure.exclude: shutdown
     enabled-by-default: true        
   endpoint:    
     shutdown:
@@ -24,7 +25,7 @@ management: #监控
 spring:
   quartz: #定时任务quartz
     auto-startup: true
-    job-store-type: jdbc #jdbc持久化
+    #job-store-type: jdbc #jdbc持久化
     jdbc:
       schema: classpath:sql/quartz.sql
       initialize-schema: embedded
@@ -33,7 +34,7 @@ spring:
         threadPool: 
           threadCount: 10
           threadPriority: 5
-        jobStore.isClustered: false #集群
+        #jobStore.isClustered: false #集群,用于jdbc模式？
   mail: #邮件
     host: mail.bonc.com.cn
     username: ENC(4EeDDgC+TkUFFOvzvrcQQlTW7l63nXbj)
