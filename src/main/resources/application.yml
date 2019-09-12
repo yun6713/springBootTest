@@ -6,9 +6,11 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     database-id: h2
+    log-impl: com.bonc.integrate.log.MybatisLog
 logging:
-  level:
-    com.bonc: info
+  config: classpath:logback-spring.xml
+#  level:
+#    com.bonc: info
 config.profile: dev
 spring:
   application:
@@ -24,7 +26,7 @@ spring:
     favicon:
       enabled: false
     date-format: dd-MM-yyyy
-    
+   
   security:
     oauth: false #启用oauth
     enabled: true #是否拦截请求
@@ -35,12 +37,12 @@ spring:
   cache:
     ehcache:
       config: classpath:ehcache-spring.xml
-
+  
   jpa:
     open-in-view: true #默认true，EntityManager在request期间绑定thread，防止懒加载错误
     show-sql: true    
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true

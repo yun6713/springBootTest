@@ -50,7 +50,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilterAt(filter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers("/test","/h2console/*","/oauth/*","/druid/*")
+				.antMatchers("/test","/h2console/*","/h2console","/oauth/*","/druid/*","/druid")
 				.permitAll()
 				.anyRequest().authenticated()
 				.and()//自动构建登录界面，允许所有访问

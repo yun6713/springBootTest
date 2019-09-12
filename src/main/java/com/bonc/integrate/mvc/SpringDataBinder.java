@@ -10,7 +10,6 @@ import java.util.Properties;
 
 import javax.validation.ConstraintValidator;
 
-import org.junit.Test;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessor;
@@ -69,14 +68,12 @@ public class SpringDataBinder {
 	AnnotationFormatterFactory d3;//绑定Annotation、Formatter
 	FormatterRegistrar d4;
 	
-	@Test
 	public void testValidator() {
 		User user=new User();
 		Errors errors=new BeanPropertyBindingResult(user,"user");
 		ValidationUtils.invokeValidator(new UserValidator(), user, errors);
 		System.out.println(errors.getFieldErrors());
 	}
-	@Test
 	public void testBeanWrapper() {
 		//需要无参构造器
 		BeanWrapper bw=new BeanWrapperImpl(User.class);
