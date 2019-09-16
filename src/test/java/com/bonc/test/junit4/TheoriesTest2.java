@@ -24,23 +24,24 @@ public class TheoriesTest2 {
 		}
 		return ints;
 	}
-	@Rule
-	public ErrorCollector ec=new ErrorCollector();
+//	@Rule
+//	public ErrorCollector ec=new ErrorCollector();
 	@Theory
 	public void test(int a,int b,int c) {
 		Assume.assumeTrue(a>0&&b>0&&c>0);
 		try {
-			triangleJudge(a,b,c);
+			if(triangleJudge(a,b,c))
 			System.out.println(String.format("Can consist triangle:{},{},{}", a,b,c));
 		}catch (Exception e) {
-			ec.addError(e);
+			
 		}
 	}
-	public void triangleJudge(int a,int b,int c) throws Exception {
+	public boolean triangleJudge(int a,int b,int c) throws Exception {
 		if(a+b>c && a+c>b && b+c>a) {
-			
+			return true;
 		}else {
-			throw new Exception(String.format("Can't consist triangle:{},{},{}", a,b,c));
+//			ec.addError( new Exception(String.format("Can't consist triangle:{},{},{}", a,b,c)));
 		}
+		return false;
 	}
 }
