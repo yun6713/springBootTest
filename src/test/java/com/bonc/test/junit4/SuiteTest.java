@@ -11,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @Description TODO
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { SuiteTest1.class,ParameterizedTest.class,
+@SuiteClasses(value = {ParameterizedTest.class,
 		RuleTest.class })
 public class SuiteTest {
 }

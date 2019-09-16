@@ -1,5 +1,8 @@
 package com.bonc.controller;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,23 +33,26 @@ public class ExpHandler implements ResponseBodyAdvice<Object>{
 		exp.printStackTrace();
 		LOG.error(exp.getMessage());
 		return exp.getMessage();
-	}
+	}    
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		HttpServletRequest req=HttpUtils.getRequest();
-		boolean flag=EndpointRequest.toAnyEndpoint().matches(req);
-		if(flag && LOG.isDebugEnabled()) {
-			LOG.debug("request url:{}",req.getRequestURL().toString());
-		}
-		return !flag;
+//		HttpServletRequest req=HttpUtils.getRequest();
+//		boolean flag=EndpointRequest.toAnyEndpoint().matches(req);
+//		if(flag && LOG.isDebugEnabled()) {
+//			LOG.debug("request url:{}",req.getRequestURL().toString());
+//		}
+		//只包装controller包返回结果，避免其他包返回格式错误。
+		String pName=returnType.getDeclaringClass().getPackage().getName();
+		boolean flag=pName.startsWith("com.bonc.controller");
+		return flag;
 	}
 	@Override
 	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
 			Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
 			ServerHttpResponse response) {
 		//对String进行特殊处理，mvc converter根据controller返回类型决定，会报错
-		return body instanceof ResultVO?body:
-			body instanceof String?JSON.toJSONString(ResultVO.ok(body)):ResultVO.ok(body);
+		return body instanceof ResultVO?body
+			:body instanceof String?JSON.toJSONString(ResultVO.ok(body)):ResultVO.ok(body);
 	}
 	public static class ResultVO<T> {
 		 	private int status = 1;

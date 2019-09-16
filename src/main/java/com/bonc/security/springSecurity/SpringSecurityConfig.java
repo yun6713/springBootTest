@@ -36,7 +36,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		//禁用csrf
-		http.csrf().disable();
+//		http.csrf().disable();
 		//放行h2
 		http.headers().frameOptions().disable();
 		//开启验证
