@@ -27,7 +27,7 @@ public class TestController {
 	TestService ts;
 	@RequestMapping(value="/test")
 	public Object test(HttpServletRequest req) {
-		return new String[] {"success"};
+		return "success";
 	}
 	@RequestMapping("/test1")
 	public String test1() {

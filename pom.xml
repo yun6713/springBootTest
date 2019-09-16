@@ -266,6 +266,13 @@
 		    <groupId>io.netty</groupId>
 		    <artifactId>netty-all</artifactId>
 	    </dependency>
+<!-- https://mvnrepository.com/artifact/org.databene/contiperf；压测 -->
+		<dependency>
+		    <groupId>org.databene</groupId>
+		    <artifactId>contiperf</artifactId>
+		    <version>2.2.0</version>
+		    <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

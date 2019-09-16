@@ -31,4 +31,10 @@ public class CommonTest4 {
 		
 		System.out.println(new DruidDataSource() instanceof DataSource);
 	}
+	@Test
+	public void testPkg() {
+		System.out.println(Package.getPackage("com.bonc.test")
+				.getName());
+		
+	}
 }

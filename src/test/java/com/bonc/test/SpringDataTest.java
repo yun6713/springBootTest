@@ -3,6 +3,7 @@ package com.bonc.test;
 
 import java.util.Arrays;
 
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.collection.internal.PersistentBag;
 import org.junit.Test;
@@ -11,8 +12,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -52,6 +51,7 @@ public class SpringDataTest {
 		ExampleMatcher em;
 		QueryByExampleExecutor q;
 		JpaSpecificationExecutor j;
+		RestClient j2;
 	}
 	public void testQueryDsl() {
 		QUser qc = QUser.user;

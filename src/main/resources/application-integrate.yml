@@ -24,16 +24,16 @@ management: #监控
       enabled: true
 spring:
   quartz: #定时任务quartz
-    auto-startup: true
-    #job-store-type: jdbc #jdbc持久化
+#    auto-startup: true
+    job-store-type: memory #jdbc持久化
     jdbc:
-      schema: classpath:sql/quartz.sql
-      initialize-schema: embedded
-    properties: 
-      org.quartz:
-        threadPool: 
-          threadCount: 10
-          threadPriority: 5
+#      schema: classpath:sql/quartz.sql
+      initialize-schema: NEVER #always,embedded,never
+#    properties: 
+#      org.quartz:
+#        threadPool: 
+#          threadCount: 10
+#          threadPriority: 5
         #jobStore.isClustered: false #集群,用于jdbc模式？
   mail: #邮件
     host: mail.bonc.com.cn
