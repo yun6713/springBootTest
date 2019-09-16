@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>  
-<configuration>  
+<!-- <configuration scan="true" scanPeriod="10 seconds" >   -->
+<configuration>
     <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">  
         <layout class="ch.qos.logback.classic.PatternLayout">  
             <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %5p [%t] %replace(%caller{1}){'\t|Caller.{1}0|\r\n', ''} - %m%n</pattern>  
@@ -52,8 +53,10 @@
     <logger name="com.frame.log.mybatis.LogbackImpl" level="debug">  
         <appender-ref ref="fileDebugLog" />  
     </logger>  
-    
-    <root level="info">  
+    <springProfile name="dev">
+    </springProfile>
+    <springProperty name="level" source="logging.level.com.bonc.config" defaultValue="info"></springProperty>
+    <root level="${level}">  
         <appender-ref ref="consoleLog" />  
         <appender-ref ref="fileInfoLog" />  
         <appender-ref ref="fileErrorLog" />  

@@ -265,6 +265,7 @@ public class FileUtils {
 				str = str.substring(str.indexOf("/"), str.indexOf(".jar!/"));
 				PROJECT_PATH = str.substring(0, str.lastIndexOf("/")+1);
 			}
+			PROJECT_PATH="file:"+PROJECT_PATH;
 			log.info("Project path is: {}",PROJECT_PATH);
 		}
 		return PROJECT_PATH;

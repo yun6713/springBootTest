@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
+import com.bonc.utils.FileUtils;
+
 @Configuration
 public class SpringExtInterface implements InitializingBean{
 	@Autowired
@@ -20,7 +22,7 @@ public class SpringExtInterface implements InitializingBean{
 				//classpath资源
 				InputStreamReader c=new InputStreamReader(rl.getResource("classpath:rsaPri").getInputStream());
 				//url资源，有前缀且非classpath，均以url resource解析
-				InputStreamReader f=new InputStreamReader(rl.getResource("file:/D:\\eclipse-workspace\\springbootTest\\src\\main\\java\\com\\bonc\\config\\DruidViewConfig.java").getInputStream());
+				InputStreamReader f=new InputStreamReader(rl.getResource(FileUtils.getProjectPath()+"\\src\\main\\java\\com\\bonc\\config\\DruidViewConfig.java").getInputStream());
 				){
 			char[] cs=new char[8*1024];
 			c.read(cs);

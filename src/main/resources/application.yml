@@ -7,8 +7,9 @@ mybatis:
   configuration:
     database-id: h2
 logging:
+  #config: classpath:logback-spring.xml
   level:
-    com.bonc: info
+    com.bonc.config: warn
 config.profile: dev
 spring:
   application:
