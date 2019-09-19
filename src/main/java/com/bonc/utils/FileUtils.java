@@ -198,7 +198,7 @@ public class FileUtils {
 	 */
 	public static void string2File(String str, File file, boolean append) throws IOException {
 		if(file.isDirectory())
-			throw new RuntimeException("file can't be a directory.");
+			throw new RuntimeException("dst file can't be a directory.");
 		try(
 				RandomAccessFile raf = new RandomAccessFile(file,"rw");
 			){			
