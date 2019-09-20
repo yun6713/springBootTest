@@ -1,10 +1,14 @@
 
 package com.bonc.test;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryShardContext;
 import org.hibernate.collection.internal.PersistentBag;
 import org.junit.Test;
 import org.springframework.data.domain.Example;
@@ -96,10 +100,13 @@ public class SpringDataTest {
 		PartialUpdate p;
 	}
 	@Test
-	public void testEs() {
+	public void testEs() throws IOException {
 		ElasticsearchTemplate et;
 		ElasticsearchRepository er;
 		PersistentBag pb;
 		QueryBuilder qb;
+		IdsQueryBuilder iqb=QueryBuilders.idsQuery("ltl").addIds("lkk")
+		.queryName("yun");
+		System.out.println(iqb);
 	}
 }

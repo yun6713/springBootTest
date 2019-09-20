@@ -70,7 +70,7 @@ public class CommonTest4 {
 	public void copy(File rawFile) throws IOException, InterruptedException{
 		String dic="C:\\Users\\Administrator\\Desktop\\dst\\";
 		String rawFileName=rawFile.getName().split("\\.")[0];
-		String src=String.format("%1$s%2$s.txt", dic,"a"),
+		String src=String.format("%1$s%2$s.txt", dic,"a"),//空白UTF-8-BOM txt。
 				dst=String.format("%1$s%2$s.txt", dic,rawFileName);
 //		String copy=String.format("copy \"%1$s\" \"%2$s\"", src,dst);
 //		String[] cmds= {"cmd.exe","/c",copy};
