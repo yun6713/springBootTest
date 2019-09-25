@@ -11,7 +11,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.bonc.utils.FileUtils;
 
-@Configuration
+//@Configuration
 public class SpringExtInterface implements InitializingBean{
 	@Autowired
 	ResourceLoader rl;

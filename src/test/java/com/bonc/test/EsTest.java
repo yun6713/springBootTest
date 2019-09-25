@@ -1,17 +1,26 @@
 package com.bonc.test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
+import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RequestOptions.Builder;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.text.Text;
@@ -25,6 +34,11 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.bonc.utils.FileUtils;
+import com.mysql.cj.xdevapi.JsonArray;
+
 /**
  * java操作查询api
  * @author 231
@@ -33,17 +47,59 @@ import org.junit.Test;
 public class EsTest {
     
     private TransportClient client;
-    
+    RestClient rc;
+//    public static final String clusterName="bonc-ids1",
+//    		IP="192.168.1.123";
+//    public static final int PORT=9301;
+    public static final String clusterName="ltl",
+    		IP="127.0.0.1";
+    public static final int PORT=9200,PORT1=9300;
+    public static final String Template="{\"query\":%1$s}";
     @Before
     public void testBefore() {
-        Settings settings = Settings.builder().put("cluster.name", "ltl").build();
+        Settings settings = Settings.builder().put("cluster.name", clusterName).build();
         client = new PreBuiltTransportClient(settings);
-        client.addTransportAddress(new TransportAddress(new InetSocketAddress("127.0.0.1", 9300)));
+        client.addTransportAddress(new TransportAddress(new InetSocketAddress(IP, PORT1)));
+        rc=RestClient.builder(new HttpHost(IP,PORT)).build();
         System.out.println("success to connect escluster");  
+        
     }
     @Test
-    public void test() {
-    	System.out.println(121);
+    public void test() throws IOException {
+    	Request r=new Request("get","es/_search");
+    	String query=QueryBuilders.termQuery("a", "2").toString();
+    	query=query.replaceAll("\\s+", " ");
+    	query=String.format(Template, query);
+    	System.out.println(query);
+    	r.setJsonEntity(query);
+    	Response resp=rc.performRequest(r);
+    	System.out.println(resp);
+    	InputStream is=resp.getEntity().getContent();
+    	byte[] bs=new byte[(int) resp.getEntity().getContentLength()];
+    	is.read(bs);
+    	System.out.println(new String(bs));
+    }
+    @Test
+    public void testInsert() throws Exception {
+    	String str=FileUtils.file2String("classpath:search");
+    	str=str.replaceAll("=", "\":\"").replaceAll("\\{", "{\"")
+    			.replaceAll(", ", "\", \"").replaceAll("\\}", "\"}");
+    	JSONArray ja=JSON.parseArray(str);
+    	String indexInfo="{\"index\":{\"_index\":\"jftest1\",\"_type\":\"ids_search\",\"_id\":\"$ID$\"}}\n";
+    	String content=ja.stream()
+    			.map(o->indexInfo+o.toString())
+    			.collect(Collectors.joining("\n"))+"\n";
+    	for (int i = 0; i < ja.size(); i++) {
+    		content=content.replaceFirst("\\$ID\\$", ""+i);
+		}
+//    	System.out.println(ja);
+    	System.out.println(content);
+    	Request r=new Request("post","jftest1/_bulk");
+    	r.setJsonEntity(content);
+    	Builder builder=RequestOptions.DEFAULT.toBuilder();
+    	builder.addHeader("Content-Type", "application/x-ndjson");
+    	r.setOptions(builder);
+    	Response resp=rc.performRequest(r);
     }
     /**
      * 使用get查询
@@ -53,7 +109,7 @@ public class EsTest {
     @Test
     public void testGet() throws InterruptedException, ExecutionException {
 //    	参数：index、type、_id
-        GetRequestBuilder requestBuilder = client.prepareGet("jftest", "user", "10025");
+        GetRequestBuilder requestBuilder = client.prepareGet("jftest", "ids_search", "M0102015");
         GetResponse response = requestBuilder.execute().actionGet();
         System.out.println(response.getSourceAsString());
         GetResponse getResponse = requestBuilder.get();
@@ -95,6 +151,7 @@ public class EsTest {
             .must(QueryBuilders.termQuery("user", "kimchy"))
             .mustNot(QueryBuilders.termQuery("message", "nihao"))
             .should(QueryBuilders.termQuery("gender", "male"));
+        System.out.println(queryBuilder.toString());
         searchFunction(queryBuilder);
     }
     

@@ -48,7 +48,7 @@ public class MybatisConfig {
 		sfb.setDataSource(dataSource);
 		sfb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(locs));
 		sfb.setDatabaseIdProvider(databaseIdProvider);
-		sfb.setTypeAliasesPackage("com.bonc.entity.jpa");TransactionManager tm;
+		sfb.setTypeAliasesPackage("com.bonc.entity.jpa");
 //		sfb.setTransactionFactory(transactionFactory());//默认值为SpringManagedTransactionFactory
 		return sfb;		
 	}

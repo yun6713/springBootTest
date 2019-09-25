@@ -7,13 +7,13 @@
   <!-- OGNL表达式方法运算：e1[e2]、e.method()、e.field、@class@method()、@class@field -->
   <!-- 内置参数：_parameter、_databaseId -->
   <!-- 比较单字符时，OGNL将'a'转换为字符a，使用"a",'a'.toString()表示字符串；否则一直返回false -->
-  <resultMap id="user" type="user">
+  <resultMap id="user" type="com.bonc.entity.jpa.User">
   	<id column="u_id" property="uId"/>
   	<result  column="username" property="username"/>
   	<result  column="password" property="password"/>
-  	<collection property="roles" ofType="role" resultMap="role"/>
+  	<collection property="roles" ofType="com.bonc.entity.jpa.Role" resultMap="role"/>
   </resultMap>
-  <resultMap type="role" id="role">
+  <resultMap type="com.bonc.entity.jpa.Role" id="role">
   	<id column="role_id" property="rId"/>
   	<result column="role_name" property="roleName"/>
   </resultMap>

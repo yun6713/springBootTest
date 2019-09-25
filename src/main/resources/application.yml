@@ -29,7 +29,7 @@ spring:
    
   security:
     oauth: false #启用oauth
-    enabled: true #是否拦截请求
+    enabled: false #是否拦截请求
     user:
       name: user
       password: user
@@ -91,8 +91,10 @@ spring: #db、redis、es、rabbitmq连接信息,username、password加密
 #    cluster:
 #      max-redirects: 3
 #      nodes: #集群节点，host:port,
-    host: localhost
-    port: 6379
+#    host: localhost
+#    port: 6379
+    host: 192.168.99.100
+    port: 32768
     lettuce:
       pool: #common-pools对应参数
         max-active: 10
@@ -103,8 +105,10 @@ spring: #db、redis、es、rabbitmq连接信息,username、password加密
       repositories:
         enabled: true
   rabbitmq:
-    username: ENC(peVPISDBoSyYChlcct8r9w==)
-    password: ENC(peVPISDBoSyYChlcct8r9w==)
+    host: 192.168.99.100
+    port: 32796
+#    username: ENC(peVPISDBoSyYChlcct8r9w==)
+#    password: ENC(peVPISDBoSyYChlcct8r9w==)
     publisher-confirms: true
     template:
       retry:

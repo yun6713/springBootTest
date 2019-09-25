@@ -22,7 +22,7 @@ import org.springframework.util.ResourceUtils;
  * @date   2019年7月5日上午11:12:40
  * @Description TODO
  */
-@Component
+//@Component
 public class H2InitCommandRunner implements CommandLineRunner{
 
 	@Autowired
