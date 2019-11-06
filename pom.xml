@@ -24,6 +24,23 @@
 	</properties>
 
 	<dependencies>
+	<!-- https://mvnrepository.com/artifact/org.apache.tika/tika-parsers -->
+		<dependency>
+		    <groupId>org.apache.tika</groupId>
+		    <artifactId>tika-parsers</artifactId>
+		    <version>1.18</version>
+		</dependency>
+	<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+	<dependency>
+	    <groupId>org.jsoup</groupId>
+	    <artifactId>jsoup</artifactId>
+	    <version>1.11.3</version>
+	</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
+		
 <!-- 日志采用slf4j+logback，排除其他日志，导入桥接器 ，begin-->
 		<!-- 排除jcl、log4j、log4j2；jul由springboot排除 -->
 		<dependency>

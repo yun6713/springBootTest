@@ -13,6 +13,8 @@ logging:
 #    com.bonc: info
 config.profile: dev
 spring:
+  config:
+    location: 
   application:
     name: test
     admin:
@@ -78,7 +80,7 @@ http-pool:
 ---
 spring: #db、redis、es、rabbitmq连接信息,username、password加密
   profiles: dev #声明当前块profile
-  datasource:  
+  datasource:
     first:
       driver-class-name: org.h2.Driver
       url: jdbc:h2:tcp://localhost:9095/./h2
@@ -105,6 +107,7 @@ spring: #db、redis、es、rabbitmq连接信息,username、password加密
       repositories:
         enabled: true
   rabbitmq:
+    virtual-host: / #默认vhost，rabbitmqctl增加
     host: 192.168.99.100
     port: 32796
 #    username: ENC(peVPISDBoSyYChlcct8r9w==)

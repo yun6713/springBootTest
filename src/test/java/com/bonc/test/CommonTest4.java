@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.concurrent.CountDownLatch;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Jedis;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.pool.DruidDataSource;
@@ -83,6 +85,17 @@ public class CommonTest4 {
 		FileUtils.string2File(FileUtils.file2String(rawFile), dst, true);
 		System.out.println("Copy success: "+rawFileName);
 	}
+	public void edit(File rawFile) throws IOException, InterruptedException{
+		String fileName=rawFile.getName();
+		if(!fileName.endsWith("md"))
+			return;
+		String newContent=new StringBuilder("{% raw %}\n ")
+				.append(FileUtils.file2String(rawFile))
+				.append("\n{% endraw %}").toString();
+		
+		FileUtils.string2File(newContent, rawFile, false);
+		System.out.println("edit success: "+fileName);
+	}
 	public static int size=30;
 	public static ExecutorService es=Executors.newFixedThreadPool(size);
 //	public static CountDownLatch cdl=new CountDownLatch(size);
@@ -90,12 +103,13 @@ public class CommonTest4 {
 	public static Semaphore sph=new Semaphore(size);
 	@Test
 	public void testFileTree() throws IOException, InterruptedException {
-		FileUtils.walkFileTree("C:\\Users\\Administrator\\Desktop\\src", (file)->{
+		FileUtils.walkFileTree("E:\\学习\\docker_practice", (file)->{
 			try {
 				sph.acquire();
 				es.execute(()->{
 					try {
-						copy(file);
+//						copy(file);
+						edit(file);
 						sph.release();
 					} catch (IOException | InterruptedException e) {
 						e.printStackTrace();
@@ -111,6 +125,44 @@ public class CommonTest4 {
 		System.out.println("end");
 	}
 	@Test
-	public void testFiles() {
+	public void testRedisSlots() {
+		String start="cluster addslots ";
+		int size=16384,s1=64;
+		int s2=size/s1;
+		for (int i = 0; i < s1; i++) {
+			StringBuffer sb=new StringBuffer(start);
+			for (int j = 0; j < s2; j++) {
+				sb.append(i*s2+j).append(" ");
+			}
+			System.out.println(sb.toString());
+		}
 	}
+	@Test
+	public void createAsciidoc() throws IOException {
+		String dir="E:/Github/elasticsearch-definitive-guide";
+		StringBuffer sb=new StringBuffer();
+//		System.out.println(Paths.get(dir).toFile().exists());
+		//获取文件夹数组
+		File[] files=new File(dir).listFiles((f,name)->f.isDirectory());
+		//遍历数组
+		for (int i = 0; i < files.length; i++) {
+			String name=files[i].getName();
+			//不以数字开头则跳过
+			if(!name.matches("^\\d+\\w+")) continue;
+			FileUtils.walkFileTree(files[i].toPath(), (f)->{
+				String fName=f.getName();
+				if(fName.endsWith(".asciidoc")) {
+					String content="include::"+name+"/"+fName+"[]";
+					//拼接格式
+					System.out.println(content);
+					//存储结果
+					sb.append(content).append("\n");
+				}
+				return FileVisitResult.CONTINUE;
+			});
+		}
+		//写入文件
+		FileUtils.string2File(sb.toString(), "f:/asciidocFile");
+	}
+	
 }

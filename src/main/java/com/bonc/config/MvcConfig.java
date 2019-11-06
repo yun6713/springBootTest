@@ -17,7 +17,7 @@ public class MvcConfig extends WebMvcConfigurationSupport {
 	ConversionService cs;
 	@Override
 	protected void addViewControllers(ViewControllerRegistry registry) {
-//		registry.addRedirectViewController("/", "/test1");
+		registry.addRedirectViewController("/", "/test1");
 		
 	}
 	@Override
@@ -32,10 +32,9 @@ public class MvcConfig extends WebMvcConfigurationSupport {
 		pool.setCorePoolSize(13);
 		return pool;
 	}
-	@Override
+	@Override//静态资源路径
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		 registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-	     super.addResourceHandlers(registry);
 	}
 	@Override//注册formatter格式化
 	protected void addFormatters(FormatterRegistry registry) {
