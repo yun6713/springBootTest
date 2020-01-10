@@ -49,7 +49,7 @@ import org.springframework.data.redis.core.index.Indexed;
  *
  */
 @Entity//jpa
-@RedisHash("{user}")//Redis
+@RedisHash("{user}")//Redis，单机时存入{user} set中，通过id查找；集群时，
 @Table(name="user")
 //@RowId(value = "rowId")//根据rowId查询记录，需数据库支持rowId；否则报错
 @NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")//命名查询
