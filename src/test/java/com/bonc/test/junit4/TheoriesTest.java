@@ -18,7 +18,7 @@ public class TheoriesTest {
 //	public static List<Integer> dataPoints() {
 //		return Arrays.asList(1,2,4,5,6,7,8,9,0,20);
 //	}
-
+	
 	@Theory//@TestOn、@Between，直接赋值
 	public void test(@TestedOn(ints = { 1,2,4,5,6,7,8,9,0,20 }) int num,
 			@TestedOn(ints = { 1,2,4,5,6,7,8,9,0,20 }) int divisor) {

@@ -199,6 +199,9 @@ public class FileUtils {
 	public static void string2File(String str, File file, boolean append) throws IOException {
 		if(file.isDirectory())
 			throw new RuntimeException("dst file can't be a directory.");
+		if(file.exists()&&!append) {
+			file.delete();
+		}
 		try(
 				RandomAccessFile raf = new RandomAccessFile(file,"rw");
 			){			
@@ -207,6 +210,7 @@ public class FileUtils {
 				raf.seek(file.length());
 			}
 			raf.write(str.getBytes(DEFAULT_CHARSET));
+			raf.close();
 		}
 	}
 	/**
