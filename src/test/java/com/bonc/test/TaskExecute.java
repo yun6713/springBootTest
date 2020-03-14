@@ -1,12 +1,19 @@
 package com.bonc.test;
 
+import java.lang.reflect.Constructor;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.LockSupport;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.ReflectUtils;
 
 public class TaskExecute {
 	public static final ExecutorService ES=Executors.newFixedThreadPool(20);
@@ -31,5 +38,17 @@ public class TaskExecute {
 	}
 	public static void execute(Runnable r) {
 		ES.execute(r);
+	}
+	volatile int[] a;
+	@Test
+	public void test() {
+		FutureTask ft;
+		LockSupport ls;
+		AbstractQueuedSynchronizer aqs;
+		Phaser p;
+		Constructor c;
+		ReflectUtils r;
+		System.out.println(2==new Double(2.0));
+		System.out.println(1==new Double(1.0));
 	}
 }
