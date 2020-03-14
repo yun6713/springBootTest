@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  */
 public class SingletonPattern {
-	//静态私有内部类持有外部类实例
+	//静态私有内部类持有外部类实例，利用java类加载机制避免并发
 	private SingletonPattern(){}
 	
 	private static class InnerClassImpl{

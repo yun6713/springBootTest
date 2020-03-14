@@ -21,7 +21,11 @@
 	<div id="jsoneditor" style="height: 600px;"></div>
    </div>
 <script>
-var URL=$("#url").val();
+$(function(){
+	$("#url").val(window.location.origin+"/actuator");
+	URL=$("#url").val();
+});
+var URL;
 // create the editor
 var container = document.getElementById('jsoneditor');
 var optionsOutput = {

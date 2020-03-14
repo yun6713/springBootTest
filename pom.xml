@@ -22,10 +22,45 @@
     	<slf4j2-log.scope>provided</slf4j2-log.scope>
     	<springboot.version>2.1.5</springboot.version>
 	    <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-    	
 	</properties>
 
 	<dependencies>
+	<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
+	<dependency>
+	    <groupId>com.lmax</groupId>
+	    <artifactId>disruptor</artifactId>
+	    <version>3.3.7</version>
+	</dependency>
+	<dependency>
+    <groupId>com.github.odiszapc</groupId>
+	    <artifactId>nginxparser</artifactId>
+	    <version>0.9.3</version>
+	</dependency>
+			
+	<!-- https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor -->
+	<dependency>
+	    <groupId>com.typesafe.akka</groupId>
+	    <artifactId>akka-actor_2.13</artifactId>
+	    <version>2.5.23</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.apache.tika/tika-parsers -->
+		<dependency>
+		    <groupId>org.apache.tika</groupId>
+		    <artifactId>tika-parsers</artifactId>
+		    <version>1.18</version>
+		</dependency>
+	<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+	<dependency>
+	    <groupId>org.jsoup</groupId>
+	    <artifactId>jsoup</artifactId>
+	    <version>1.11.3</version>
+	</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
+		
 <!-- 日志采用slf4j+logback，排除其他日志，导入桥接器 ，begin-->
 		<!-- 排除jcl、log4j、log4j2；jul由springboot排除 -->
 		<dependency>
@@ -281,6 +316,16 @@
 		    <artifactId>contiperf</artifactId>
 		    <version>2.2.0</version>
 		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.7.0</version>
 		</dependency>
 	</dependencies>
 

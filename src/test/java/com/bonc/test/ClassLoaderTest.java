@@ -31,4 +31,11 @@ public class ClassLoaderTest {
 		System.out.println("ClassLoaderTest.main:a="+a);
 		System.out.println("ClassLoaderTest.main:b="+b);
 	}
+	public void classLoader(){
+//		BootstrapClassLoader bcl;
+//		ExtClassLoader ecl;
+//		AppClassLoader acl;
+		
+		
+	}
 }

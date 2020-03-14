@@ -29,6 +29,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 /**
  * 注解优先使用java.persistence包。<p>
  * 列注解：@Id、@Column、@Temporal；@ColumnTransformer、@Lob、@Formula<p>
@@ -48,8 +51,9 @@ import org.springframework.data.redis.core.index.Indexed;
  * @author Administrator
  *
  */
+@ApiModel(value="User", description="User Test")
 @Entity//jpa
-@RedisHash("{user}")//Redis
+@RedisHash("{user}")//Redis，单机时存入{user} set中，通过id查找；集群时，
 @Table(name="user")
 //@RowId(value = "rowId")//根据rowId查询记录，需数据库支持rowId；否则报错
 @NamedQuery(name = "getAllUsers", query = "SELECT u FROM User u")//命名查询
@@ -68,6 +72,7 @@ public class User implements Serializable{
 	private Integer uId;
 //	@JsonIgnore
 	@Column(name="username")
+	@ApiModelProperty(value="姓名",example="ltl")
 	private String username;
 	@Column(name="password")
 	private String password;
