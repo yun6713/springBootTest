@@ -1,5 +1,10 @@
 package com.bonc.test.qs;
 
+import java.io.Externalizable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import org.junit.Test;
 
 public class JavaBase {
@@ -39,5 +44,13 @@ public class JavaBase {
 //	不可同时使用abstract final
 //	public abstract final class A{}
 	
-	
+	public void xlh(){
+		//序列化接口
+		Serializable s;
+		Externalizable e;
+		//jdk序列化
+		ObjectOutputStream oos;
+		ObjectInputStream ois;
+		
+	}
 }
