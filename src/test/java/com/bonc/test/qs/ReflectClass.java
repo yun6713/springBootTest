@@ -15,6 +15,5 @@ public class ReflectClass {
 		Field fld;
 		Annotation ann;
 		
-		
 	}
 }

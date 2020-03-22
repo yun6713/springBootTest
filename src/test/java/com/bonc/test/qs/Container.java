@@ -1,11 +1,13 @@
 package com.bonc.test.qs;
 
 import java.lang.reflect.Array;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +20,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -27,6 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.junit.Test;
+
 /**
  * 容器
  * @author litianlin
@@ -54,6 +58,7 @@ public class Container {
 		Vector v;
 		//Set
 		HashSet hs;
+		EnumSet es=EnumSet.allOf(Month.class);
 		CopyOnWriteArraySet set;
 		//Queue
 		LinkedList ll2;//双端队列
@@ -72,8 +77,10 @@ public class Container {
 		HashMap hm;
 		ConcurrentHashMap chm;
 		TreeMap tm;
+		SortedMap sm;
 		LinkedHashMap lhm;
 		Hashtable h;
+		
 	}
 	
 }
