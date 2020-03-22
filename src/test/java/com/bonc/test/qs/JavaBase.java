@@ -18,6 +18,10 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.Externalizable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.junit.Test;
 
@@ -188,5 +192,15 @@ public class JavaBase {
 	
 		System.out.println(String.format("hello %2$s %1$s %1$s", "a","b"));
 		System.out.println(String.format("hello %s %s", "a","b"));
+	}	
+		
+	public void xlh(){
+		//序列化接口
+		Serializable s;
+		Externalizable e;
+		//jdk序列化
+		ObjectOutputStream oos;
+		ObjectInputStream ois;
+		
 	}
 }

@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html class="" lang="en">
+<head prefix="og: http://ogp.me/ns#">
+<meta charset="utf-8">
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta content="object" property="og:type">
+<meta content="GitLab" property="og:site_name">
+<meta content="Projects · Dashboard" property="og:title">
+<meta content="动脑学院VIP服务平台" property="og:description">
+<meta content="http://code.dongnaoedu.com:9999/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png" property="og:image">
+<meta content="64" property="og:image:width">
+<meta content="64" property="og:image:height">
+<meta content="http://code.dongnaoedu.com:9999/?non_archived=true&amp;page=1&amp;sort=latest_activity_desc" property="og:url">
+<meta content="summary" property="twitter:card">
+<meta content="Projects · Dashboard" property="twitter:title">
+<meta content="动脑学院VIP服务平台" property="twitter:description">
+<meta content="http://code.dongnaoedu.com:9999/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png" property="twitter:image">
+
+<title>Projects · Dashboard · GitLab</title>
+<meta content="动脑学院VIP服务平台" name="description">
+<link rel="shortcut icon" type="image/png" href="/uploads/-/system/appearance/favicon/1/favicon.png" id="favicon" data-original-href="/uploads/-/system/appearance/favicon/1/favicon.png" />
+<link rel="stylesheet" media="all" href="/assets/application-d56f0577fbbbd6f159e9be00b274270cb25b60a7809871a6a572783b533f5a3c.css" />
+<link rel="stylesheet" media="print" href="/assets/print-74c3df10dad473d66660c828e3aa54ca3bfeac6d8bb708643331403fe7211e60.css" />
+
+
+
+<link rel="stylesheet" media="all" href="/assets/highlight/themes/white-3144068cf4f603d290f553b653926358ddcd02493b9728f62417682657fc58c0.css" />
+<script>
+//<![CDATA[
+window.gon={};gon.api_version="v4";gon.default_avatar_url="http://code.dongnaoedu.com:9999/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png";gon.max_file_size=10;gon.asset_host=null;gon.webpack_public_path="/assets/webpack/";gon.relative_url_root="";gon.shortcuts_path="/help/shortcuts";gon.user_color_scheme="white";gon.gitlab_url="http://code.dongnaoedu.com:9999";gon.revision="09f8edbc29a";gon.gitlab_logo="/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png";gon.sprite_icons="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg";gon.sprite_file_icons="/assets/file_icons-7262fc6897e02f1ceaf8de43dc33afa5e4f9a2067f4f68ef77dcc87946575e9e.svg";gon.emoji_sprites_css_path="/assets/emoji_sprites-289eccffb1183c188b630297431be837765d9ff4aed6130cf738586fb307c170.css";gon.test_env=false;gon.suggested_label_colors={"#0033CC":"UA blue","#428BCA":"Moderate blue","#44AD8E":"Lime green","#A8D695":"Feijoa","#5CB85C":"Slightly desaturated green","#69D100":"Bright green","#004E00":"Very dark lime green","#34495E":"Very dark desaturated blue","#7F8C8D":"Dark grayish cyan","#A295D6":"Slightly desaturated blue","#5843AD":"Dark moderate blue","#8E44AD":"Dark moderate violet","#FFECDB":"Very pale orange","#AD4363":"Dark moderate pink","#D10069":"Strong pink","#CC0033":"Strong red","#FF0000":"Pure red","#D9534F":"Soft red","#D1D100":"Strong yellow","#F0AD4E":"Soft orange","#AD8D43":"Dark moderate orange"};gon.first_day_of_week=0;gon.ee=false;gon.current_user_id=4006;gon.current_username="986156499";gon.current_user_fullname="986156499";gon.current_user_avatar_url="https://www.gravatar.com/avatar/8085cbd194d4a30826791fd4d5ada5f9?s=80\u0026d=identicon";
+//]]>
+</script>
+
+
+<script src="/assets/webpack/runtime.1d0a57b5.bundle.js" defer="defer"></script>
+<script src="/assets/webpack/main.69074579.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/pages.root.b2a5a402.chunk.js" defer="defer"></script>
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="a+oCrwtvFWyjK1GwLvIYaBhK8pAbBlILcwSNqO+7fVkU504FcOCK+OT3CUCN05xo5KtHJbCEvi+7ger5qJw7dA==" />
+
+<meta content="origin-when-cross-origin" name="referrer">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+<meta content="#474D57" name="theme-color">
+<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-iphone-5a9cee0e8a51212e70b90c87c12f382c428870c0ff67d1eb034d884b78d2dae7.png" />
+<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-ipad-a6eec6aeb9da138e507593b464fdac213047e49d3093fc30e90d9a995df83ba3.png" sizes="76x76" />
+<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-iphone-retina-72e2aadf86513a56e050e7f0f2355deaa19cc17ed97bbe5147847f2748e5a3e3.png" sizes="120x120" />
+<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-ipad-retina-8ebe416f5313483d9c1bc772b5bbe03ecad52a54eba443e5215a22caed2a16a2.png" sizes="152x152" />
+<link color="rgb(226, 67, 41)" href="/assets/logo-d36b5212042cebc89b96df4bf6ac24e43db316143e89926c0db839ff694d2de4.svg" rel="mask-icon">
+<meta content="/assets/msapplication-tile-1196ec67452f618d39cdd85e2e3a542f76574c071051ae7effbfde01710eb17d.png" name="msapplication-TileImage">
+<meta content="#30353E" name="msapplication-TileColor">
+<link rel="alternate" type="application/atom+xml" title="All activity" href="http://code.dongnaoedu.com:9999/dashboard/projects.atom?feed_token=DgyQP3fZXsKwUz-mUX7p" />
+
+
+
+
+</head>
+
+<body class="ui-indigo  gl-browser-chrome gl-platform-windows" data-group="" data-page="root:index" data-project="">
+
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.client = {"isChrome":true,"isWindows":true};
+
+
+//]]>
+</script>
+
+
+<header class="navbar navbar-gitlab navbar-expand-sm js-navbar" data-qa-selector="navbar">
+<a class="sr-only gl-accessibility" href="#content-body" tabindex="1">Skip to content</a>
+<div class="container-fluid">
+<div class="header-content">
+<div class="title-container">
+<h1 class="title">
+<a title="Dashboard" id="logo" href="/"><img class="brand-header-logo lazy" data-src="/uploads/-/system/appearance/header_logo/1/logo-white.png" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />
+</a></h1>
+<ul class="list-unstyled navbar-sub-nav">
+<li id="nav-projects-dropdown" class="home dropdown header-projects qa-projects-dropdown active" data-track-label="projects_dropdown" data-track-event="click_dropdown" data-track-value=""><button class="btn" data-toggle="dropdown" type="button">
+Projects
+<svg class="caret-down"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#angle-down"></use></svg>
+</button>
+<div class="dropdown-menu frequent-items-dropdown-menu">
+<div class="frequent-items-dropdown-container">
+<div class="frequent-items-dropdown-sidebar qa-projects-dropdown-sidebar">
+<ul>
+<li class=""><a class="qa-your-projects-link" href="/dashboard/projects">Your projects
+</a></li><li class=""><a href="/dashboard/projects/starred">Starred projects
+</a></li><li class=""><a href="/explore">Explore projects
+</a></li></ul>
+</div>
+<div class="frequent-items-dropdown-content">
+<div data-user-name="986156499" id="js-projects-dropdown"></div>
+</div>
+</div>
+
+</div>
+</li><li id="nav-groups-dropdown" class="home dropdown header-groups qa-groups-dropdown" data-track-label="groups_dropdown" data-track-event="click_dropdown" data-track-value=""><button class="btn" data-toggle="dropdown" type="button">
+Groups
+<svg class="caret-down"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#angle-down"></use></svg>
+</button>
+<div class="dropdown-menu frequent-items-dropdown-menu">
+<div class="frequent-items-dropdown-container">
+<div class="frequent-items-dropdown-sidebar qa-groups-dropdown-sidebar">
+<ul>
+<li class=""><a class="qa-your-groups-link" href="/dashboard/groups">Your groups
+</a></li><li class=""><a href="/explore/groups">Explore groups
+</a></li></ul>
+</div>
+<div class="frequent-items-dropdown-content">
+<div data-user-name="986156499" id="js-groups-dropdown"></div>
+</div>
+</div>
+
+</div>
+</li><li class="d-none d-xl-block"><a class="dashboard-shortcuts-activity" href="/dashboard/activity">Activity
+</a></li><li class="d-none d-xl-block"><a class="dashboard-shortcuts-milestones" href="/dashboard/milestones">Milestones
+</a></li><li class="d-none d-xl-block"><a class="dashboard-shortcuts-snippets qa-snippets-link" href="/dashboard/snippets">Snippets
+</a></li>
+<li class="d-xl-none dropdown header-more">
+<a data-toggle="dropdown" href="#">
+More
+<svg class="caret-down"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#angle-down"></use></svg>
+</a>
+<div class="dropdown-menu">
+<ul>
+<li class=""><a href="/dashboard/activity">Activity
+</a></li><li class=""><a class="dashboard-shortcuts-milestones" href="/dashboard/milestones">Milestones
+</a></li><li class=""><a class="dashboard-shortcuts-snippets" href="/dashboard/snippets">Snippets
+</a></li>
+<li class="dropdown d-lg-none">
+
+</li>
+<li class="d-lg-none"><a href="/-/instance_statistics">Instance Statistics
+</a></li></ul>
+</div>
+</li>
+<li class="hidden">
+<a class="dashboard-shortcuts-projects" href="/dashboard/projects">Projects
+</a></li>
+<li class="d-lg-block d-none dropdown">
+
+</li>
+<li class="d-none d-lg-block d-xl-block"><a title="Instance Statistics" aria-label="Instance Statistics" data-toggle="tooltip" data-placement="bottom" data-container="body" href="/-/instance_statistics"><svg class="s18"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#chart"></use></svg>
+</a></li>
+</ul>
+
+</div>
+<div class="navbar-collapse collapse">
+<ul class="nav navbar-nav">
+<li class="header-new dropdown" data-track-event="click_dropdown" data-track-label="new_dropdown" data-track-value="">
+<a class="header-new-dropdown-toggle has-tooltip qa-new-menu-toggle" id="js-onboarding-new-project-link" title="New..." ref="tooltip" aria-label="New..." data-toggle="dropdown" data-placement="bottom" data-container="body" data-display="static" href="/projects/new"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#plus-square"></use></svg>
+<svg class="caret-down"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#angle-down"></use></svg>
+</a><div class="dropdown-menu dropdown-menu-right">
+<ul>
+<li><a class="qa-global-new-project-link" href="/projects/new">New project</a></li>
+<li><a href="/groups/new">New group</a></li>
+<li><a class="qa-global-new-snippet-link" href="/snippets/new">New snippet</a></li>
+</ul>
+</div>
+</li>
+
+<li class="nav-item d-none d-sm-none d-md-block m-auto">
+<div class="search search-form" data-track-event="activate_form_input" data-track-label="navbar_search" data-track-value="">
+<form class="form-inline" action="/search" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" /><div class="search-input-container">
+<div class="search-input-wrap">
+<div class="dropdown" data-url="/search/autocomplete">
+<input type="search" name="search" id="search" placeholder="Search or jump to…" class="search-input dropdown-menu-toggle no-outline js-search-dashboard-options" spellcheck="false" tabindex="1" autocomplete="off" data-issues-path="/dashboard/issues" data-mr-path="/dashboard/merge_requests" data-qa-selector="search_term_field" aria-label="Search or jump to…" />
+<button class="hidden js-dropdown-search-toggle" data-toggle="dropdown" type="button"></button>
+<div class="dropdown-menu dropdown-select js-dashboard-search-options">
+<div class="dropdown-content"><ul>
+<li class="dropdown-menu-empty-item">
+<a>
+Loading...
+</a>
+</li>
+</ul>
+</div><div class="dropdown-loading"><i aria-hidden="true" data-hidden="true" class="fa fa-spinner fa-spin"></i></div>
+</div>
+<svg class="s16 search-icon"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#search"></use></svg>
+<svg class="s16 clear-icon js-clear-input"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#close"></use></svg>
+</div>
+</div>
+</div>
+<input type="hidden" name="group_id" id="group_id" class="js-search-group-options" />
+<input type="hidden" name="project_id" id="search_project_id" value="" class="js-search-project-options" />
+<input type="hidden" name="repository_ref" id="repository_ref" />
+<input type="hidden" name="nav_source" id="nav_source" value="navbar" />
+
+<div class="search-autocomplete-opts hide" data-autocomplete-path="/search/autocomplete"></div>
+</form></div>
+
+</li>
+<li class="nav-item d-inline-block d-sm-none d-md-none">
+<a title="Search" aria-label="Search" data-toggle="tooltip" data-placement="bottom" data-container="body" href="/search"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#search"></use></svg>
+</a></li>
+<li class="user-counter"><a title="Issues" class="dashboard-shortcuts-issues" aria-label="Issues" data-toggle="tooltip" data-placement="bottom" data-container="body" href="/dashboard/issues?assignee_username=986156499"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+<span class="badge badge-pill green-badge hidden issues-count">
+0
+</span>
+</a></li><li class="user-counter"><a title="Merge requests" class="dashboard-shortcuts-merge_requests" aria-label="Merge requests" data-toggle="tooltip" data-placement="bottom" data-container="body" href="/dashboard/merge_requests?assignee_username=986156499"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+<span class="badge badge-pill hidden merge-requests-count">
+0
+</span>
+</a></li><li class="user-counter"><a title="To-Do List" aria-label="To-Do List" class="shortcuts-todos" data-toggle="tooltip" data-placement="bottom" data-container="body" href="/dashboard/todos"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#todo-done"></use></svg>
+<span class="badge badge-pill hidden todos-count">
+0
+</span>
+</a></li><li class="nav-item header-help dropdown">
+<a class="header-help-dropdown-toggle" data-toggle="dropdown" href="/help"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#question"></use></svg>
+<svg class="caret-down"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#angle-down"></use></svg>
+</a><div class="dropdown-menu dropdown-menu-right">
+<ul>
+<li>
+<a href="/help">Help</a>
+</li>
+<li>
+<a href="https://about.gitlab.com/getting-help/">Support</a>
+</li>
+
+<li class="divider"></li>
+<li>
+<a href="https://about.gitlab.com/submit-feedback">Submit feedback</a>
+</li>
+<li>
+<a target="_blank" class="text-nowrap" href="https://about.gitlab.com/contributing">Contribute to GitLab
+</a></li>
+
+
+</ul>
+
+</div>
+</li>
+<li class="nav-item header-user dropdown" data-qa-selector="user_menu" data-track-event="click_dropdown" data-track-label="profile_dropdown" data-track-value="">
+<a class="header-user-dropdown-toggle" data-toggle="dropdown" href="/986156499"><img width="23" height="23" class="header-user-avatar qa-user-avatar lazy" data-src="https://www.gravatar.com/avatar/8085cbd194d4a30826791fd4d5ada5f9?s=46&amp;d=identicon" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />
+<svg class="caret-down"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#angle-down"></use></svg>
+</a><div class="dropdown-menu dropdown-menu-right">
+<ul>
+<li class="current-user">
+<div class="user-name bold">
+986156499
+</div>
+@986156499
+</li>
+<li class="divider"></li>
+<li>
+<div class="js-set-status-modal-trigger" data-has-status="false"></div>
+</li>
+<li>
+<a class="profile-link" data-user="986156499" href="/986156499">Profile</a>
+</li>
+<li>
+<a data-qa-selector="settings_link" href="/profile">Settings</a>
+</li>
+<li class="divider"></li>
+<li>
+<a class="sign-out-link" data-qa-selector="sign_out_link" href="/users/sign_out">Sign out</a>
+</li>
+</ul>
+
+</div>
+</li>
+</ul>
+</div>
+<button class="navbar-toggler d-block d-sm-none" type="button">
+<span class="sr-only">Toggle navigation</span>
+<svg class="s12 more-icon js-navbar-toggle-right"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#ellipsis_h"></use></svg>
+<svg class="s12 close-icon js-navbar-toggle-left"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#close"></use></svg>
+</button>
+</div>
+</div>
+</header>
+<div class="js-set-status-modal-wrapper" data-current-emoji="" data-current-message=""></div>
+
+<div class="layout-page">
+<div class="content-wrapper">
+
+<div class="mobile-overlay"></div>
+<div class="alert-wrapper">
+
+<div dir="auto" class="broadcast-message" style="background-color: #E75E40; color: #ffffff"><i aria-hidden="true" data-hidden="true" class="fa fa-bullhorn"></i> <p>欢迎加入动脑学院VIP大家庭，加油！</p></div>
+
+
+
+
+
+
+<div class="flash-container flash-container-page">
+</div>
+
+<div class="d-flex"></div>
+</div>
+<div class=" ">
+<div class="content" id="content-body">
+
+<div class="container-fluid container-limited">
+
+<div class="page-title-holder d-flex align-items-center">
+<h1 class="page-title">Projects</h1>
+<div class="page-title-controls">
+<a class="btn btn-success" href="/projects/new">New project</a>
+</div>
+</div>
+<div class="top-area scrolling-tabs-container inner-page-scroll-tabs">
+<div class="fade-left"><i aria-hidden="true" data-hidden="true" class="fa fa-angle-left"></i></div>
+<div class="fade-right"><i aria-hidden="true" data-hidden="true" class="fa fa-angle-right"></i></div>
+<ul class="mobile-separator nav nav-links nav-tabs scrolling-tabs">
+<li class="active"><a class="shortcuts-activity" data-placement="right" href="/dashboard/projects">Your projects
+<span class="badge badge-pill">24</span>
+</a></li><li class=""><a data-placement="right" href="/dashboard/projects/starred">Starred projects
+<span class="badge badge-pill">0</span>
+</a></li><li class=""><a data-placement="right" href="/explore">Explore projects
+</a></li></ul>
+<div class="nav-controls">
+<form class="project-filter-form qa-project-filter-form" id="project-filter-form" action="/?sort=latest_activity_desc" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" /><input type="search" name="name" id="project-filter-form-field" placeholder="Filter by name..." class="project-filter-form-field form-control input-short js-projects-list-filter" spellcheck="false" tabindex="2" />
+<input type="hidden" name="sort" id="sort" value="latest_activity_desc" />
+
+</form>
+<div class="dropdown js-project-filter-dropdown-wrap">
+<button class="dropdown-menu-toggle " id="sort-projects-dropdown" type="button" data-toggle="dropdown" data-display="static"><span class="dropdown-toggle-text ">Last updated</span><i aria-hidden="true" data-hidden="true" class="fa fa-chevron-down"></i></button>
+<ul class="dropdown-menu dropdown-menu-right dropdown-menu-selectable">
+<li class="dropdown-header">
+Sort by
+</li>
+<li>
+<a class="is-active" href="/?sort=latest_activity_desc">Last updated
+</a></li>
+<li>
+<a href="/?sort=created_desc">Last created
+</a></li>
+<li>
+<a href="/?sort=name_asc">Name
+</a></li>
+<li>
+<a href="/?sort=stars_desc">Most stars
+</a></li>
+<li>
+<a href="/?sort=latest_activity_asc">Oldest updated
+</a></li>
+<li>
+<a href="/?sort=created_asc">Oldest created
+</a></li>
+<li class="divider"></li>
+<li>
+<a class="is-active" href="/?sort=latest_activity_desc">Hide archived projects
+</a></li>
+<li>
+<a href="/?archived=true&amp;sort=latest_activity_desc">Show archived projects
+</a></li>
+<li>
+<a href="/?archived=only&amp;sort=latest_activity_desc">Show archived projects only
+</a></li>
+<li class="divider"></li>
+<li>
+<a class="is-active" href="/?sort=latest_activity_desc">Owned by anyone
+</a></li>
+<li>
+<a href="/?personal=true&amp;sort=latest_activity_desc">Owned by me
+</a></li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<div class="nav-block">
+<ul class="nav-links mobile-separator nav nav-tabs">
+<li class="active"><a href="/dashboard/projects">All</a>
+</li><li class=""><a href="/?personal=true&amp;sort=latest_activity_desc">Personal</a>
+</li></ul>
+</div>
+
+<div class="js-projects-list-holder">
+<ul class="projects-list">
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/24-project-instance-01"><div class="avatar project-avatar s48 identicon bg5">2</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/24-project-instance-01"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">24-project-instance-01</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:12" dir="auto">项目实战</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/24-project-instance-01/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/24-project-instance-01/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/24-project-instance-01/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/24-project-instance-01/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/24-project-instance-01/commit/fb422db8ae238e3b2acfbc1dfad5a36132b89966/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 26, 2019 6:29am" datetime="2019-09-26T06:29:52Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 26, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/17-optimization-jvm"><div class="avatar project-avatar s48 identicon bg6">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/17-optimization-jvm"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">17-optimization-jvm</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:27" dir="auto">JVM优化相关代码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/17-optimization-jvm/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/17-optimization-jvm/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/17-optimization-jvm/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/17-optimization-jvm/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+1
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/17-optimization-jvm/commit/824f41c5f90f188b82cdf26df1e70a2945dc60d5/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 8:16am" datetime="2019-09-25T08:16:13Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/19-docker"><div class="avatar project-avatar s48 identicon bg6">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/19-docker"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">19-docker</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:24" dir="auto">docker相关代码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/19-docker/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/19-docker/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/19-docker/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/19-docker/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/19-docker/commit/bc228a93261d5df281fb8fc4c800174e15d202ed/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 5:00am" datetime="2019-09-25T05:00:12Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/20-kubernetes"><div class="avatar project-avatar s48 identicon bg7">2</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/20-kubernetes"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">20-kubernetes</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:21" dir="auto">k8s相关代码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/20-kubernetes/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/20-kubernetes/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/20-kubernetes/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/20-kubernetes/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/20-kubernetes/commit/07f853a9f51951eb489b07718e26eb5bcb7666e4/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 4:19am" datetime="2019-09-25T04:19:01Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/18-optimization-web"><div class="avatar project-avatar s48 identicon bg5">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/18-optimization-web"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">18-optimization-web</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:27" dir="auto">web系统性能优化相关</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/18-optimization-web/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/18-optimization-web/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/18-optimization-web/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/18-optimization-web/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/18-optimization-web/commit/f6cc529bbde3f43ee16c3e4996be91f30e4c7fcf/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 4:15am" datetime="2019-09-25T04:15:18Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/13-database-cluster"><div class="avatar project-avatar s48 identicon bg5">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/13-database-cluster"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">13-database-cluster</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:21" dir="auto">数据库集群相关</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/13-database-cluster/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/13-database-cluster/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/13-database-cluster/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/13-database-cluster/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/13-database-cluster/commit/2baf3b7ee8b74e1a6efb900fe22251a96e71c1b1/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 4:11am" datetime="2019-09-25T04:11:59Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/16-optimization-database"><div class="avatar project-avatar s48 identicon bg1">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/16-optimization-database"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">16-optimization-database</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:30" dir="auto">数据库操作相关的优化</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/16-optimization-database/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/16-optimization-database/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/16-optimization-database/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/16-optimization-database/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/16-optimization-database/commit/435bfed7a7cd820044ad5c6135025dc169d596bf/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 4:09am" datetime="2019-09-25T04:09:26Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex no-description project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/14-search-engine"><div class="avatar project-avatar s48 identicon bg7">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/14-search-engine"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">14-search-engine</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/14-search-engine/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/14-search-engine/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/14-search-engine/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/14-search-engine/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/14-search-engine/commit/c27dc8cc4264faf1358d826b0c0a346f86374e6b/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 4:09am" datetime="2019-09-25T04:09:52Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/15-mongodb"><div class="avatar project-avatar s48 identicon bg2">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/15-mongodb"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">15-mongodb</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:19" dir="auto">mongodb代码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/15-mongodb/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/15-mongodb/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/15-mongodb/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/15-mongodb/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/15-mongodb/commit/e0068bdbcbc575e37f2f40351949f4968cab8fe8/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 25, 2019 3:35am" datetime="2019-09-25T03:35:52Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 25, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/04-spring-cloud"><div class="avatar project-avatar s48 identicon bg5">0</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/04-spring-cloud"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">04-spring-cloud</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:13" dir="auto">代码/文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/04-spring-cloud/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/04-spring-cloud/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/04-spring-cloud/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/04-spring-cloud/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/04-spring-cloud/commit/6a3366d31e4be1240efbf3fd3c9a0f31863eab0b/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:42pm" datetime="2019-09-24T15:42:30Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/23-ci-cd"><div class="avatar project-avatar s48 identicon bg3">2</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/23-ci-cd"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">23-ci-cd</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:19" dir="auto">jenkins持续集成</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/23-ci-cd/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/23-ci-cd/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+1
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/23-ci-cd/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/23-ci-cd/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/23-ci-cd/commit/3b849f0e55232de57e6395fb9d2816f0ef9a76c7/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:33pm" datetime="2019-09-24T15:33:46Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex no-description project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/22-git"><div class="avatar project-avatar s48 identicon bg2">2</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/22-git"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">22-git</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/22-git/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/22-git/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/22-git/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/22-git/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/22-git/commit/20d0eaeebaf5a1087c6e5f4a96b38fd307b14762/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:33pm" datetime="2019-09-24T15:33:21Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex no-description project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/21-maven"><div class="avatar project-avatar s48 identicon bg1">2</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/21-maven"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">21-maven</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/21-maven/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/21-maven/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/21-maven/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/21-maven/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/21-maven/commit/6a24507665fecbf1a97318771fa6fabe1d75a278/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:32pm" datetime="2019-09-24T15:32:29Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/08-jdk-thread"><div class="avatar project-avatar s48 identicon bg2">0</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/08-jdk-thread"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">08-jdk-thread</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:21" dir="auto">多线程源码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/08-jdk-thread/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/08-jdk-thread/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/08-jdk-thread/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/08-jdk-thread/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/08-jdk-thread/commit/aa5287c58b907d98886bd2c501595785b7618596/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:15pm" datetime="2019-09-24T15:15:55Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/12-load-balancer"><div class="avatar project-avatar s48 identicon bg6">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/12-load-balancer"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">12-load-balancer</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:30" dir="auto">负载均衡相关代码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/12-load-balancer/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/12-load-balancer/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/12-load-balancer/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/12-load-balancer/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/12-load-balancer/commit/1ac20ecbcca3673b3ac0b0fe59b1b36dc1a6d661/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:01pm" datetime="2019-09-24T15:01:21Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/10-cache"><div class="avatar project-avatar s48 identicon bg4">1</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/10-cache"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">10-cache</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:42" dir="auto">redis memcached等缓存技术代码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/10-cache/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/10-cache/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/10-cache/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/10-cache/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/10-cache/commit/da14b46dcc73603f9a53a18eff5d084a14c10c19/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 3:00pm" datetime="2019-09-24T15:00:27Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/09-nio-netty"><div class="avatar project-avatar s48 identicon bg3">0</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/09-nio-netty"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">09-nio-netty</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:24" dir="auto">09-nio-netty源码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/09-nio-netty/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/09-nio-netty/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/09-nio-netty/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/09-nio-netty/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a></div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 2:59pm" datetime="2019-09-24T14:59:48Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/07-dubbo"><div class="avatar project-avatar s48 identicon bg1">0</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/07-dubbo"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">07-dubbo</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:20" dir="auto">07-dubbo源码文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/07-dubbo/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/07-dubbo/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/07-dubbo/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/07-dubbo/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/07-dubbo/commit/10ae87ae5561c75758ff755a463c50a359c28190/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 2:59pm" datetime="2019-09-24T14:59:12Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/06-zookeeper"><div class="avatar project-avatar s48 identicon bg7">0</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/06-zookeeper"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">06-zookeeper</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:25" dir="auto">06-zookeeper代码/文档</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/06-zookeeper/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/06-zookeeper/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/06-zookeeper/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/06-zookeeper/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/06-zookeeper/commit/b740b1c43e92c516f4bd60e42cb94fd5332e4364/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 2:58pm" datetime="2019-09-24T14:58:35Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+<li class="d-flex project-row">
+<div class="avatar-container flex-grow-0 flex-shrink-0 rect-avatar s48">
+<a class="project" href="/java-vip-all/05-rpc"><div class="avatar project-avatar s48 identicon bg6">0</div>
+</a></div>
+<div class="project-details d-sm-flex flex-sm-fill align-items-center">
+<div class="flex-wrapper">
+<div class="d-flex align-items-center flex-wrap project-title">
+<h2 class="d-flex prepend-top-8">
+<a class="text-plain" href="/java-vip-all/05-rpc"><span class="project-full-name append-right-8"><span class="namespace-name">
+java-vip-all
+/
+</span>
+<span class="project-name">05-rpc</span></span></a></h2>
+<span class="metadata-info visibility-icon append-right-10 prepend-top-8 text-secondary has-tooltip" data-container="body" data-placement="top" title="Private - Project access must be granted explicitly to each user.">
+<i aria-hidden="true" data-hidden="true" class="fa fa-lock fa-fw"></i>
+</span>
+ 
+<div class="metadata-info prepend-top-8">
+<span class="user-access-role d-block">Reporter</span>
+</div>
+</div>
+<div class="description d-none d-sm-block append-right-default">
+<p data-sourcepos="1:1-1:22" dir="auto">rpc相关代码/源码</p>
+</div>
+</div>
+<div class="align-items-center align-items-sm-end controls d-flex flex-lg-row flex-shrink-0 flex-sm-column flex-wrap justify-content-lg-between text-secondary">
+<div class="icon-container d-flex align-items-center">
+<a class="d-flex align-items-center icon-wrapper stars has-tooltip" title="Stars" data-container="body" data-placement="top" href="/java-vip-all/05-rpc/-/starrers"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#star"></use></svg>
+0
+</a><a class="align-items-center icon-wrapper forks has-tooltip" title="Forks" data-container="body" data-placement="top" href="/java-vip-all/05-rpc/-/forks"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#fork"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper merge-requests has-tooltip" title="Merge Requests" data-container="body" data-placement="top" href="/java-vip-all/05-rpc/merge_requests"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#git-merge"></use></svg>
+0
+</a><a class="d-none d-xl-flex align-items-center icon-wrapper issues has-tooltip" title="Issues" data-container="body" data-placement="top" href="/java-vip-all/05-rpc/issues"><svg class="s14 append-right-4"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#issues"></use></svg>
+0
+</a><span class="icon-wrapper pipeline-status">
+<a class="ci-status-link ci-status-icon ci-status-icon-failed has-tooltip " title="Commit: failed" data-placement="top" href="/java-vip-all/05-rpc/commit/ac7df0d853ccb17b6c8713d486f0a3d3164570ca/pipelines?ref=master"><svg class="s16"><use xlink:href="/assets/icons-351e10820d76c3052c94570c89d3c67936a2915b1cc0b9c99b63885be7ff1961.svg#status_failed"></use></svg>
+</a>
+</span>
+</div>
+<div class="updated-note">
+<span>
+Updated
+<time class="js-timeago" title="Sep 24, 2019 2:57pm" datetime="2019-09-24T14:57:57Z" data-toggle="tooltip" data-placement="top" data-container="body">Sep 24, 2019</time>
+</span>
+</div>
+</div>
+</div>
+</li>
+
+</ul>
+<div class="gl-pagination prepend-top-default">
+<ul class="pagination justify-content-center">
+<li class="disabled js-previous-button page-item">
+<a rel="prev" class="page-link" href="#">Prev</a>
+</li>
+
+<li class="active js-pagination-page page-item">
+<a class="page-link" href="/?non_archived=true&amp;sort=latest_activity_desc">1</a>
+</li>
+
+<li class="d-none d-md-block js-pagination-page page-item sibling">
+<a rel="next" class="page-link" href="/?non_archived=true&amp;page=2&amp;sort=latest_activity_desc">2</a>
+</li>
+
+<li class="js-next-button page-item">
+<a rel="next" class="page-link" href="/?non_archived=true&amp;page=2&amp;sort=latest_activity_desc">Next</a>
+</li>
+
+
+</ul>
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</body>
+</html>
+

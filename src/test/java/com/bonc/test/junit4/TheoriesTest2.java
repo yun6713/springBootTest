@@ -1,11 +1,10 @@
 package com.bonc.test.junit4;
 
 import org.junit.Assume;
-import org.junit.Rule;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 /**
  * 只能双参数
@@ -17,6 +16,7 @@ import org.junit.runner.RunWith;
 public class TheoriesTest2 {
 	public static final int SIZE=20;
 	@DataPoints
+//	@DataPoint
 	public static int[] dataPoints() {
 		int[] ints=new int[SIZE];
 		for (int i = 0; i < SIZE; i++) {
