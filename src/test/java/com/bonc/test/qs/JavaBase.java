@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -22,7 +23,11 @@ import java.io.Externalizable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Target;
 
+import org.apache.ibatis.annotations.Results;
 import org.junit.Test;
 
 public class JavaBase {
@@ -202,5 +207,14 @@ public class JavaBase {
 		ObjectOutputStream oos;
 		ObjectInputStream ois;
 		
+	}
+	@Test
+	public void annotation() {
+		Class<Test> t = Test.class;
+		System.out.println(Arrays.toString(t.getInterfaces()));
+		System.out.println(t.isAnnotationPresent(Target.class));
+		Class<Results> container = Results.class;
+		Repeatable r;
+		ElementType et;
 	}
 }
