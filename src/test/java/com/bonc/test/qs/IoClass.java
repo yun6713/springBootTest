@@ -16,8 +16,16 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.Channel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.AttributeView;
+import java.nio.file.attribute.FileAttributeView;
 import java.util.Scanner;
+
+import javax.naming.directory.Attributes;
 
 import org.junit.Test;
 
@@ -56,6 +64,15 @@ public class IoClass {
 	public void charset() {
 		Charset c=StandardCharsets.UTF_8;
 		System.out.println(System.getProperty("file.encoding"));
-		c.encode(null);
+		c.encode("");
+		CharsetEncoder en=c.newEncoder();
+	}
+	public void nio2(){
+		Paths ps;
+		Path p;
+		Files fs;
+		AttributeView av;
+		FileAttributeView fav;
+		Attributes a;
 	}
 }

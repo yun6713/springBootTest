@@ -31,13 +31,16 @@ public class ReflectClass {
 		Class clazz;
 		Type type;
 		Constructor cons;
-		Method mtd;
+		Method mtd=null;
+		Test test = mtd.getAnnotation(Test.class);
+		test.timeout();
 		Parameter p;
 		Type t;
 		ParameterizedType pt;//带泛型类型
 		Field fld;
 		Annotation ann;
 		Array array;
+		
 		
 	}
 	
