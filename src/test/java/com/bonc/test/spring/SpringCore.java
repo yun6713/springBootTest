@@ -1,7 +1,9 @@
 package com.bonc.test.spring;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
+import java.beans.VetoableChangeListener;
 import java.net.MalformedURLException;
 
 import javax.validation.Constraint;
@@ -12,6 +14,8 @@ import org.aspectj.lang.annotation.DeclareParents;
 import org.junit.Test;
 import org.springframework.beans.BeanMetadataElement;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -41,6 +45,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.DataBinder;
@@ -126,9 +131,13 @@ public class SpringCore {
 		Validated v2;
 		DataBinder db;
 		BeanWrapper bw;
+		BeanWrapperImpl bwi;
 		PropertyEditor pe;
 		PropertyEditorSupport pes;
-		
+		PropertyValue pv;
+		PropertyChangeListener pcl;
+		VetoableChangeListener vcl;
+		NumberFormat nf;
 	}
 	@Test
 	//测试BeanMetadataElement
@@ -145,6 +154,7 @@ public class SpringCore {
 	}
 	@Test
 	public void order() {
+		@SuppressWarnings("resource")
 		ApplicationContext ac=new AnnotationConfigApplicationContext(TestBeanConfig.class);
 		DefaultListableBeanFactory bf=(DefaultListableBeanFactory)(ac.getAutowireCapableBeanFactory());
 		bf.destroySingleton("nana");

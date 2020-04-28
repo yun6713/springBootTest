@@ -8,11 +8,16 @@ import java.util.concurrent.Executors;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.TypeExcludeFilter;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -23,6 +28,7 @@ import org.springframework.security.concurrent.DelegatingSecurityContextExecutor
  * 数据库：H2+druid<p>
  * 数据框架：mybatis、jpa、spring-boot-starter-data-*<p>
  * 缓存：ehcache、redis<p>
+ * 消息：rabbitmq<p>
  * 测试：junit、MockMvc<p>
  * 加密：单向(PasswordEncoder、MD5)、双向(rsa、base64)<p>
  * 监控：spring boot admin+简单网页监控
@@ -31,6 +37,9 @@ import org.springframework.security.concurrent.DelegatingSecurityContextExecutor
  * @Description TODO
  */
 @SpringBootApplication
+@ComponentScan(excludeFilters = {
+		@Filter(type = FilterType.ASSIGNABLE_TYPE,
+				classes = AutoConfigurationExcludeFilter.class) })
 @EnableAsync//异步
 @EnableScheduling//定时
 @EnableCaching//开启缓存

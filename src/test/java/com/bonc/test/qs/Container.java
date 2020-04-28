@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.WeakHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -80,6 +81,7 @@ public class Container {
 		SortedMap sm;
 		LinkedHashMap lhm;
 		Hashtable h;
+		WeakHashMap whm;
 		
 	}
 	

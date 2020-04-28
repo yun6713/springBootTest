@@ -12,6 +12,7 @@ import org.springframework.util.ResourceUtils;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
+import net.sf.ehcache.config.CacheConfiguration;
 
 
 public class LogTest {
