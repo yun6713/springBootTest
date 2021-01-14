@@ -18,7 +18,7 @@
 		<java.version>1.8</java.version>
 		<commons-logging.version>1.2</commons-logging.version>
     	<log4j.version>1.2.17</log4j.version>
-    	<poi.version>3.15</poi.version>
+    	<poi.version>4.1.2</poi.version>
     	<slf4j2-log.scope>provided</slf4j2-log.scope>
     	<springboot.version>2.1.5</springboot.version>
 	    <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
